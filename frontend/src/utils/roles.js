@@ -1,0 +1,61 @@
+export const ROLES = {
+    SUPER_ADMIN: 'Super Admin',
+    ADMIN: 'Admin',
+    HR: 'HR',
+    MANAGER: 'Manager',
+    EMPLOYEE: 'Employee',
+    SALES: 'Sales',
+    SALES_TEAM: 'Sales Team'
+};
+
+export const MODULE_ACCESS = {
+    // CORE
+    DASHBOARD: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.HR, ROLES.MANAGER, ROLES.EMPLOYEE, ROLES.SALES, ROLES.SALES_TEAM],
+    REPORTS: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.HR, ROLES.MANAGER],
+
+    // HRMS
+    EMPLOYEES: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.HR, ROLES.MANAGER],
+    ATTENDANCE: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.HR, ROLES.MANAGER, ROLES.EMPLOYEE],
+    LEAVES: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.HR, ROLES.MANAGER, ROLES.EMPLOYEE],
+    PAYROLL: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.HR, ROLES.EMPLOYEE, ROLES.MANAGER],
+
+    // OPERATIONS
+    TASKS: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.HR, ROLES.MANAGER, ROLES.EMPLOYEE],
+
+    // ERP / INVENTORY
+    INVENTORY: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER],
+    VENDORS: [ROLES.SUPER_ADMIN, ROLES.ADMIN],
+    ORDERS: [ROLES.SUPER_ADMIN, ROLES.ADMIN],
+
+    // CRM
+    CRM_INSIGHTS: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.SALES, ROLES.SALES_TEAM, ROLES.MANAGER],
+    CRM_CUSTOMERS: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.SALES, ROLES.SALES_TEAM, ROLES.MANAGER],
+    CRM_PIPELINE: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.SALES, ROLES.SALES_TEAM, ROLES.MANAGER],
+    CRM_SALES: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.SALES, ROLES.SALES_TEAM, ROLES.MANAGER],
+    FIELD_AUDIT: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.EMPLOYEE],
+
+    // SYSTEM
+    ROLES: [ROLES.SUPER_ADMIN],
+    ANNOUNCEMENTS: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.HR, ROLES.MANAGER, ROLES.EMPLOYEE, ROLES.SALES, ROLES.SALES_TEAM],
+    AUDIT_LOGS: [ROLES.SUPER_ADMIN, ROLES.ADMIN],
+    SETTINGS: [ROLES.SUPER_ADMIN, ROLES.ADMIN]
+};
+
+/**
+ * Utility to check if a user role has access to a specific module
+ * @param {string} userRole - The role of the current user
+ * @param {string[]} allowedRoles - Array of allowed roles for the module
+ * @returns {boolean}
+ */
+export const hasAccess = (userRole, allowedRoles) => {
+    if (!userRole) return false;
+    
+    const normalizedUserRole = userRole.toLowerCase();
+    
+    // Super Admin global override
+    if (normalizedUserRole === ROLES.SUPER_ADMIN.toLowerCase()) return true;
+
+    if (!allowedRoles || !Array.isArray(allowedRoles)) return false;
+    
+    return allowedRoles.map(role => role.toLowerCase()).includes(normalizedUserRole);
+};
