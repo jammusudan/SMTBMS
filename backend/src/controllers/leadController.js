@@ -86,54 +86,51 @@ exports.createLead = async (req, res) => {
 // @route   POST /api/leads/:id/convert
 exports.convertToDeal = async (req, res) => {
     const { expected_close_date, notes } = req.body;
+    const leadId = req.params.id;
+
     try {
-        const lead = await Lead.findById(req.params.id).lean();
-        if (!lead) return res.status(404).json({ message: 'Lead not found' });
+        console.log(`Starting conversion for Lead: ${leadId}`);
         
+        const lead = await Lead.findById(leadId);
+        if (!lead) {
+            return res.status(404).json({ message: 'Lead record not found in database' });
+        }
+        
+        // Ensure lead is in a valid state for conversion
         if (lead.status !== 'Qualified') {
-            return res.status(400).json({ message: 'Only Qualified leads can be converted to deals' });
+            return res.status(400).json({ message: `Lead must be "Qualified" before conversion. Current status: ${lead.status}` });
         }
 
-        // Create new deal
-        let deal;
-        try {
-            // Determine who to assign the deal to
-            const assignedTo = lead.assigned_to?._id || lead.assigned_to || (req.user ? req.user.id : null);
-            
-            if (!assignedTo) {
-                return res.status(400).json({ message: 'Deal assignment failed: No user found to assign the deal to' });
-            }
+        // Prepare Deal data
+        const dealData = {
+            lead_id: lead._id,
+            prospect_name: lead.name,
+            prospect_email: lead.email || '',
+            prospect_phone: lead.phone || '',
+            title: `Opportunity: ${lead.name}`,
+            amount: Number(lead.estimatedValue) || 0,
+            expected_close_date: expected_close_date || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+            notes: notes || lead.notes || '',
+            assigned_to: lead.assigned_to || req.user.id,
+            stage: 'Prospecting'
+        };
 
-            const dealData = {
-                lead_id: lead._id,
-                prospect_name: lead.name,
-                prospect_email: lead.email || '',
-                prospect_phone: lead.phone || '',
-                title: `Opportunity: ${lead.name}`,
-                amount: Number(lead.estimatedValue) || 0,
-                expected_close_date: expected_close_date || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-                notes: notes || lead.notes,
-                assigned_to: assignedTo,
-                stage: 'Prospecting'
-            };
-            
-            deal = await Deal.create(dealData);
-        } catch (dealError) {
-            console.error('DEAL_CREATION_FAILURE:', dealError);
-            return res.status(500).json({ 
-                message: `Deal Creation Failed: ${dealError.message}`,
-                details: dealError.errors ? Object.keys(dealError.errors) : []
-            });
-        }
+        const newDeal = new Deal(dealData);
+        const savedDeal = await newDeal.save();
+
+        console.log(`Deal created successfully: ${savedDeal._id}`);
 
         res.status(201).json({ 
-            message: 'Lead converted to Deal successfully', 
-            deal_id: deal._id,
-            title: deal.title
+            message: 'Lead converted to Opportunity successfully', 
+            deal_id: savedDeal._id,
+            title: savedDeal.title
         });
     } catch (error) {
-        console.error('CONVERT_LEAD_TO_DEAL_OUTER_ERROR:', error);
-        res.status(500).json({ message: error.message || 'Server error during conversion' });
+        console.error('CRITICAL_CONVERSION_ERROR:', error);
+        res.status(500).json({ 
+            message: 'Server failed to process conversion', 
+            error: error.message 
+        });
     }
 };
 
