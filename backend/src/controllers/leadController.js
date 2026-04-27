@@ -86,7 +86,7 @@ exports.createLead = async (req, res) => {
 exports.convertToDeal = async (req, res) => {
     const { expected_close_date, notes } = req.body;
     try {
-        const lead = await Lead.findById(req.params.id);
+        const lead = await Lead.findById(req.params.id).lean();
         if (!lead) return res.status(404).json({ message: 'Lead not found' });
         
         if (lead.status !== 'Qualified') {
@@ -94,29 +94,32 @@ exports.convertToDeal = async (req, res) => {
         }
 
         // Create new deal
-        const deal = await Deal.create({
-            lead_id: lead._id,
-            prospect_name: lead.name,
-            prospect_email: lead.email,
-            prospect_phone: lead.phone,
-            title: `Opportunity: ${lead.name}`,
-            amount: lead.estimatedValue || 0,
-            expected_close_date: expected_close_date || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // Default 30 days
-            notes: notes || lead.notes,
-            assigned_to: (lead.assigned_to?._id || lead.assigned_to || req.user.id),
-            stage: 'Prospecting'
-        });
+        let deal;
+        try {
+            deal = await Deal.create({
+                lead_id: lead._id,
+                prospect_name: lead.name,
+                prospect_email: lead.email,
+                prospect_phone: lead.phone,
+                title: `Opportunity: ${lead.name}`,
+                amount: Number(lead.estimatedValue) || 0,
+                expected_close_date: expected_close_date || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+                notes: notes || lead.notes,
+                assigned_to: (lead.assigned_to?._id || lead.assigned_to || req.user.id),
+                stage: 'Prospecting'
+            });
+        } catch (dealError) {
+            console.error('DEAL_CREATION_INNER_ERROR:', dealError);
+            return res.status(500).json({ message: `Deal Creation Failed: ${dealError.message}` });
+        }
 
-        // Mark lead as handled? For now we just keep it Qualified.
-        // User said Lead -> Qualified -> Deal.
-        
         res.status(201).json({ 
             message: 'Lead converted to Deal successfully', 
             deal_id: deal._id,
             title: deal.title
         });
     } catch (error) {
-        console.error('CONVERT_LEAD_TO_DEAL_ERROR:', error);
+        console.error('CONVERT_LEAD_TO_DEAL_OUTER_ERROR:', error);
         res.status(500).json({ message: error.message || 'Server error during conversion' });
     }
 };
