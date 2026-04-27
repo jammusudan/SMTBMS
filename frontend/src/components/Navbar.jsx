@@ -5,7 +5,8 @@ import {
     CalendarDays, Truck, ShoppingCart, UserCheck, 
     TrendingUp, Receipt, Bell, Settings as SettingsIcon, 
     Activity, LogOut, Search, ClipboardList, Banknote, 
-    Megaphone, BarChart3, User, ShieldCheck, Warehouse
+    Megaphone, BarChart3, User, ShieldCheck, Warehouse,
+    Target, Briefcase
 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { notificationService } from '../services/api';
@@ -51,7 +52,7 @@ const Navbar = () => {
     const role = user.role;
 
     // DYNAMIC NAVIGATION CONFIGURATION
-    const NAV_CONFIG = [
+    const NAV_CONFIG = React.useMemo(() => [
         {
             section: 'CORE',
             items: [
@@ -77,25 +78,24 @@ const Navbar = () => {
             ]
         },
         {
-            section: 'ERP / CRM',
+            section: 'SALES & CRM',
             items: [
-                { name: 'Orders', icon: ShoppingCart, path: '/erp/orders', accessGroup: MODULE_ACCESS.ORDERS },
-                { name: 'Vendors', icon: Truck, path: '/erp/vendors', accessGroup: MODULE_ACCESS.VENDORS },
-                { name: 'CRM Overview', icon: LayoutDashboard, path: '/crm/overview', accessGroup: MODULE_ACCESS.CRM_INSIGHTS },
+                { name: 'Leads', icon: Target, path: '/crm/leads', accessGroup: MODULE_ACCESS.CRM_PIPELINE },
+                { name: 'Deals', icon: Briefcase, path: '/crm/deals', accessGroup: MODULE_ACCESS.CRM_SALES },
                 { name: 'Customers', icon: Users, path: '/crm/customers', accessGroup: MODULE_ACCESS.CRM_CUSTOMERS },
-                { name: 'Field Audit', icon: ShieldCheck, path: '/crm/field-audit', accessGroup: MODULE_ACCESS.FIELD_AUDIT },
-                { name: 'Insights', icon: BarChart3, path: '/crm/insights', accessGroup: MODULE_ACCESS.CRM_INSIGHTS },
+                { name: 'Activities', icon: Activity, path: '/logs', accessGroup: MODULE_ACCESS.AUDIT_LOGS },
+                { name: 'Performance', icon: TrendingUp, path: '/crm/insights', accessGroup: MODULE_ACCESS.CRM_INSIGHTS },
+                { name: 'Orders', icon: ShoppingCart, path: '/erp/orders', accessGroup: MODULE_ACCESS.ORDERS },
             ]
         },
         {
             section: 'SYSTEM',
             items: [
-                { name: 'Announcements', icon: Megaphone, path: '/announcements', accessGroup: MODULE_ACCESS.ANNOUNCEMENTS },
-                { name: 'Logs', icon: Activity, path: '/logs', accessGroup: MODULE_ACCESS.AUDIT_LOGS },
+                { name: 'Notifications', icon: Megaphone, path: '/announcements', accessGroup: MODULE_ACCESS.ANNOUNCEMENTS },
                 { name: 'Settings', icon: SettingsIcon, path: '/settings', accessGroup: MODULE_ACCESS.SETTINGS },
             ]
         }
-    ];
+    ], [role]);
 
     const filteredMenu = NAV_CONFIG.map(group => ({
         ...group,
