@@ -1,0 +1,16 @@
+{
+  "name": "smtbms-root",
+  "version": "1.0.0",
+  "description": "Smart Material Tracking and Business Management System",
+  "main": "index.js",
+  "scripts": {
+    "install-all": "npm install --prefix backend && npm install --prefix frontend",
+    "build-frontend": "npm run build --prefix frontend",
+    "start-backend": "npm start --prefix backend",
+    "install": "npm install --prefix backend",
+    "build": "echo 'Skipping root build'",
+    "start": "npm start --prefix backend"
+  },
+  "author": "",
+  "license": "ISC"
+}
