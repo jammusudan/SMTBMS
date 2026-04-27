@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { crmService, hrmsService } from '../services/api';
+import { crmService, hrmsService, staffService } from '../services/api';
 import { 
     UserCheck, Plus, Search, Filter, MoreVertical, 
     Mail, Phone, Calendar, Loader2, Link as LinkIcon,
@@ -29,9 +29,11 @@ const LeadsManagement = () => {
         phone: '',
         source: 'Website',
         notes: '',
+        context: '',
         status: 'New',
         assigned_to: '',
         next_follow_up: getDefaultReviewDate(),
+        reviewDate: getDefaultReviewDate(),
         priority: 'Medium',
         estimatedValue: ''
     };
@@ -47,7 +49,7 @@ const LeadsManagement = () => {
             const [leadsRes, custRes, staffRes] = await Promise.all([
                 crmService.getLeads(),
                 crmService.getCustomers(),
-                hrmsService.getStaff('sales')
+                staffService.getByRole('Sales')
             ]);
             setLeads(leadsRes.data);
             setCustomers(custRes.data);
@@ -62,10 +64,14 @@ const LeadsManagement = () => {
     const handleCreateLead = async (e) => {
         e.preventDefault();
         
-        // Validation
         const isNewCustomer = !formData.customer_id;
-        if (isNewCustomer && (!formData.name || !formData.phone || !formData.email)) {
-            alert('Please fill all prospect contact details.');
+        if (isNewCustomer && (!formData.name || !formData.phone)) {
+            alert('Prospect name and contact number are required.');
+            return;
+        }
+
+        if (!formData.context && !formData.notes) {
+            alert('Requirement context is mandatory');
             return;
         }
 
@@ -208,7 +214,7 @@ const LeadsManagement = () => {
                                             {lead.status}
                                         </span>
                                         <p className="text-slate-400 text-[11px] font-black uppercase tracking-widest flex items-center gap-2">
-                                            <UserCheck size={14} className="text-indigo-400" /> {lead.assigned_to?.username || lead.assigned_to?.name || 'Unassigned'}
+                                            <UserCheck size={14} className="text-indigo-400" /> {typeof lead.assigned_to === 'object' ? (lead.assigned_to?.username || 'Unassigned') : (lead.assigned_to || 'Unassigned')}
                                         </p>
                                     </div>
                                 </td>
@@ -319,7 +325,7 @@ const LeadsManagement = () => {
                                                 required rows="4" 
                                                 placeholder="What is the customer looking for? Mention material types, grades, and specific needs."
                                                 className="w-full bg-slate-50/80 border border-slate-100 rounded-3xl py-5 px-6 text-sm font-black text-slate-800 focus:outline-none focus:border-indigo-100 focus:bg-white transition-all shadow-sm resize-none"
-                                                value={formData.notes} onChange={e => setFormData({...formData, notes: e.target.value})}
+                                                value={formData.context || formData.notes} onChange={e => setFormData({...formData, context: e.target.value, notes: e.target.value})}
                                             />
                                         </div>
 
