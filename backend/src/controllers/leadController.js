@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const Lead = require('../models/Lead');
 const Customer = require('../models/Customer');
 const Deal = require('../models/Deal');
@@ -81,7 +82,7 @@ exports.createLead = async (req, res) => {
     }
 };
 
-// @desc    Convert lead to a formal Deal
+// @desc    Convert lead to a deal (Opportunity)
 // @route   POST /api/leads/:id/convert
 exports.convertToDeal = async (req, res) => {
     const { expected_close_date, notes } = req.body;
@@ -96,18 +97,19 @@ exports.convertToDeal = async (req, res) => {
         // Create new deal
         let deal;
         try {
-            deal = await Deal.create({
-                lead_id: lead._id,
-                prospect_name: lead.name,
-                prospect_email: lead.email,
-                prospect_phone: lead.phone,
+            const dealData = {
+                lead_id: new mongoose.Types.ObjectId(lead._id),
+                prospect_name: String(lead.name),
+                prospect_email: String(lead.email || ''),
+                prospect_phone: String(lead.phone || ''),
                 title: `Opportunity: ${lead.name}`,
                 amount: Number(lead.estimatedValue) || 0,
                 expected_close_date: expected_close_date || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
                 notes: notes || lead.notes,
-                assigned_to: (lead.assigned_to?._id || lead.assigned_to || req.user.id),
+                assigned_to: new mongoose.Types.ObjectId(lead.assigned_to?._id || lead.assigned_to || req.user.id),
                 stage: 'Prospecting'
-            });
+            };
+            deal = await Deal.create(dealData);
         } catch (dealError) {
             console.error('DEAL_CREATION_INNER_ERROR:', dealError);
             return res.status(500).json({ message: `Deal Creation Failed: ${dealError.message}` });
