@@ -132,7 +132,9 @@ const LeadsManagement = () => {
             alert('Lead converted to Opportunity successfully!');
             fetchData();
         } catch (error) {
-            alert(error.response?.data?.message || 'Error converting lead to deal');
+            const errorMsg = error.response?.data?.message || error.message || 'Unknown error';
+            alert(`Conversion Failed: ${errorMsg}`);
+            console.error('Conversion Error Detail:', error);
         } finally {
             setActionLoading(false);
         }
