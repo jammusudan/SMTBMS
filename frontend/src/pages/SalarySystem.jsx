@@ -297,22 +297,24 @@ const SalarySystem = () => {
                             {years.map(y => <option key={y} value={y}>{y}</option>)}
                         </select>
                     </div>
-                    <button 
-                        onClick={() => setIsGenerateModalOpen(true)}
-                        disabled={activeJob && !jobError}
-                        className={`flex items-center gap-2 font-bold py-2.5 px-5 rounded-xl transition-all shadow-lg text-sm ml-auto md:ml-0 ${activeJob && !jobError ? 'bg-slate-100 text-slate-400 cursor-not-allowed shadow-none' : 'bg-indigo-600 text-white hover:bg-slate-900 shadow-indigo-100'}`}
-                    >
-                        <RefreshCcw size={16} className={activeJob && !jobError ? 'animate-spin' : ''} />
-                        Run Batch
-                    </button>
-                    {(user.role === 'Admin' || user.role === 'HR') && (
-                        <button 
-                            onClick={() => setIsRollbackModalOpen(true)}
-                            className="flex items-center gap-2 bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white font-bold py-2.5 px-5 rounded-xl border border-rose-100 transition-all shadow-lg shadow-rose-100 text-sm"
-                        >
-                            <AlertCircle size={16} />
-                            Rollback
-                        </button>
+                    {user?.role === 'HR' && (
+                        <>
+                            <button 
+                                onClick={() => setIsGenerateModalOpen(true)}
+                                disabled={activeJob && !jobError}
+                                className={`flex items-center gap-2 font-bold py-2.5 px-5 rounded-xl transition-all shadow-lg text-sm ml-auto md:ml-0 ${activeJob && !jobError ? 'bg-slate-100 text-slate-400 cursor-not-allowed shadow-none' : 'bg-indigo-600 text-white hover:bg-slate-900 shadow-indigo-100'}`}
+                            >
+                                <RefreshCcw size={16} className={activeJob && !jobError ? 'animate-spin' : ''} />
+                                Run Batch
+                            </button>
+                            <button 
+                                onClick={() => setIsRollbackModalOpen(true)}
+                                className="flex items-center gap-2 bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white font-bold py-2.5 px-5 rounded-xl border border-rose-100 transition-all shadow-lg shadow-rose-100 text-sm"
+                            >
+                                <AlertCircle size={16} />
+                                Rollback
+                            </button>
+                        </>
                     )}
                     <button onClick={exportToCSV} className="p-2.5 bg-white border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-50 shadow-sm transition-all"><Download size={18} /></button>
                 </div>
@@ -431,7 +433,7 @@ const SalarySystem = () => {
                                             </span>
                                         </td>
                                         <td className="px-6 py-5 text-right flex justify-end gap-2 items-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                            {(sal.status === 'Pending' || sal.status === 'Partially Paid') && (
+                                            {user?.role === 'HR' && (sal.status === 'Pending' || sal.status === 'Partially Paid') && (
                                                 <button 
                                                     onClick={() => setIsPayModalOpen(sal)} 
                                                     className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 text-white hover:bg-slate-900 rounded-xl transition-all font-black text-[9px] tracking-widest uppercase shadow-lg shadow-emerald-100"
@@ -440,11 +442,11 @@ const SalarySystem = () => {
                                                     Process Pay
                                                 </button>
                                             )}
-                                            {sal.isFrozen && sal.status !== 'Reverted' && sal.status !== 'REVERTED' ? (
-                                                user.role === 'Admin' && <button onClick={() => handleReOpen(sal._id)} className="p-2 bg-slate-100 text-slate-600 hover:bg-indigo-600 hover:text-white rounded-xl transition-all"><RefreshCcw size={16} /></button>
+                                            {user?.role === 'HR' && (sal.isFrozen && sal.status !== 'Reverted' && sal.status !== 'REVERTED' ? (
+                                                <button onClick={() => handleReOpen(sal._id)} className="p-2 bg-slate-100 text-slate-600 hover:bg-indigo-600 hover:text-white rounded-xl transition-all"><RefreshCcw size={16} /></button>
                                             ) : sal.status !== 'Reverted' && sal.status !== 'REVERTED' && (
                                                 <button onClick={() => setIsAdjustModalOpen(sal)} className="p-2 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-xl border border-indigo-100 transition-all"><Plus size={16} /></button>
-                                            )}
+                                            ))}
                                             <button onClick={() => setViewSlip(sal)} className="p-2 bg-white text-slate-500 hover:bg-slate-900 hover:text-white border border-slate-200 rounded-xl transition-all shadow-sm"><FileText size={16} /></button>
                                         </td>
                                     </tr>

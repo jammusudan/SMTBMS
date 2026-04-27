@@ -10,6 +10,7 @@ const Department = require('../models/Department');
 const Salary = require('../models/Salary');
 const Lead = require('../models/Lead');
 const Customer = require('../models/Customer');
+const ActivityLog = require('../models/ActivityLog');
 
 // @desc    Get dashboard summary statistics
 // @route   GET /api/dashboard/stats
@@ -151,9 +152,9 @@ exports.getHRStats = async (req, res) => {
             attendancesToday,
             recentLeaves,
             pendingLeaveCount,
-            activeTasks,
             departments,
-            recentSalaries
+            recentSalaries,
+            recentActivities
         ] = await Promise.all([
             Employee.countDocuments(),
             Attendance.find({ date: { $gte: today, $lt: tomorrow } }, 'status').lean(),
@@ -173,6 +174,10 @@ exports.getHRStats = async (req, res) => {
                 })
                 .sort({ createdAt: -1 })
                 .limit(5)
+                .lean(),
+            ActivityLog.find({ module: 'HRMS' })
+                .sort({ createdAt: -1 })
+                .limit(8)
                 .lean()
         ]);
 
@@ -224,7 +229,8 @@ exports.getHRStats = async (req, res) => {
                 { $group: { 
                     _id: null, 
                     totalPayout: { $sum: "$netPay" }, 
-                    totalTax: { $sum: "$monthlyTax" } 
+                    totalTax: { $sum: "$monthlyTax" },
+                    paidPayout: { $sum: "$paidAmount" }
                 } }
             ]),
             Salary.countDocuments({ month: currentMonth, year: currentYear }),
@@ -233,6 +239,7 @@ exports.getHRStats = async (req, res) => {
 
         const totalPayout = payrollStats[0]?.totalPayout || 0;
         const totalTax = payrollStats[0]?.totalTax || 0;
+        const paidPayout = payrollStats[0]?.paidPayout || 0;
 
         res.json({
             metrics: {
@@ -243,6 +250,8 @@ exports.getHRStats = async (req, res) => {
                 pending_tasks: activeTasks,
                 payroll_processed: processedPayroll,
                 total_monthly_payout: totalPayout,
+                paid_payout: paidPayout,
+                pending_payout: Math.max(0, totalPayout - paidPayout),
                 total_tax_month: totalTax,
                 pending_payroll_count: unpaidPayroll,
                 pending_leave_count: pendingLeaveCount
@@ -263,6 +272,12 @@ exports.getHRStats = async (req, res) => {
                 net_pay: s.netPay,
                 status: s.status,
                 paid_at: s.paidAt || s.createdAt
+            })),
+            recent_activities: recentActivities.map(a => ({
+                id: a._id,
+                user: a.username,
+                action: a.action,
+                time: a.createdAt
             }))
         });
     } catch (error) {
@@ -552,46 +567,47 @@ exports.globalSearch = async (req, res) => {
 // @route   GET /api/dashboard/payroll/reports
 exports.getPayrollReports = async (req, res) => {
     try {
-        const currentMonthStr = new Date().toLocaleString('default', { month: 'long', year: 'numeric' });
-
-        // 1. 12-Month Payout Trend
-        // Since month_year is a string "Month Year", we need to be careful.
-        // For simplicity in this demo, we'll fetch all records and group them,
-        // or we can generate the last 12 month strings and query them.
-        const last12Months = [];
+        const today = new Date();
+        const last12Periods = [];
+        const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        
         for (let i = 0; i < 12; i++) {
             const d = new Date();
             d.setMonth(d.getMonth() - i);
-            last12Months.push(d.toLocaleString('default', { month: 'long', year: 'numeric' }));
+            last12Periods.push({ month: d.getMonth() + 1, year: d.getFullYear() });
         }
 
         const stats = await Salary.aggregate([
-            { $match: { month_year: { $in: last12Months } } },
+            { $match: { 
+                $or: last12Periods.map(p => ({ month: p.month, year: p.year }))
+            } },
             {
                 $group: {
-                    _id: "$month_year",
-                    totalPayout: { $sum: "$net_pay" },
-                    totalTax: { $sum: "$tax" },
-                    avgSalary: { $avg: "$net_pay" },
+                    _id: { month: "$month", year: "$year" },
+                    totalPayout: { $sum: "$netPay" },
+                    totalTax: { $sum: "$monthlyTax" },
+                    avgSalary: { $avg: "$netPay" },
                     count: { $sum: 1 }
                 }
             }
         ]);
 
-        // Sort stats by date (this is tricky with string months, so we sort in JS)
-        const sortedTrends = last12Months.reverse().map(month => {
-            const monthData = stats.find(s => s._id === month);
+        const sortedTrends = last12Periods.reverse().map(p => {
+            const monthData = stats.find(s => s._id.month === p.month && s._id.year === p.year);
             return {
-                period: month,
+                period: `${monthNames[p.month - 1].slice(0, 3)} ${p.year}`,
                 payout: monthData?.totalPayout || 0,
                 tax: monthData?.totalTax || 0,
                 employees: monthData?.count || 0
             };
         });
 
-        // 2. Department-wise Breakdown
+        // 2. Department-wise Breakdown (Current Month)
+        const currentMonth = today.getMonth() + 1;
+        const currentYear = today.getFullYear();
+
         const deptBreakdown = await Salary.aggregate([
-            { $match: { month_year: currentMonthStr } },
+            { $match: { month: currentMonth, year: currentYear } },
             {
                 $lookup: {
                     from: "employees",
@@ -613,23 +629,23 @@ exports.getPayrollReports = async (req, res) => {
             {
                 $group: {
                     _id: "$dept.name",
-                    totalPayout: { $sum: "$net_pay" },
+                    totalPayout: { $sum: "$netPay" },
                     employeeCount: { $sum: 1 }
                 }
             },
             { $sort: { totalPayout: -1 } }
         ]);
 
-        // 3. Overall Summary
+        // 3. Overall Summary (Current Month)
         const summary = await Salary.aggregate([
-            { $match: { month_year: currentMonthStr } },
+            { $match: { month: currentMonth, year: currentYear } },
             {
                 $group: {
                     _id: null,
-                    totalPayout: { $sum: "$net_pay" },
-                    totalTax: { $sum: "$tax" },
-                    avgNetPay: { $avg: "$net_pay" },
-                    maxNetPay: { $max: "$net_pay" }
+                    totalPayout: { $sum: "$netPay" },
+                    totalTax: { $sum: "$monthlyTax" },
+                    avgNetPay: { $avg: "$netPay" },
+                    maxNetPay: { $max: "$netPay" }
                 }
             }
         ]);

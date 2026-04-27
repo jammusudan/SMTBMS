@@ -51,6 +51,26 @@ exports.getEmployees = async (req, res) => {
     }
 };
 
+// @desc    Update employee/user status
+// @route   PATCH /api/employees/:id/status
+exports.updateStatus = async (req, res) => {
+    const { status } = req.body;
+    try {
+        const employee = await Employee.findById(req.params.id);
+        if (!employee) return res.status(404).json({ message: 'Employee not found' });
+
+        const user = await User.findById(employee.user_id);
+        if (!user) return res.status(404).json({ message: 'User record not found' });
+
+        user.status = status;
+        await user.save();
+
+        res.json({ message: `Employee status updated to ${status}`, status: user.status });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 // @desc    Get current employee profile
 // @route   GET /api/employees/profile
 exports.getProfile = async (req, res) => {
@@ -101,6 +121,11 @@ exports.upsertEmployee = async (req, res) => {
                 return res.status(400).json({ message: 'Email, password and role are required for new employees' });
             }
 
+            // HR cannot create Admin users
+            if (req.user.role === 'HR' && (role === 'Admin' || role === 'Super Admin')) {
+                return res.status(403).json({ message: 'HR is not authorized to create Admin users' });
+            }
+
             // Check if email exists
             const userExists = await User.findOne({ email });
             if (userExists) {
@@ -143,7 +168,7 @@ exports.upsertEmployee = async (req, res) => {
                 last_name,
                 dept_id,
                 designation,
-                salary,
+                salary: Number(salary) || 0,
                 join_date: join_date || new Date(),
                 salaryStructure: {
                     basicSalary: Number(salary) || 0,
@@ -154,6 +179,11 @@ exports.upsertEmployee = async (req, res) => {
                     taxPercent: 0
                 }
             });
+        }
+
+        // Strict Validation before save
+        if (employee.salaryStructure.basicSalary <= 0) {
+            return res.status(400).json({ message: 'Basic salary must be greater than zero' });
         }
 
         await employee.save();
@@ -203,13 +233,33 @@ exports.updateSalaryStructure = async (req, res) => {
             employee.employeeCode = `EMP-${Math.random().toString(36).substr(2, 6).toUpperCase()}`;
         }
 
+        // Strict Validation
+        const bSal = Number(basicSalary);
+        if (bSal <= 0) {
+            return res.status(400).json({ message: 'Basic salary must be greater than zero' });
+        }
+
+        const h = Number(hra) || 0;
+        const a = Number(allowances) || 0;
+        const b = Number(bonus) || 0;
+        const pfP = Number(pfPercent) || 12;
+        const taxP = Number(taxPercent) || 0;
+
+        const gross = bSal + h + a + b;
+        const pf = Math.trunc(bSal * (pfP / 100));
+        const tax = Math.trunc(gross * (taxP / 100));
+
+        if ((pf + tax) >= gross && gross > 0) {
+            return res.status(400).json({ message: 'Deductions (PF + Tax) cannot exceed or equal Gross Salary' });
+        }
+
         employee.salaryStructure = {
-            basicSalary: Number(basicSalary),
-            hra: Number(hra) || 0,
-            allowances: Number(allowances) || 0,
-            bonus: Number(bonus) || 0,
-            pfPercent: Number(pfPercent) || 12,
-            taxPercent: Number(taxPercent) || 0
+            basicSalary: bSal,
+            hra: h,
+            allowances: a,
+            bonus: b,
+            pfPercent: pfP,
+            taxPercent: taxP
         };
 
         // Also sync the main 'salary' field with the total gross for consistency

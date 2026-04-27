@@ -25,6 +25,7 @@ export const hrmsService = {
     getProfile: () => api.get('/employees/profile'),
     upsertEmployee: (data) => api.post('/employees', data),
     updateSalaryStructure: (id, data) => api.put(`/employees/${id}/salary`, data),
+    updateEmployeeStatus: (id, status) => api.patch(`/employees/${id}/status`, { status }),
     deleteEmployee: (id) => api.delete(`/employees/${id}`),
 
     // Attendance
