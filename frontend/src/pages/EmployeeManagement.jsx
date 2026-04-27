@@ -206,8 +206,9 @@ const EmployeeManagement = () => {
         const matchesDept = deptFilter === '' || e.dept_id === deptFilter;
         const matchesRole = roleFilter === '' || e.role === roleFilter;
 
-        // HR Dashboard Visibility: HR can only view 'Employee' details in this directory
-        const isVisibleToHR = !isHR || e.role?.toLowerCase() === 'employee';
+        // HR Dashboard Visibility: HR can view roles they are authorized to manage
+        const manageableRoles = ['employee', 'sales', 'manager', 'hr'];
+        const isVisibleToHR = !isHR || manageableRoles.includes(e.role?.toLowerCase());
 
         return matchesSearch && matchesDept && matchesRole && isVisibleToHR;
     });
