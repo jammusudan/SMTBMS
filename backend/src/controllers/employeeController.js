@@ -164,6 +164,7 @@ exports.upsertEmployee = async (req, res) => {
         } else {
             employee = new Employee({
                 user_id: userId,
+                employeeCode: `EMP-${Math.random().toString(36).substr(2, 6).toUpperCase()}`,
                 first_name,
                 last_name,
                 dept_id,
@@ -179,6 +180,11 @@ exports.upsertEmployee = async (req, res) => {
                     taxPercent: 0
                 }
             });
+        }
+
+        // Ensure employeeCode exists for existing profiles (Migration Safety)
+        if (!employee.employeeCode) {
+            employee.employeeCode = `EMP-${Math.random().toString(36).substr(2, 6).toUpperCase()}`;
         }
 
         // Strict Validation before save
