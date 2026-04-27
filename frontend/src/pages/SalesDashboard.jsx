@@ -282,62 +282,139 @@ const SalesDashboard = () => {
             </div>
 
             {/* MODALS */}
-            {/* New Lead Modal (Kept clean) */}
+            {/* Redesigned Capture Lead Modal */}
             <AnimatePresence>
                 {isLeadModalOpen && (
-                    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-950/40 backdrop-blur-sm">
-                        <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }} className="bg-white w-full max-w-lg rounded-[32px] overflow-hidden shadow-2xl border border-slate-100">
-                            <div className="p-6 border-b border-slate-50 flex justify-between items-center bg-slate-50/50 uppercase tracking-tight">
-                                <h2 className="text-lg font-black text-slate-900 flex items-center gap-2"><UserPlus className="text-indigo-600" size={20}/> Capture Lead</h2>
-                                <button onClick={() => setIsLeadModalOpen(false)} className="text-slate-400 hover:text-slate-900"><X size={20}/></button>
-                            </div>
-                            <form onSubmit={handleCreateLead} className="p-8 space-y-6">
-                                <div className="grid grid-cols-2 gap-5">
-                                     <div className="col-span-2">
-                                         <label className="block text-slate-500 text-[10px] font-black uppercase tracking-widest mb-2 px-1 text-left">Customer Client <span className="text-rose-500">*</span></label>
-                                         <select required className="w-full bg-slate-50 border border-slate-100 rounded-2xl p-4 text-[13px] font-bold focus:border-indigo-500 outline-none appearance-none" value={leadForm.customer_id} onChange={(e) => setLeadForm({...leadForm, customer_id: e.target.value})}>
-                                             <option value="">Select Target...</option>
-                                             {customers.map(c => <option key={c.id || c._id} value={c.id || c._id}>{c.name}</option>)}
-                                         </select>
-                                     </div>
-                                     <div className="col-span-2">
-                                         <label className="block text-slate-500 text-[10px] font-black uppercase tracking-widest mb-2 px-1 text-left">Deal Context <span className="text-rose-500">*</span></label>
-                                         <textarea rows="2" required className="w-full bg-slate-50 border border-slate-100 rounded-2xl p-4 text-[13px] font-bold outline-none resize-none" value={leadForm.context} onChange={(e) => setLeadForm({...leadForm, context: e.target.value})} placeholder="e.g. 50 tons granite supply for resort project"></textarea>
-                                     </div>
-                                     <div>
-                                         <label className="block text-slate-500 text-[10px] font-black uppercase tracking-widest mb-2 px-1 text-left">Lead Source</label>
-                                         <select required className="w-full bg-slate-50 border border-slate-100 rounded-2xl p-4 text-[13px] font-bold outline-none" value={leadForm.source} onChange={(e) => setLeadForm({...leadForm, source: e.target.value})}>
-                                             <option value="Email">Email</option>
-                                             <option value="Social Media">Social Media</option>
-                                             <option value="Phone Call">Phone Call</option>
-                                             <option value="Referral">Referral</option>
-                                             <option value="Website">Website</option>
-                                         </select>
-                                     </div>
-                                     <div>
-                                         <label className="block text-slate-500 text-[10px] font-black uppercase tracking-widest mb-2 px-1 text-left">Review Date</label>
-                                         <input type="date" required className="w-full bg-slate-50 border border-slate-100 rounded-2xl p-4 text-[13px] font-bold outline-none" value={leadForm.reviewDate} onChange={(e) => setLeadForm({...leadForm, reviewDate: e.target.value})} />
-                                     </div>
-                                     <div>
-                                         <label className="block text-slate-500 text-[10px] font-black uppercase tracking-widest mb-2 px-1 text-left">Estimated Value (₹) <span className="text-rose-500">*</span></label>
-                                         <input type="number" required className="w-full bg-slate-50 border border-slate-100 rounded-2xl p-4 text-[13px] font-bold outline-none" value={leadForm.estimatedValue} onChange={(e) => setLeadForm({...leadForm, estimatedValue: e.target.value})} placeholder="Value in ₹" />
-                                     </div>
-                                     <div>
-                                         <label className="block text-slate-500 text-[10px] font-black uppercase tracking-widest mb-2 px-1 text-left">Priority</label>
-                                         <select required className="w-full bg-slate-50 border border-slate-100 rounded-2xl p-4 text-[13px] font-bold outline-none" value={leadForm.priority} onChange={(e) => setLeadForm({...leadForm, priority: e.target.value})}>
-                                             <option value="High">High</option>
-                                             <option value="Medium">Medium</option>
-                                             <option value="Low">Low</option>
-                                         </select>
-                                     </div>
+                    <div className="fixed inset-0 z-[1001] flex items-center justify-center p-6">
+                        <motion.div 
+                            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                            onClick={() => setIsLeadModalOpen(false)}
+                            className="absolute inset-0 bg-slate-900/60 backdrop-blur-md"
+                        />
+                        <motion.div 
+                            initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 20, opacity: 0 }}
+                            className="bg-white w-full max-w-2xl rounded-[48px] shadow-2xl relative overflow-hidden flex flex-col max-h-[90vh] border border-white/20 text-left"
+                        >
+                            {/* Header */}
+                            <div className="p-10 pb-6 flex justify-between items-start border-b border-slate-50 bg-slate-50/30">
+                                <div>
+                                    <div className="flex items-center gap-3 mb-2">
+                                        <div className="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-lg shadow-indigo-100">
+                                            <Plus size={24} />
+                                        </div>
+                                        <h2 className="text-3xl font-black text-slate-900 tracking-tight italic">Capture Lead</h2>
+                                    </div>
+                                    <p className="text-slate-400 font-bold text-[11px] uppercase tracking-[0.2em] ml-13">New Prospect Acquisition Intelligence</p>
                                 </div>
-                                <div className="pt-4 flex gap-4">
-                                    <button type="button" onClick={() => setIsLeadModalOpen(false)} className="flex-1 px-6 py-5 rounded-2xl text-slate-400 bg-white hover:bg-slate-50 transition-all font-black text-[11px] uppercase tracking-[0.2em] border border-slate-100">DISCARD</button>
-                                    <button type="submit" disabled={actionLoading} className="flex-1 bg-indigo-600 text-white font-black py-5 rounded-2xl shadow-2xl shadow-indigo-100 hover:bg-indigo-700 transition-all flex justify-center items-center gap-2 text-[11px] uppercase tracking-[0.2em]">
-                                        {actionLoading ? <Loader2 className="animate-spin" size={16}/> : 'CONFIRM_LEAD'}
-                                    </button>
+                                <button onClick={() => setIsLeadModalOpen(false)} className="p-3 hover:bg-white hover:shadow-md rounded-2xl transition-all text-slate-300 hover:text-rose-500"><X size={24} /></button>
+                            </div>
+
+                            {/* Form Body */}
+                            <form onSubmit={handleCreateLead} className="flex-1 overflow-y-auto p-10 space-y-10">
+                                {/* Section 1: Customer Info */}
+                                <div className="space-y-6">
+                                    <div className="flex items-center gap-3 border-l-4 border-indigo-600 pl-4">
+                                        <h3 className="text-[12px] font-black text-slate-900 uppercase tracking-widest">Customer Information</h3>
+                                    </div>
+                                    
+                                    <div className="space-y-4">
+                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block ml-1">Customer / Prospect <span className="text-rose-500">*</span></label>
+                                        <select 
+                                            required
+                                            className="w-full bg-slate-50 border border-slate-100 rounded-2xl py-4.5 px-6 text-sm font-black text-slate-800 focus:outline-none focus:border-indigo-100 focus:bg-white transition-all shadow-sm"
+                                            value={leadForm.customer_id} onChange={e => setLeadForm({...leadForm, customer_id: e.target.value})}
+                                        >
+                                            <option value="">Select Target...</option>
+                                            {customers.map(c => <option key={c._id || c.id} value={c._id || c.id}>{c.name} ({c.email || 'N/A'})</option>)}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                {/* Section 2: Lead Info */}
+                                <div className="space-y-6">
+                                    <div className="flex items-center gap-3 border-l-4 border-emerald-600 pl-4">
+                                        <h3 className="text-[12px] font-black text-slate-900 uppercase tracking-widest">Requirement Details</h3>
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-6">
+                                        <div className="col-span-2">
+                                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block ml-1 mb-3">Requirement / Notes <span className="text-rose-500">*</span></label>
+                                            <textarea 
+                                                required rows="3" 
+                                                placeholder="What is the customer looking for? e.g. 50 tons granite supply"
+                                                className="w-full bg-slate-50 border border-slate-100 rounded-3xl py-5 px-6 text-sm font-black text-slate-800 focus:outline-none focus:border-indigo-100 focus:bg-white transition-all shadow-sm resize-none"
+                                                value={leadForm.context} onChange={e => setLeadForm({...leadForm, context: e.target.value})}
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block ml-1 mb-3">Lead Source</label>
+                                            <select 
+                                                className="w-full bg-slate-50 border border-slate-100 rounded-2xl py-4.5 px-6 text-sm font-black text-slate-800 focus:outline-none focus:border-indigo-100 focus:bg-white transition-all shadow-sm"
+                                                value={leadForm.source} onChange={e => setLeadForm({...leadForm, source: e.target.value})}
+                                            >
+                                                <option value="Website">Website</option>
+                                                <option value="Referral">Referral</option>
+                                                <option value="Cold Call">Cold Call</option>
+                                                <option value="WhatsApp">WhatsApp</option>
+                                                <option value="Walk-in">Walk-in</option>
+                                                <option value="Email">Email</option>
+                                            </select>
+                                        </div>
+
+                                        <div>
+                                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block ml-1 mb-3">Estimated Value (₹) <span className="text-rose-500">*</span></label>
+                                            <input 
+                                                type="number" required placeholder="Value in ₹"
+                                                className="w-full bg-slate-50 border border-slate-100 rounded-2xl py-4.5 px-6 text-sm font-black text-slate-800 focus:outline-none focus:border-indigo-100 focus:bg-white transition-all shadow-sm"
+                                                value={leadForm.estimatedValue} onChange={e => setLeadForm({...leadForm, estimatedValue: e.target.value})}
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block ml-1 mb-3">Lead Priority</label>
+                                            <select 
+                                                className="w-full bg-slate-50 border border-slate-100 rounded-2xl py-4.5 px-6 text-sm font-black text-slate-800 focus:outline-none focus:border-indigo-100 focus:bg-white transition-all shadow-sm"
+                                                value={leadForm.priority} onChange={e => setLeadForm({...leadForm, priority: e.target.value})}
+                                            >
+                                                <option value="Low">Low</option>
+                                                <option value="Medium">Medium</option>
+                                                <option value="High">High</option>
+                                                <option value="Urgent">Urgent</option>
+                                            </select>
+                                        </div>
+
+                                        <div>
+                                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block ml-1 mb-3">Follow-up Date <span className="text-rose-500">*</span></label>
+                                            <input 
+                                                type="date" required 
+                                                className="w-full bg-slate-50 border border-slate-100 rounded-2xl py-4.5 px-6 text-sm font-black text-slate-800 focus:outline-none focus:border-indigo-100 focus:bg-white transition-all shadow-sm"
+                                                value={leadForm.reviewDate} onChange={e => setLeadForm({...leadForm, reviewDate: e.target.value})}
+                                            />
+                                        </div>
+                                    </div>
                                 </div>
                             </form>
+
+                            {/* Footer Actions */}
+                            <div className="p-10 bg-slate-50/50 border-t border-slate-50 flex gap-4">
+                                <button 
+                                    type="button" onClick={() => setIsLeadModalOpen(false)}
+                                    className="flex-1 bg-white border border-slate-200 text-slate-600 font-black text-[13px] uppercase tracking-widest py-5 rounded-3xl hover:bg-slate-50 transition-all active:scale-95 shadow-sm"
+                                >
+                                    DISCARD
+                                </button>
+                                <button 
+                                    onClick={handleCreateLead}
+                                    disabled={actionLoading}
+                                    className={`flex-[2] text-white font-black text-[13px] uppercase tracking-widest py-5 rounded-3xl transition-all flex items-center justify-center gap-3 shadow-xl ${
+                                        actionLoading ? 'bg-slate-300 cursor-not-allowed' : 'bg-indigo-600 hover:bg-indigo-700 shadow-indigo-100 active:scale-95'
+                                    }`}
+                                >
+                                    {actionLoading ? <Loader2 className="animate-spin" /> : <Plus size={20} />}
+                                    CONFIRM_LEAD
+                                </button>
+                            </div>
                         </motion.div>
                     </div>
                 )}
