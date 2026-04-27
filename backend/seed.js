@@ -1,16 +1,33 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const User = require('./src/models/User');
+const Department = require('./src/models/Department');
+const { connectDB } = require('./src/config/db');
 require('dotenv').config();
 
-const seedUsers = async () => {
+const seedData = async () => {
     try {
-        await mongoose.connect(process.env.MONGO_URI);
+        await connectDB();
 
         console.log('MongoDB connection successful for seeding.');
 
-        // Delete existing users to prevent duplicates during testing
+        // Clear existing data
         await User.deleteMany({});
+        await Department.deleteMany({});
+
+        // Seed Departments (Units)
+        const units = [
+            { name: 'Production Unit' },
+            { name: 'Quality Control' },
+            { name: 'Logistics & Supply' },
+            { name: 'Maintenance' },
+            { name: 'Administration' },
+            { name: 'HR & Payroll' },
+            { name: 'Sales & Marketing' }
+        ];
+
+        const createdDepts = await Department.insertMany(units);
+        console.log('✅ Seeded Departments (Units)');
 
         const hashedPassword = await bcrypt.hash('123456', 10);
 
@@ -23,7 +40,9 @@ const seedUsers = async () => {
         ];
 
         await User.insertMany(users);
-        console.log('Successfully seeded local MongoDB with test accounts.');
+        console.log('✅ Seeded Test Users');
+        
+        console.log('Successfully seeded database with Units and Test Accounts.');
         process.exit();
     } catch (err) {
         console.error('Failed to seed MongoDB:', err);
@@ -31,4 +50,4 @@ const seedUsers = async () => {
     }
 };
 
-seedUsers();
+seedData();
