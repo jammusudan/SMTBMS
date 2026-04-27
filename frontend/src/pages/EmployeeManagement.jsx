@@ -5,7 +5,7 @@ import {
     Users, UserPlus, Search, Trash2, Edit2, 
     Loader2, Mail, Briefcase, DollarSign, 
     Calendar, Lock, Shield, X, CheckCircle, 
-    UserMinus, UserCheck, Filter, ChevronDown 
+    UserMinus, UserCheck, Filter, ChevronDown, ShieldAlert
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
