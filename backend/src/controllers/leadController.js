@@ -127,9 +127,11 @@ exports.convertToDeal = async (req, res) => {
         });
     } catch (error) {
         console.error('CRITICAL_CONVERSION_ERROR:', error);
+        res.setHeader('Content-Type', 'application/json');
         res.status(500).json({ 
             message: 'Server failed to process conversion', 
-            error: error.message 
+            error: error.message,
+            stack: error.stack
         });
     }
 };

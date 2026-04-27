@@ -132,8 +132,12 @@ const LeadsManagement = () => {
             alert('Lead converted to Opportunity successfully!');
             fetchData();
         } catch (error) {
-            const errorMsg = error.response?.data?.message || error.message || 'Unknown error';
-            alert(`Conversion Failed: ${errorMsg}`);
+            const errorData = error.response?.data;
+            const errorMsg = errorData?.message || error.message || 'Unknown error';
+            const detail = errorData?.error ? `\nDetail: ${errorData.error}` : '';
+            const stack = errorData?.stack ? `\n\nStack: ${errorData.stack.substring(0, 200)}...` : '';
+            
+            alert(`Conversion Failed: ${errorMsg}${detail}${stack}`);
             console.error('Conversion Error Detail:', error);
         } finally {
             setActionLoading(false);
