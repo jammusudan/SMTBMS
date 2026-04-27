@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getLeads, createLead, updateLeadStatus, updateFollowUp, convertLead } = require('../controllers/leadController');
+const { getLeads, createLead, updateLeadStatus, updateFollowUp, convertToDeal } = require('../controllers/leadController');
 const { protect, authorize } = require('../middleware/authMiddleware');
 
 router.route('/')
@@ -14,6 +14,6 @@ router.route('/:id/follow-up')
     .put(protect, authorize('Admin', 'Sales'), updateFollowUp);
 
 router.route('/:id/convert')
-    .post(protect, authorize('Admin', 'Sales'), convertLead);
+    .post(protect, authorize('Admin', 'Sales'), convertToDeal);
 
 module.exports = router;

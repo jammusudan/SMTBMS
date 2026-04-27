@@ -111,15 +111,28 @@ const LeadsManagement = () => {
         }
     }, [formData.customer_id, customers]);
 
-    const handleConvertLead = async (id) => {
-        if (!window.confirm('Convert this lead to a formal Customer profile?')) return;
+    const handleQualifyLead = async (id) => {
         setActionLoading(true);
         try {
-            await crmService.convertLead(id);
-            alert('Lead converted successfully!');
+            await crmService.updateLeadStatus(id, 'Qualified');
+            alert('Lead status updated to Qualified!');
             fetchData();
         } catch (error) {
-            alert(error.response?.data?.message || 'Error converting lead');
+            alert(error.response?.data?.message || 'Error qualifying lead');
+        } finally {
+            setActionLoading(false);
+        }
+    };
+
+    const handleConvertToDeal = async (id) => {
+        if (!window.confirm('Convert this qualified lead to a formal Opportunity (Deal)?')) return;
+        setActionLoading(true);
+        try {
+            await crmService.convertLead(id); // Backend now handles Lead -> Deal
+            alert('Lead converted to Opportunity successfully!');
+            fetchData();
+        } catch (error) {
+            alert(error.response?.data?.message || 'Error converting lead to deal');
         } finally {
             setActionLoading(false);
         }
@@ -220,12 +233,20 @@ const LeadsManagement = () => {
                                 </td>
                                 <td className="px-10 py-8 text-right">
                                     <div className="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-all">
-                                        {(!lead.converted_customer_id && lead.status !== 'Won' && lead.status !== 'Lost') && (
+                                        {lead.status !== 'Qualified' && lead.status !== 'Lost' && (
                                             <button 
-                                                onClick={() => handleConvertLead(lead.id || lead._id)}
-                                                className="px-5 py-2.5 bg-emerald-600 text-white text-[11px] font-black uppercase tracking-widest rounded-xl hover:bg-emerald-700 transition-all flex items-center gap-2 shadow-lg shadow-emerald-100 active:scale-95"
+                                                onClick={() => handleQualifyLead(lead.id || lead._id)}
+                                                className="px-5 py-2.5 bg-indigo-600 text-white text-[11px] font-black uppercase tracking-widest rounded-xl hover:bg-indigo-700 transition-all flex items-center gap-2 shadow-lg shadow-indigo-100 active:scale-95"
                                             >
                                                 Qualify <ChevronRight size={14} />
+                                            </button>
+                                        )}
+                                        {lead.status === 'Qualified' && (
+                                            <button 
+                                                onClick={() => handleConvertToDeal(lead.id || lead._id)}
+                                                className="px-5 py-2.5 bg-emerald-600 text-white text-[11px] font-black uppercase tracking-widest rounded-xl hover:bg-emerald-700 transition-all flex items-center gap-2 shadow-lg shadow-emerald-100 active:scale-95"
+                                            >
+                                                Convert to Deal <ChevronRight size={14} />
                                             </button>
                                         )}
                                         <button className="p-2.5 text-slate-400 hover:text-indigo-600 bg-white border border-slate-100 rounded-xl transition-all shadow-sm hover:shadow-md">

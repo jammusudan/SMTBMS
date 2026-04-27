@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { crmService } from '../services/api';
+import { crmService, materialService } from '../services/api';
 import { 
     TrendingUp, Plus, Search, Filter, 
     Calendar, DollarSign, Target, Loader2,
@@ -17,16 +17,31 @@ const DealsManagement = () => {
     
     const [formData, setFormData] = useState({
         customer_id: '',
+        lead_id: '',
         title: '',
         amount: '',
-        stage: 'Discovery',
-        expected_close_date: new Date().toISOString().split('T')[0],
+        materialId: '',
+        quantity: '',
+        stage: 'Prospecting',
+        expected_close_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
         notes: ''
     });
 
+    const [materials, setMaterials] = useState([]);
+
     useEffect(() => {
         fetchData();
+        fetchMaterials();
     }, []);
+
+    const fetchMaterials = async () => {
+        try {
+            const res = await materialService.getAll();
+            setMaterials(res.data);
+        } catch (error) {
+            console.error('Error fetching materials:', error);
+        }
+    };
 
     const fetchData = async () => {
         try {
@@ -59,12 +74,23 @@ const DealsManagement = () => {
     };
 
     const handleUpdateStage = async (id, stage) => {
+        let lost_reason = '';
+        if (stage === 'Lost') {
+            lost_reason = window.prompt('Select Lost Reason: Price, Competitor, No Need, Timing, Product Fit, Other');
+            if (!lost_reason) return;
+        }
+
+        if (stage === 'Won') {
+            if (!window.confirm('Finalizing this sale will automatically create a Customer profile and a Sales Order. Proceed?')) return;
+        }
+
         setActionLoading(true);
         try {
-            await crmService.updateDealStage(id, stage);
+            await crmService.updateDealStage(id, stage, lost_reason);
+            alert(`Deal successfully moved to ${stage}`);
             fetchData();
         } catch (error) {
-            alert('Error updating deal stage');
+            alert(error.response?.data?.message || 'Error updating deal stage');
         } finally {
             setActionLoading(false);
         }
@@ -75,7 +101,8 @@ const DealsManagement = () => {
             case 'Won': return 'bg-emerald-600 text-white shadow-emerald-100';
             case 'Lost': return 'bg-rose-600 text-white shadow-rose-100';
             case 'Negotiation': return 'bg-indigo-600 text-white shadow-indigo-100';
-            case 'Proposal': return 'bg-violet-600 text-white shadow-violet-100';
+            case 'Final': return 'bg-violet-600 text-white shadow-violet-100';
+            case 'Prospecting': return 'bg-amber-600 text-white shadow-amber-100';
             default: return 'bg-slate-200 text-slate-700 shadow-slate-100';
         }
     };
@@ -138,14 +165,17 @@ const DealsManagement = () => {
                                         </div>
                                     </div>
                                 </td>
-                                <td className="px-8 py-6">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 font-black text-[10px]">
-                                            {deal.customer_id?.name?.charAt(0)}
-                                        </div>
-                                        <p className="text-slate-700 font-black text-[13px] tracking-tight truncate max-w-[200px]">{deal.customer_id?.name}</p>
-                                    </div>
-                                </td>
+                                 <td className="px-8 py-6">
+                                     <div className="flex items-center gap-3">
+                                         <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 font-black text-[10px]">
+                                             {(deal.customer_id?.name || deal.prospect_name || '?').charAt(0)}
+                                         </div>
+                                         <div>
+                                             <p className="text-slate-700 font-black text-[13px] tracking-tight truncate max-w-[200px]">{deal.customer_id?.name || deal.prospect_name}</p>
+                                             {deal.prospect_email && <p className="text-[10px] text-slate-400 font-bold tracking-tight">{deal.prospect_email}</p>}
+                                         </div>
+                                     </div>
+                                 </td>
                                 <td className="px-8 py-6">
                                     <p className="text-indigo-600 font-black text-lg tracking-tight">₹{deal.amount.toLocaleString()}</p>
                                     <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest">Weighted Value</p>
@@ -159,13 +189,13 @@ const DealsManagement = () => {
                                     <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all translate-x-2 group-hover:translate-x-0">
                                         {deal.stage !== 'Won' && deal.stage !== 'Lost' && (
                                             <>
-                                                <button 
-                                                    onClick={() => handleUpdateStage(deal._id, 'Won')}
-                                                    className="p-2.5 text-emerald-600 hover:bg-emerald-600 hover:text-white bg-white border border-emerald-100 rounded-xl transition-all shadow-sm"
-                                                    title="Close Won"
-                                                >
-                                                    <CheckCircle2 size={18} />
-                                                </button>
+                                                 <button 
+                                                     onClick={() => handleUpdateStage(deal._id, 'Won')}
+                                                     className="px-4 py-2 text-emerald-600 hover:bg-emerald-600 hover:text-white bg-white border border-emerald-100 rounded-xl transition-all shadow-sm font-black text-[10px] uppercase tracking-widest flex items-center gap-2"
+                                                     title="Finalize Sale"
+                                                 >
+                                                     <CheckCircle2 size={16} /> Finalize
+                                                 </button>
                                                 <button 
                                                     onClick={() => handleUpdateStage(deal._id, 'Lost')}
                                                     className="p-2.5 text-rose-600 hover:bg-rose-600 hover:text-white bg-white border border-rose-100 rounded-xl transition-all shadow-sm"
@@ -237,13 +267,31 @@ const DealsManagement = () => {
                                             value={formData.amount} onChange={e => setFormData({...formData, amount: e.target.value})}
                                         />
                                     </div>
-                                    <div>
-                                        <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1 mb-2 block">Expected Closure</label>
-                                        <input 
-                                            type="date" required className="w-full bg-slate-50 border border-slate-100 rounded-2xl py-4.5 px-6 text-sm font-black text-slate-800 focus:outline-none focus:border-indigo-100 focus:bg-white transition-all shadow-inner"
-                                            value={formData.expected_close_date} onChange={e => setFormData({...formData, expected_close_date: e.target.value})}
-                                        />
-                                    </div>
+                                     <div className="col-span-2">
+                                         <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1 mb-2 block">Material / Product</label>
+                                         <select 
+                                             required className="w-full bg-slate-50 border border-slate-100 rounded-2xl py-4.5 px-6 text-sm font-black text-slate-800 focus:outline-none focus:border-indigo-100 focus:bg-white transition-all appearance-none"
+                                             value={formData.materialId} onChange={e => setFormData({...formData, materialId: e.target.value})}
+                                         >
+                                             <option value="">Select Material</option>
+                                             {materials.map(m => <option key={m._id} value={m._id}>{m.name} ({m.grade})</option>)}
+                                         </select>
+                                     </div>
+                                     <div>
+                                         <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1 mb-2 block">Quantity</label>
+                                         <input 
+                                             type="number" required className="w-full bg-slate-50 border border-slate-100 rounded-2xl py-4.5 px-6 text-sm font-black text-slate-800 focus:outline-none focus:border-indigo-100 focus:bg-white transition-all shadow-inner"
+                                             placeholder="100"
+                                             value={formData.quantity} onChange={e => setFormData({...formData, quantity: e.target.value})}
+                                         />
+                                     </div>
+                                     <div>
+                                         <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1 mb-2 block">Expected Closure</label>
+                                         <input 
+                                             type="date" required className="w-full bg-slate-50 border border-slate-100 rounded-2xl py-4.5 px-6 text-sm font-black text-slate-800 focus:outline-none focus:border-indigo-100 focus:bg-white transition-all shadow-inner"
+                                             value={formData.expected_close_date} onChange={e => setFormData({...formData, expected_close_date: e.target.value})}
+                                         />
+                                     </div>
                                 </div>
                                 <button 
                                     className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-black text-[13px] uppercase tracking-widest py-6 rounded-3xl shadow-2xl shadow-indigo-100 transition-all flex items-center justify-center gap-3 active:scale-[0.98]"

@@ -83,7 +83,7 @@ export const crmService = {
     // Deals
     getDeals: () => api.get('/deals'),
     createDeal: (data) => api.post('/deals', data),
-    updateDealStage: (id, stage) => api.put(`/deals/${id}/stage`, { stage }),
+    updateDealStage: (id, stage, lost_reason) => api.put(`/deals/${id}/stage`, { stage, lost_reason }),
     deleteDeal: (id) => api.delete(`/deals/${id}`),
 
     // Transactions

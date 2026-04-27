@@ -4,8 +4,15 @@ const dealSchema = new mongoose.Schema({
     customer_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Customer',
-        required: true
+        required: false
     },
+    lead_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Lead'
+    },
+    prospect_name: String,
+    prospect_email: String,
+    prospect_phone: String,
     title: {
         type: String,
         required: [true, 'Deal title is required'],
@@ -26,8 +33,12 @@ const dealSchema = new mongoose.Schema({
     },
     stage: {
         type: String,
-        enum: ['Discovery', 'Proposal', 'Negotiation', 'Won', 'Lost'],
-        default: 'Discovery'
+        enum: ['Prospecting', 'Negotiation', 'Final', 'Won', 'Lost'],
+        default: 'Prospecting'
+    },
+    lost_reason: {
+        type: String,
+        enum: ['Price', 'Competitor', 'No Need', 'Timing', 'Product Fit', 'Other']
     },
     assigned_to: {
         type: mongoose.Schema.Types.ObjectId,

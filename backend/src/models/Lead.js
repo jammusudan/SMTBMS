@@ -21,7 +21,7 @@ const leadSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['New', 'Contacted', 'Qualified', 'Lost', 'Won', 'Converted'],
+        enum: ['New', 'Contacted', 'Qualified', 'Lost'],
         default: 'New'
     },
     notes: {

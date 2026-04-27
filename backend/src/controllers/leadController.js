@@ -1,5 +1,6 @@
 const Lead = require('../models/Lead');
 const Customer = require('../models/Customer');
+const Deal = require('../models/Deal');
 
 // @desc    Get all leads
 // @route   GET /api/leads
@@ -80,33 +81,39 @@ exports.createLead = async (req, res) => {
     }
 };
 
-// @desc    Convert lead to customer
+// @desc    Convert lead to a formal Deal
 // @route   POST /api/leads/:id/convert
-exports.convertLead = async (req, res) => {
+exports.convertToDeal = async (req, res) => {
+    const { expected_close_date, notes } = req.body;
     try {
         const lead = await Lead.findById(req.params.id);
         if (!lead) return res.status(404).json({ message: 'Lead not found' });
         
-        if (lead.converted_customer_id) {
-            return res.status(400).json({ message: 'Lead already converted to customer' });
+        if (lead.status !== 'Qualified') {
+            return res.status(400).json({ message: 'Only Qualified leads can be converted to deals' });
         }
 
-        // Create new customer
-        const customer = await Customer.create({
-            name: lead.name,
-            email: lead.email,
-            phone: lead.phone
+        // Create new deal
+        const deal = await Deal.create({
+            lead_id: lead._id,
+            prospect_name: lead.name,
+            prospect_email: lead.email,
+            prospect_phone: lead.phone,
+            title: `Opportunity: ${lead.name}`,
+            amount: lead.estimatedValue || 0,
+            expected_close_date: expected_close_date || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // Default 30 days
+            notes: notes || lead.notes,
+            assigned_to: lead.assigned_to || req.user.id,
+            stage: 'Prospecting'
         });
 
-        // Update lead
-        lead.status = 'Converted';
-        lead.converted_customer_id = customer._id;
-        await lead.save();
-
-        res.json({ 
-            message: 'Lead converted successfully', 
-            customer_id: customer._id,
-            customer_name: customer.name
+        // Mark lead as handled? For now we just keep it Qualified.
+        // User said Lead -> Qualified -> Deal.
+        
+        res.status(201).json({ 
+            message: 'Lead converted to Deal successfully', 
+            deal_id: deal._id,
+            title: deal.title
         });
     } catch (error) {
         res.status(500).json({ message: error.message });
