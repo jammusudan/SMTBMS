@@ -212,7 +212,9 @@ const EmployeeManagement = () => {
         return matchesSearch && matchesDept && matchesRole && isVisibleToHR;
     });
 
-    const availableRoles = isHR ? ['Employee', 'Manager'] : ['Employee', 'Manager', 'HR', 'Admin'];
+    const availableRoles = isHR 
+        ? ['Employee', 'Sales', 'Manager', 'HR'] 
+        : ['Employee', 'Sales', 'Manager', 'HR', 'Admin'];
 
     return (
         <div className="p-8 min-h-screen bg-[#F9FAFB]">
