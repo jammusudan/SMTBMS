@@ -7,6 +7,10 @@ const employeeSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
+    onboardedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    },
     first_name: {
         type: String,
         required: [true, 'First name is required'],

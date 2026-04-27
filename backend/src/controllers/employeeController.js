@@ -36,6 +36,7 @@ exports.getEmployees = async (req, res) => {
             email: emp.user_id?.email,
             role: emp.user_id?.role,
             username: emp.user_id?.username,
+            onboardedBy: emp.onboardedBy,
             first_name: emp.first_name,
             last_name: emp.last_name,
             dept_id: emp.dept_id?._id,
@@ -164,6 +165,7 @@ exports.upsertEmployee = async (req, res) => {
         } else {
             employee = new Employee({
                 user_id: userId,
+                onboardedBy: req.user.id, // Track who onboarded this employee
                 employeeCode: `EMP-${Math.random().toString(36).substr(2, 6).toUpperCase()}`,
                 first_name,
                 last_name,

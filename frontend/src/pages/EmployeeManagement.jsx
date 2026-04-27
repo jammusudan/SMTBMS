@@ -206,9 +206,12 @@ const EmployeeManagement = () => {
         const matchesDept = deptFilter === '' || e.dept_id === deptFilter;
         const matchesRole = roleFilter === '' || e.role === roleFilter;
 
-        // HR Dashboard Visibility: HR can view roles they are authorized to manage
+        // HR Dashboard Visibility: HR can ONLY view details of personnel THEY onboarded
         const manageableRoles = ['employee', 'sales', 'manager', 'hr'];
-        const isVisibleToHR = !isHR || manageableRoles.includes(e.role?.toLowerCase());
+        const isVisibleToHR = !isHR || (
+            manageableRoles.includes(e.role?.toLowerCase()) && 
+            String(e.onboardedBy) === String(user.id)
+        );
 
         return matchesSearch && matchesDept && matchesRole && isVisibleToHR;
     });
