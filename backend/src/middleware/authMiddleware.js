@@ -23,11 +23,15 @@ const protect = (req, res, next) => {
 // Grant access to specific roles
 const authorize = (...roles) => {
     return (req, res, next) => {
+        if (!req.user || !req.user.role) {
+            return res.status(401).json({ message: 'User role not found' });
+        }
+        
         // Super Admin has global access override
         if (req.user.role === 'Super Admin') return next();
 
-        const normalizedUserRole = req.user.role.toLowerCase();
-        const normalizedAllowedRoles = roles.map(r => r.toLowerCase());
+        const normalizedUserRole = String(req.user.role).toLowerCase();
+        const normalizedAllowedRoles = roles.map(r => String(r).toLowerCase());
 
         if (!normalizedAllowedRoles.includes(normalizedUserRole)) {
             return res.status(403).json({ 
