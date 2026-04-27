@@ -21,7 +21,7 @@ const leadSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['New', 'Contacted', 'In Progress', 'Negotiation', 'Won', 'Lost'],
+        enum: ['New', 'Contacted', 'Qualified', 'Lost'],
         default: 'New'
     },
     notes: {
@@ -37,12 +37,11 @@ const leadSchema = new mongoose.Schema({
     },
     priority: {
         type: String,
-        enum: ['High', 'Medium', 'Low'],
+        enum: ['Low', 'Medium', 'High', 'Urgent'],
         default: 'Medium'
     },
     context: {
-        type: String,
-        required: [true, 'Deal context is mandatory']
+        type: String
     },
     reviewDate: {
         type: Date
