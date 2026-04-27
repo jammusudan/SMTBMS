@@ -116,7 +116,8 @@ exports.convertToDeal = async (req, res) => {
             title: deal.title
         });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error('CONVERT_LEAD_TO_DEAL_ERROR:', error);
+        res.status(500).json({ message: error.message || 'Server error during conversion' });
     }
 };
 
