@@ -99,7 +99,7 @@ exports.convertLead = async (req, res) => {
         });
 
         // Update lead
-        lead.status = 'Won';
+        lead.status = 'Converted';
         lead.converted_customer_id = customer._id;
         await lead.save();
 
