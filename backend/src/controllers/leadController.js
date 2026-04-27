@@ -103,7 +103,7 @@ exports.convertToDeal = async (req, res) => {
             amount: lead.estimatedValue || 0,
             expected_close_date: expected_close_date || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // Default 30 days
             notes: notes || lead.notes,
-            assigned_to: lead.assigned_to || req.user.id,
+            assigned_to: (lead.assigned_to?._id || lead.assigned_to || req.user.id),
             stage: 'Prospecting'
         });
 
