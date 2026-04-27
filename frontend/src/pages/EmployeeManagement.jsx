@@ -205,7 +205,11 @@ const EmployeeManagement = () => {
             e.designation.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesDept = deptFilter === '' || e.dept_id === deptFilter;
         const matchesRole = roleFilter === '' || e.role === roleFilter;
-        return matchesSearch && matchesDept && matchesRole;
+
+        // HR Dashboard Visibility: HR can only view 'Employee' details in this directory
+        const isVisibleToHR = !isHR || e.role?.toLowerCase() === 'employee';
+
+        return matchesSearch && matchesDept && matchesRole && isVisibleToHR;
     });
 
     const availableRoles = isHR ? ['Employee', 'Manager'] : ['Employee', 'Manager', 'HR', 'Admin'];
