@@ -4,9 +4,10 @@ import {
     TrendingUp, Plus, Search, Filter, 
     Calendar, DollarSign, Target, Loader2,
     ChevronRight, CheckCircle2, XCircle, MoreVertical,
-    Briefcase, User, Info
+    Briefcase, User, Info, LayoutGrid, List
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import DealKanban from '../components/DealKanban';
 
 const DealsManagement = () => {
     const [deals, setDeals] = useState([]);
@@ -14,6 +15,7 @@ const DealsManagement = () => {
     const [loading, setLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [actionLoading, setActionLoading] = useState(false);
+    const [view, setView] = useState('kanban'); // Default to kanban for "wow" factor
     
     const [formData, setFormData] = useState({
         customer_id: '',
@@ -125,6 +127,20 @@ const DealsManagement = () => {
                         <p className="text-slate-400 font-black text-[11px] uppercase tracking-widest mb-1">Total Weighted Pipeline</p>
                         <p className="text-3xl font-black text-slate-900 tracking-tight">₹{totalPipeline.toLocaleString()}</p>
                     </div>
+                    <div className="flex bg-white border border-slate-200 p-1 rounded-2xl shadow-sm mr-4">
+                        <button 
+                            onClick={() => setView('table')}
+                            className={`p-2.5 rounded-xl transition-all ${view === 'table' ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-100' : 'text-slate-400 hover:bg-slate-50'}`}
+                        >
+                            <List size={20} />
+                        </button>
+                        <button 
+                            onClick={() => setView('kanban')}
+                            className={`p-2.5 rounded-xl transition-all ${view === 'kanban' ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-100' : 'text-slate-400 hover:bg-slate-50'}`}
+                        >
+                            <LayoutGrid size={20} />
+                        </button>
+                    </div>
                     <button 
                         onClick={() => setIsModalOpen(true)}
                         className="flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white font-black text-[13px] uppercase tracking-widest py-4 px-10 rounded-2xl shadow-xl shadow-slate-100 transition-all active:scale-[0.98]"
@@ -134,8 +150,15 @@ const DealsManagement = () => {
                 </div>
             </header>
 
-            <div className="bg-white rounded-[40px] overflow-hidden border border-slate-100 shadow-[0_4px_25px_-4px_rgba(0,0,0,0.05)]">
-                <table className="w-full text-left border-collapse">
+            <AnimatePresence mode="wait">
+                {view === 'table' ? (
+                    <motion.div 
+                        key="table"
+                        initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}
+                        className="bg-white rounded-[40px] overflow-hidden border border-slate-100 shadow-[0_4px_25px_-4px_rgba(0,0,0,0.05)]"
+                    >
+                        <table className="w-full text-left border-collapse">
+                            {/* ... table content remains same ... */}
                     <thead>
                         <tr className="bg-slate-50/50 border-b border-slate-100">
                             <th className="px-8 py-6 text-[11px] font-black text-slate-400 uppercase tracking-widest">Opportunity Intelligence</th>
@@ -213,8 +236,21 @@ const DealsManagement = () => {
                             </tr>
                         ))}
                     </tbody>
-                </table>
-            </div>
+                        </table>
+                    </motion.div>
+                ) : (
+                    <motion.div
+                        key="kanban"
+                        initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 1.02 }}
+                    >
+                        <DealKanban 
+                            deals={deals} 
+                            onUpdateStage={handleUpdateStage} 
+                            actionLoading={actionLoading} 
+                        />
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
             {/* Modal */}
             <AnimatePresence>

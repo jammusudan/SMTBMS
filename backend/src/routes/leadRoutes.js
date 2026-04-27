@@ -5,15 +5,15 @@ const { protect, authorize } = require('../middleware/authMiddleware');
 
 router.route('/')
     .get(protect, getLeads)
-    .post(protect, authorize('Admin', 'Sales'), createLead);
+    .post(protect, authorize('Admin', 'Manager', 'Sales'), createLead);
 
 router.route('/:id/status')
-    .put(protect, authorize('Admin', 'Sales'), updateLeadStatus);
+    .put(protect, authorize('Admin', 'Manager', 'Sales'), updateLeadStatus);
 
 router.route('/:id/follow-up')
-    .put(protect, authorize('Admin', 'Sales'), updateFollowUp);
+    .put(protect, authorize('Admin', 'Manager', 'Sales'), updateFollowUp);
 
 router.route('/:id/convert')
-    .post(protect, authorize('Admin', 'Sales'), convertToDeal);
+    .post(protect, authorize('Admin', 'Manager', 'Sales'), convertToDeal);
 
 module.exports = router;
