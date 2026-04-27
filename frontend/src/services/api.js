@@ -78,7 +78,7 @@ export const crmService = {
     createLead: (data) => api.post('/leads', data),
     updateLeadStatus: (id, status) => api.put(`/leads/${id}/status`, { status }),
     updateFollowUp: (id, date) => api.put(`/leads/${id}/follow-up`, { next_follow_up: date }),
-    convertLead: (id) => api.post(`/leads/${id}/convert`),
+    convertLead: (id) => api.post(`/leads/${id}/convert`, {}),
 
     // Deals
     getDeals: () => api.get('/deals'),

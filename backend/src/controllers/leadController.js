@@ -85,7 +85,7 @@ exports.createLead = async (req, res) => {
 // @desc    Convert lead to a deal (Opportunity)
 // @route   POST /api/leads/:id/convert
 exports.convertToDeal = async (req, res) => {
-    const { expected_close_date, notes } = req.body;
+    const { expected_close_date, notes } = req.body || {};
     const leadId = req.params.id;
 
     try {
