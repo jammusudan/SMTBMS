@@ -97,22 +97,33 @@ exports.convertToDeal = async (req, res) => {
         // Create new deal
         let deal;
         try {
+            // Determine who to assign the deal to
+            const assignedTo = lead.assigned_to?._id || lead.assigned_to || (req.user ? req.user.id : null);
+            
+            if (!assignedTo) {
+                return res.status(400).json({ message: 'Deal assignment failed: No user found to assign the deal to' });
+            }
+
             const dealData = {
-                lead_id: new mongoose.Types.ObjectId(lead._id),
-                prospect_name: String(lead.name),
-                prospect_email: String(lead.email || ''),
-                prospect_phone: String(lead.phone || ''),
+                lead_id: lead._id,
+                prospect_name: lead.name,
+                prospect_email: lead.email || '',
+                prospect_phone: lead.phone || '',
                 title: `Opportunity: ${lead.name}`,
                 amount: Number(lead.estimatedValue) || 0,
                 expected_close_date: expected_close_date || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
                 notes: notes || lead.notes,
-                assigned_to: new mongoose.Types.ObjectId(lead.assigned_to?._id || lead.assigned_to || req.user.id),
+                assigned_to: assignedTo,
                 stage: 'Prospecting'
             };
+            
             deal = await Deal.create(dealData);
         } catch (dealError) {
-            console.error('DEAL_CREATION_INNER_ERROR:', dealError);
-            return res.status(500).json({ message: `Deal Creation Failed: ${dealError.message}` });
+            console.error('DEAL_CREATION_FAILURE:', dealError);
+            return res.status(500).json({ 
+                message: `Deal Creation Failed: ${dealError.message}`,
+                details: dealError.errors ? Object.keys(dealError.errors) : []
+            });
         }
 
         res.status(201).json({ 
