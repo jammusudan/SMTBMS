@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { crmService, dashboardService, erpService, notificationService } from '../services/api';
+import { crmService, dashboardService, erpService, notificationService, hrmsService } from '../services/api';
 import { 
     Users, ClipboardList, ShoppingCart, 
     AlertTriangle, CheckCircle2, Clock, 
@@ -86,7 +86,18 @@ const ManagerDashboard = () => {
         </motion.div>
     );
 
-    const activeEmpCount = stats.employees.attendance_today.find(a => a.status === 'Present')?.count || 0;
+    if (!stats || !stats.employees || !stats.materials) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-[80vh] text-slate-400">
+                <AlertTriangle className="mb-4 text-rose-500" size={48} />
+                <span className="text-lg font-black tracking-tight text-slate-900 uppercase">Manager Intelligence Offline</span>
+                <p className="text-xs font-bold mt-2 uppercase tracking-widest text-slate-400">Unable to load operational metrics.</p>
+                <button onClick={() => window.location.reload()} className="mt-8 px-8 py-3 bg-indigo-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest">Retry Connection</button>
+            </div>
+        );
+    }
+
+    const activeEmpCount = stats.employees.attendance_today?.find(a => a.status === 'Present')?.count || 0;
     
     return (
         <div className="p-8 max-w-[1600px] mx-auto min-h-screen">

@@ -166,6 +166,7 @@ exports.getHRStats = async (req, res) => {
             attendancesToday,
             recentLeaves,
             pendingLeaveCount,
+            activeTasks,
             departments,
             recentSalaries,
             recentActivities
