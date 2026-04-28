@@ -62,7 +62,7 @@ const LeadsManagement = () => {
     };
 
     const handleCreateLead = async (e) => {
-        e.preventDefault();
+        if (e && e.preventDefault) e.preventDefault();
         
         const isNewCustomer = !formData.customer_id;
         if (isNewCustomer && (!formData.name || !formData.phone)) {
@@ -296,7 +296,7 @@ const LeadsManagement = () => {
                             </div>
 
                             {/* Form Body */}
-                            <form onSubmit={handleCreateLead} className="flex-1 overflow-y-auto p-10 space-y-12">
+                            <div className="flex-1 overflow-y-auto p-10 space-y-12">
                                 {/* Section 1: Customer Info */}
                                 <div className="space-y-6">
                                     <div className="flex items-center gap-3 border-l-4 border-indigo-600 pl-4">
@@ -437,7 +437,7 @@ const LeadsManagement = () => {
                                         </div>
                                     </div>
                                 </div>
-                            </form>
+                            </div>
 
                             {/* Footer Actions */}
                             <div className="p-10 bg-slate-50/50 border-t border-slate-50 flex gap-4">
