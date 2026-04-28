@@ -77,6 +77,7 @@ const Navbar = () => {
                 { name: 'Payroll', icon: Banknote, path: '/salary', accessGroup: MODULE_ACCESS.PAYROLL },
             ]
         },
+        {
             section: 'SALES & CRM',
             items: [
                 { name: 'CRM Overview', icon: PieChart, path: '/crm/overview', accessGroup: MODULE_ACCESS.CRM_INSIGHTS },
