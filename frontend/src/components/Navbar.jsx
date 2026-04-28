@@ -6,7 +6,7 @@ import {
     TrendingUp, Receipt, Bell, Settings as SettingsIcon, 
     Activity, LogOut, Search, ClipboardList, Banknote, 
     Megaphone, BarChart3, User, ShieldCheck, Warehouse,
-    Target, Briefcase
+    Target, Briefcase, PieChart
 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { notificationService } from '../services/api';
@@ -77,12 +77,13 @@ const Navbar = () => {
                 { name: 'Payroll', icon: Banknote, path: '/salary', accessGroup: MODULE_ACCESS.PAYROLL },
             ]
         },
-        {
             section: 'SALES & CRM',
             items: [
+                { name: 'CRM Overview', icon: PieChart, path: '/crm/overview', accessGroup: MODULE_ACCESS.CRM_INSIGHTS },
                 { name: 'Leads', icon: Target, path: '/crm/leads', accessGroup: MODULE_ACCESS.CRM_PIPELINE },
                 { name: 'Deals', icon: Briefcase, path: '/crm/deals', accessGroup: MODULE_ACCESS.CRM_SALES },
                 { name: 'Customers', icon: Users, path: '/crm/customers', accessGroup: MODULE_ACCESS.CRM_CUSTOMERS },
+                { name: 'Vendors', icon: Truck, path: '/erp/vendors', accessGroup: MODULE_ACCESS.VENDORS },
                 { name: 'Activities', icon: Activity, path: '/logs', accessGroup: MODULE_ACCESS.AUDIT_LOGS },
                 { name: 'Performance', icon: TrendingUp, path: '/crm/insights', accessGroup: MODULE_ACCESS.CRM_INSIGHTS },
                 { name: 'Orders', icon: ShoppingCart, path: '/erp/orders', accessGroup: MODULE_ACCESS.ORDERS },
