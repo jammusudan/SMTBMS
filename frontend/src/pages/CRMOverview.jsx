@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { crmService } from '../services/api';
 import { 
-    LayoutDashboard, TrendingUp, Users, IndianRupee, 
+    LayoutDashboard, TrendingUp, Users, User, IndianRupee, 
     ArrowUpRight, ArrowDownRight, Target, Activity,
     Calendar, Loader2, BarChart3, PieChart as PieChartIcon
 } from 'lucide-react';
@@ -110,21 +110,21 @@ const CRMOverview = () => {
                 />
                 <StatCard 
                     title="Active Deals" 
-                    value={data?.kpis.activeDeals}
+                    value={data?.kpis?.activeDeals}
                     subtext="Deals in Progress"
                     icon={Target}
                     color="bg-violet-600"
                 />
                 <StatCard 
                     title="Conversion Rate" 
-                    value={`${data?.kpis.conversionRate}%`}
+                    value={`${data?.kpis?.conversionRate}%`}
                     subtext="Lead Conversion Success"
                     icon={TrendingUp}
                     color="bg-rose-600"
                 />
                 <StatCard 
                     title="Top Performer" 
-                    value={data?.kpis.topPerformer}
+                    value={data?.kpis?.topPerformer}
                     subtext="Elite Sales Achievement"
                     icon={User}
                     color="bg-amber-600"
