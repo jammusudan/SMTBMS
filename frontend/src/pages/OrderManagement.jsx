@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { erpService, materialService, crmService } from '../services/api';
-import { ShoppingCart, Plus, Search, Loader2, CheckCircle, Package, ArrowUpRight, ArrowDownRight, User, XCircle, AlertCircle, Eye, Calendar, Tag, ShieldCheck, IndianRupee, Wallet, UserCog } from 'lucide-react';
+import { ShoppingCart, Plus, Search, Loader2, CheckCircle, Package, ArrowUpRight, ArrowDownRight, User, XCircle, AlertCircle, Eye, Calendar, Tag, ShieldCheck, IndianRupee, Wallet, UserCog, TrendingUp, Filter, ArrowUpDown, Award, Star, TrendingDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 
@@ -22,6 +22,8 @@ const OrderManagement = () => {
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [actionLoading, setActionLoading] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
+    const [activeFilter, setActiveFilter] = useState('ALL'); // ALL, PAID, PENDING_PAYMENT, HIGH_VALUE
+    const [sortBy, setSortBy] = useState('DATE_DESC'); // DATE_DESC, DATE_ASC, AMOUNT_DESC, AMOUNT_ASC
 
     const [paymentFormData, setPaymentFormData] = useState({
         paymentStatus: 'PAID',
@@ -168,14 +170,69 @@ const OrderManagement = () => {
         }
     };
 
-    const formatCurrency = (val) => Number(val).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+    const formatCurrency = (val) => Number(val || 0).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 });
 
-    const filteredOrders = (orders || []).filter(o => 
-        (o.materialId?.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (o.orderType || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (o.status || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (o.createdByRole || '').toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    // Financial Aggregations
+    const kpis = {
+        totalOrders: orders.length,
+        totalRevenue: orders.filter(o => o.orderType === 'SALE' && o.status !== 'CANCELLED').reduce((sum, o) => sum + (o.totalAmount || 0), 0),
+        totalPaid: orders.filter(o => o.status !== 'CANCELLED').reduce((sum, o) => sum + (o.paidAmount || 0), 0),
+        totalPending: orders.filter(o => o.status !== 'CANCELLED').reduce((sum, o) => sum + ((o.totalAmount || 0) - (o.paidAmount || 0)), 0)
+    };
+
+    // Business Intelligence Analytics
+    const getAnalytics = () => {
+        if (orders.length === 0) return { topProduct: 'N/A', topCustomer: 'N/A' };
+        
+        const productStats = {};
+        const customerStats = {};
+        
+        orders.forEach(o => {
+            if (o.status === 'CANCELLED') return;
+            
+            // Product Stats
+            const pName = o.materialId?.name || 'Unknown';
+            productStats[pName] = (productStats[pName] || 0) + (o.quantity || 0);
+            
+            // Customer Stats
+            if (o.orderType === 'SALE') {
+                const cName = o.customerId?.name || 'Walk-in';
+                customerStats[cName] = (customerStats[cName] || 0) + (o.totalAmount || 0);
+            }
+        });
+
+        const topProduct = Object.entries(productStats).sort((a, b) => b[1] - a[1])[0]?.[0] || 'N/A';
+        const topCustomer = Object.entries(customerStats).sort((a, b) => b[1] - a[1])[0]?.[0] || 'N/A';
+        
+        return { topProduct, topCustomer };
+    };
+
+    const analytics = getAnalytics();
+
+    const filteredOrders = (orders || [])
+        .filter(o => {
+            // Search filter
+            const matchesSearch = (o.materialId?.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+                (o.orderType || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+                (o.status || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+                (o.createdByRole || '').toLowerCase().includes(searchTerm.toLowerCase());
+            
+            if (!matchesSearch) return false;
+
+            // Tab filter
+            if (activeFilter === 'PAID') return o.paymentStatus === 'PAID';
+            if (activeFilter === 'PENDING_PAYMENT') return o.paymentStatus !== 'PAID';
+            if (activeFilter === 'HIGH_VALUE') return o.totalAmount > 50000;
+            
+            return true;
+        })
+        .sort((a, b) => {
+            if (sortBy === 'DATE_DESC') return new Date(b.createdAt) - new Date(a.createdAt);
+            if (sortBy === 'DATE_ASC') return new Date(a.createdAt) - new Date(b.createdAt);
+            if (sortBy === 'AMOUNT_DESC') return (b.totalAmount || 0) - (a.totalAmount || 0);
+            if (sortBy === 'AMOUNT_ASC') return (a.totalAmount || 0) - (b.totalAmount || 0);
+            return 0;
+        });
 
     return (
         <div className="p-8 min-h-screen">
@@ -198,16 +255,97 @@ const OrderManagement = () => {
                 )}
             </header>
 
-            {/* Filter */}
-            <div className="bg-white p-4 rounded-xl flex items-center gap-4 mb-6 border border-slate-200 shadow-sm">
-                <Search className="text-slate-400" size={20} />
-                <input 
-                    type="text" 
-                    placeholder="Search by material, type, status or creator role..." 
-                    className="bg-transparent border-none outline-none text-slate-900 placeholder-slate-400 w-full font-medium"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+                <KpiCard title="Total Registry" value={kpis.totalOrders} subtitle="Order Volume" icon={Package} color="indigo" />
+                <KpiCard title="Gross Revenue" value={`₹${formatCurrency(kpis.totalRevenue)}`} subtitle="Sales Pipeline" icon={TrendingUp} color="emerald" />
+                <KpiCard title="Settled Amount" value={`₹${formatCurrency(kpis.totalPaid)}`} subtitle="Recovered Funds" icon={ShieldCheck} color="blue" />
+                <KpiCard title="Outstanding" value={`₹${formatCurrency(kpis.totalPending)}`} subtitle="Payment Lag" icon={AlertCircle} color="rose" />
+            </div>
+
+            {/* Strategic Intelligence Bar */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                <div className="lg:col-span-2 bg-white p-6 rounded-[32px] border border-slate-200 shadow-sm flex flex-col md:flex-row items-center gap-6">
+                    <div className="flex-1 flex items-center gap-4 border-r border-slate-100 pr-6">
+                        <div className="p-3 bg-amber-50 text-amber-600 rounded-2xl"><Award size={24} /></div>
+                        <div>
+                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Top Selling Product</p>
+                            <p className="text-sm font-black text-slate-900">{analytics.topProduct}</p>
+                        </div>
+                    </div>
+                    <div className="flex-1 flex items-center gap-4 border-r border-slate-100 pr-6">
+                        <div className="p-3 bg-blue-50 text-blue-600 rounded-2xl"><Star size={24} /></div>
+                        <div>
+                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Prime Customer</p>
+                            <p className="text-sm font-black text-slate-900">{analytics.topCustomer}</p>
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-3 bg-slate-900 text-white px-6 py-3 rounded-2xl">
+                        <TrendingUp size={20} className="text-emerald-400" />
+                        <p className="text-[10px] font-black uppercase tracking-widest">Growth Phase Active</p>
+                    </div>
+                </div>
+
+                <div className="bg-indigo-600 p-6 rounded-[32px] shadow-lg shadow-indigo-100 flex items-center justify-between group overflow-hidden relative">
+                    <div className="absolute -right-4 -top-4 w-24 h-24 bg-white/10 rounded-full blur-2xl group-hover:bg-white/20 transition-all"></div>
+                    <div className="relative z-10">
+                        <p className="text-indigo-100 text-[10px] font-black uppercase tracking-widest mb-1">High Value Alert</p>
+                        <p className="text-2xl font-black text-white tracking-tighter italic">₹{formatCurrency(kpis.totalRevenue / (kpis.totalOrders || 1))} <span className="text-xs font-normal opacity-70 ml-1">AVG_DEAL</span></p>
+                    </div>
+                    <ArrowUpRight className="text-white opacity-40 group-hover:opacity-100 group-hover:scale-110 transition-all" size={32} />
+                </div>
+            </div>
+
+            {/* Filter & Search Hub */}
+            <div className="flex flex-col xl:flex-row items-stretch xl:items-center gap-4 mb-6">
+                <div className="flex-1 bg-white p-2.5 rounded-2xl flex items-center gap-4 border border-slate-200 shadow-sm transition-all focus-within:border-indigo-100 focus-within:ring-4 focus-within:ring-indigo-50">
+                    <Search className="text-slate-400 ml-2" size={20} />
+                    <input 
+                        type="text" 
+                        placeholder="Scan registry by material, type, or role..." 
+                        className="bg-transparent border-none outline-none text-slate-900 placeholder-slate-300 w-full font-black text-xs uppercase tracking-wider"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                </div>
+                
+                <div className="flex flex-wrap items-center gap-2 bg-slate-50 p-2 rounded-2xl border border-slate-200">
+                    {[
+                        { id: 'ALL', label: 'All Orders', icon: ShoppingCart },
+                        { id: 'PAID', label: 'Paid Only', icon: ShieldCheck },
+                        { id: 'PENDING_PAYMENT', label: 'Debt Tracking', icon: AlertCircle },
+                        { id: 'HIGH_VALUE', label: 'Whale Deals', icon: TrendingUp }
+                    ].map(tab => (
+                        <button 
+                            key={tab.id}
+                            onClick={() => setActiveFilter(tab.id)}
+                            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
+                                activeFilter === tab.id 
+                                ? 'bg-slate-900 text-white shadow-lg shadow-slate-200' 
+                                : 'text-slate-500 hover:bg-white hover:text-slate-900'
+                            }`}
+                        >
+                            <tab.icon size={14} />
+                            {tab.label}
+                        </button>
+                    ))}
+                </div>
+
+                <div className="relative group">
+                    <div className="flex items-center gap-3 bg-white px-4 py-2.5 rounded-2xl border border-slate-200 shadow-sm font-black text-[10px] uppercase tracking-widest text-slate-600">
+                        <ArrowUpDown size={14} className="text-indigo-600" />
+                        Sort: 
+                        <select 
+                            className="bg-transparent border-none outline-none text-slate-900 cursor-pointer"
+                            value={sortBy}
+                            onChange={(e) => setSortBy(e.target.value)}
+                        >
+                            <option value="DATE_DESC">Newest First</option>
+                            <option value="DATE_ASC">Oldest First</option>
+                            <option value="AMOUNT_DESC">Highest Value</option>
+                            <option value="AMOUNT_ASC">Lowest Value</option>
+                        </select>
+                    </div>
+                </div>
             </div>
 
             {/* Orders Table */}
@@ -228,11 +366,17 @@ const OrderManagement = () => {
                         </thead>
                         <tbody className="divide-y divide-slate-50">
                             {loading ? (
-                                <tr><td colSpan="7" className="text-center py-20 text-slate-500"><Loader2 className="animate-spin text-indigo-600 mx-auto mb-2" /> Indexing records...</td></tr>
+                                <tr><td colSpan="8" className="text-center py-20 text-slate-500"><Loader2 className="animate-spin text-indigo-600 mx-auto mb-2" /> Indexing records...</td></tr>
                             ) : filteredOrders.length === 0 ? (
-                                <tr><td colSpan="7" className="text-center py-20 text-slate-500 font-black uppercase tracking-widest text-[10px]">Registry is empty.</td></tr>
+                                <tr><td colSpan="8" className="text-center py-20 text-slate-500 font-black uppercase tracking-widest text-[10px]">No orders matching your criteria found.</td></tr>
                             ) : filteredOrders.map((order) => (
-                                <tr key={order._id} className="hover:bg-slate-50/50 transition-colors group">
+                                <tr 
+                                    key={order._id} 
+                                    className={`transition-colors group ${
+                                        order.paymentStatus !== 'PAID' && order.status === 'COMPLETED' ? 'bg-amber-50/30 hover:bg-amber-50/50' : 
+                                        order.totalAmount > 50000 ? 'bg-indigo-50/10 hover:bg-indigo-50/30' : 'hover:bg-slate-50/50'
+                                    }`}
+                                >
                                     <td className="px-6 py-5 text-slate-400 font-mono text-[11px] font-black uppercase tracking-tighter">#{order._id.toString().slice(-10)}</td>
                                     <td className="px-6 py-5">
                                         <div className="flex flex-col gap-1.5">
@@ -257,8 +401,8 @@ const OrderManagement = () => {
                                         )}
                                     </td>
                                     <td className="px-6 py-5 text-center font-black text-slate-900">{order.quantity}</td>
-                                    <td className="px-6 py-5 text-right font-black text-slate-900">
-                                        <span className="text-[10px] text-slate-400 mr-1">₹</span>
+                                    <td className={`px-6 py-5 text-right font-black ${order.totalAmount > 50000 ? 'text-indigo-600 text-sm italic' : 'text-slate-900'}`}>
+                                        <span className="text-[10px] text-slate-400 mr-1 italic">₹</span>
                                         {formatCurrency(order.totalAmount)}
                                     </td>
                                     <td className="px-6 py-5 text-center">
@@ -785,6 +929,20 @@ const DetailItem = ({ icon, label, value, isType, type, isStatus, styles }) => (
                 {value}
             </p>
         )}
+    </div>
+);
+
+const KpiCard = ({ title, value, subtitle, icon: Icon, color }) => (
+    <div className="bg-white p-6 rounded-[32px] border border-slate-200 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
+        <div className={`absolute top-0 right-0 w-24 h-24 rounded-full blur-3xl -mr-10 -mt-10 opacity-10 group-hover:opacity-20 transition-all bg-${color === 'rose' ? 'red' : color}-500`}></div>
+        <div className="flex justify-between items-start mb-4">
+            <div className={`p-3 rounded-2xl border bg-${color === 'rose' ? 'red' : color}-50 border-${color === 'rose' ? 'red' : color}-100 text-${color === 'rose' ? 'red' : color}-600`}>
+                <Icon size={20} />
+            </div>
+            <span className={`text-[8px] font-black uppercase tracking-[0.2em] px-2 py-1 rounded-full bg-${color === 'rose' ? 'red' : color}-50 text-${color === 'rose' ? 'red' : color}-600`}>{subtitle}</span>
+        </div>
+        <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{title}</h4>
+        <h3 className="text-2xl font-black text-slate-900 tracking-tight italic">{value}</h3>
     </div>
 );
 
