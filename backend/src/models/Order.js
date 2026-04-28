@@ -26,6 +26,14 @@ const orderSchema = new mongoose.Schema({
         ref: 'Customer',
         required: function() { return this.orderType === 'SALE'; }
     },
+    paymentStatus: {
+        type: String,
+        enum: ['PENDING', 'PAID', 'PARTIAL'],
+        default: 'PENDING'
+    },
+    paidAt: {
+        type: Date
+    },
     status: {
         type: String,
         enum: ['PENDING', 'COMPLETED', 'CANCELLED'],

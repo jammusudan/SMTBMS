@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { crmService } from '../services/api';
-import { Receipt, Plus, Search, Loader2, Calendar, User, DollarSign, ArrowUpRight, Filter, ChevronDown } from 'lucide-react';
+import { Receipt, Plus, Search, Loader2, Calendar, User, IndianRupee, ArrowUpRight, Filter, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const SalesRecord = () => {
@@ -81,7 +81,7 @@ const SalesRecord = () => {
                 <div className="bg-white p-6 rounded-[24px] border border-slate-200 shadow-sm border-b-[6px] border-b-emerald-500 hover:shadow-md transition-all">
                     <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest">Total Revenue</p>
                     <div className="flex items-baseline gap-2 mt-2">
-                        <h3 className="text-3xl font-bold text-slate-900">${totalRevenue.toLocaleString()}</h3>
+                        <h3 className="text-3xl font-bold text-slate-900">₹{totalRevenue.toLocaleString()}</h3>
                         <span className="text-emerald-600 bg-emerald-50 px-2 flex items-center rounded-md font-bold text-xs"><ArrowUpRight size={14} /> Overall</span>
                     </div>
                 </div>
@@ -92,7 +92,7 @@ const SalesRecord = () => {
                 <div className="bg-white p-6 rounded-[24px] border border-slate-200 shadow-sm border-b-[6px] border-b-indigo-500 hover:shadow-md transition-all">
                     <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest">Avg. Sale Value</p>
                     <h3 className="text-3xl font-bold text-slate-900 mt-2">
-                        ${sales.length > 0 ? (totalRevenue / sales.length).toLocaleString(undefined, {maximumFractionDigits: 0}) : 0}
+                        ₹{sales.length > 0 ? (totalRevenue / sales.length).toLocaleString(undefined, {maximumFractionDigits: 0}) : 0}
                     </h3>
                 </div>
             </div>
@@ -135,7 +135,7 @@ const SalesRecord = () => {
                                     {sale.salesperson_name}
                                 </td>
                                 <td className="px-6 py-4 text-slate-500 text-sm font-medium">{new Date(sale.date).toLocaleDateString()}</td>
-                                <td className="px-6 py-4 text-right text-emerald-600 font-bold">${Number(sale.total_amount).toLocaleString()}</td>
+                                <td className="px-6 py-4 text-right text-emerald-600 font-bold">₹{Number(sale.total_amount).toLocaleString()}</td>
                             </tr>
                         ))}
                     </tbody>
@@ -178,10 +178,10 @@ const SalesRecord = () => {
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-slate-700 text-xs font-bold uppercase tracking-widest mb-2 px-1">Total Amount ($)</label>
+                                        <label className="block text-slate-700 text-xs font-bold uppercase tracking-widest mb-2 px-1">Total Amount (₹)</label>
                                         <div className="relative">
                                             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
-                                                <DollarSign size={16} />
+                                                <IndianRupee size={16} />
                                             </div>
                                             <input 
                                                 type="number" required min="1"

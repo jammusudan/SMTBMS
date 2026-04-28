@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { dashboardService } from '../services/api';
 import { 
     TrendingUp, Award, BarChart3, PieChart, 
-    Download, Calendar, Target, DollarSign, 
+    Download, Calendar, Target, IndianRupee, 
     ArrowUpRight, Users, Loader2, Filter,
     ChevronRight, Briefcase
 } from 'lucide-react';
@@ -83,11 +83,11 @@ const SalesInsights = () => {
                     <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-3xl -mr-10 -mt-10"></div>
                     <div className="flex items-center gap-4 mb-4">
                         <div className="p-3 bg-emerald-50 text-emerald-600 rounded-2xl border border-emerald-100">
-                            <DollarSign size={24} />
+                            <IndianRupee size={24} />
                         </div>
                         <h3 className="text-slate-500 text-xs font-black uppercase tracking-widest">Cumulative Revenue</h3>
                     </div>
-                    <p className="text-3xl font-black text-slate-900 tracking-tight">${summary?.cumulative_revenue?.toLocaleString()}</p>
+                    <p className="text-3xl font-black text-slate-900 tracking-tight">₹{summary?.cumulative_revenue?.toLocaleString()}</p>
                     <div className="mt-2 flex items-center gap-1 text-emerald-600 font-bold text-xs">
                         <ArrowUpRight size={14} /> Total Deal Value
                     </div>
@@ -101,7 +101,7 @@ const SalesInsights = () => {
                         </div>
                         <h3 className="text-slate-500 text-xs font-black uppercase tracking-widest">Average Ticket</h3>
                     </div>
-                    <p className="text-3xl font-black text-slate-900 tracking-tight">${Math.round(summary?.average_deal_size || 0).toLocaleString()}</p>
+                    <p className="text-3xl font-black text-slate-900 tracking-tight">₹{Math.round(summary?.average_deal_size || 0).toLocaleString()}</p>
                     <div className="mt-2 flex items-center gap-1 text-slate-400 font-bold text-xs uppercase tracking-wider">
                         Per Closed Opportunity
                     </div>
@@ -115,7 +115,7 @@ const SalesInsights = () => {
                         </div>
                         <h3 className="text-slate-500 text-xs font-black uppercase tracking-widest">Largest Deal</h3>
                     </div>
-                    <p className="text-3xl font-black text-slate-900 tracking-tight">${summary?.largest_deal?.toLocaleString()}</p>
+                    <p className="text-3xl font-black text-slate-900 tracking-tight">₹{summary?.largest_deal?.toLocaleString()}</p>
                     <div className="mt-2 flex items-center gap-1 text-fuchsia-600 font-bold text-xs uppercase tracking-wider">
                         Premium Achievement
                     </div>
@@ -178,8 +178,8 @@ const SalesInsights = () => {
                                     </div>
                                 </div>
                                 <div className="text-right">
-                                    <p className="text-slate-900 font-black text-lg">${rep.totalRevenue.toLocaleString()}</p>
-                                    <p className="text-amber-600 text-[10px] font-bold uppercase tracking-widest">Avg: ${Math.round(rep.averageDealSize).toLocaleString()}</p>
+                                    <p className="text-slate-900 font-black text-lg">₹{rep.totalRevenue.toLocaleString()}</p>
+                                    <p className="text-amber-600 text-[10px] font-bold uppercase tracking-widest">Avg: ₹{Math.round(rep.averageDealSize).toLocaleString()}</p>
                                 </div>
                             </div>
                         ))}
@@ -203,7 +203,7 @@ const SalesInsights = () => {
                                             <div className={`w-2 h-2 rounded-full bg-slate-300`} style={{ backgroundColor: `hsl(${200 + (idx * 40)}, 70%, 50%)` }}></div>
                                             {source.source}
                                         </span>
-                                        <span className="text-slate-900">${source.revenue.toLocaleString()}</span>
+                                        <span className="text-slate-900">₹{source.revenue.toLocaleString()}</span>
                                     </div>
                                     <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
                                         <motion.div 
@@ -301,7 +301,7 @@ const SalesInsights = () => {
                             Customer Lifetime Value (Top Loyal)
                         </h3>
                         <div className="bg-indigo-50 text-indigo-600 px-4 py-2 rounded-2xl font-bold text-xs">
-                            Avg CLV: ${retention.average_clv}
+                            Avg CLV: ₹{retention.average_clv}
                         </div>
                     </div>
                     
@@ -318,7 +318,7 @@ const SalesInsights = () => {
                                 <div className="mt-4 flex justify-between items-end">
                                     <div>
                                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Lifetime Spend</p>
-                                        <p className="text-2xl font-black text-slate-900">${cust.value.toLocaleString()}</p>
+                                        <p className="text-2xl font-black text-slate-900">₹{cust.value.toLocaleString()}</p>
                                     </div>
                                     <div className="text-right">
                                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Orders</p>

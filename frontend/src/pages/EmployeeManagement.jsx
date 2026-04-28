@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { hrmsService } from '../services/api';
 import { 
     Users, UserPlus, Search, Trash2, Edit2, 
-    Loader2, Mail, Briefcase, DollarSign, 
+    Loader2, Mail, Briefcase, IndianRupee, 
     Calendar, Lock, Shield, X, CheckCircle, 
     UserMinus, UserCheck, Filter, ChevronDown, ShieldAlert
 } from 'lucide-react';
@@ -360,7 +360,7 @@ const EmployeeManagement = () => {
                                                     className="p-3 bg-white hover:bg-indigo-600 text-indigo-600 hover:text-white rounded-2xl border border-indigo-100 transition-all shadow-sm"
                                                     title="Configure Salary Structure"
                                                 >
-                                                    <DollarSign size={18} />
+                                                    <IndianRupee size={18} />
                                                 </button>
                                             )}
                                             {canDelete && (
@@ -687,7 +687,7 @@ const EmployeeManagement = () => {
                                     <div className="mt-auto bg-[#F8FAFC] p-10 rounded-[40px] border border-slate-100 relative overflow-hidden group">
                                         <div className="absolute top-0 right-0 w-40 h-40 bg-indigo-600/5 rounded-full blur-3xl -mr-10 -mt-10 group-hover:bg-indigo-600/10 transition-colors"></div>
                                         <h4 className="text-[11px] font-black text-indigo-600 uppercase tracking-[0.3em] mb-8 flex items-center gap-2 relative z-10">
-                                            <DollarSign size={16} /> Compensation Model
+                                            <IndianRupee size={16} /> Compensation Model
                                         </h4>
                                         <div className="flex items-end justify-between relative z-10">
                                             <div>

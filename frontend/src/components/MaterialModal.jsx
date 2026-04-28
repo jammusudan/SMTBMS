@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Save, Package, Hash, Tag, Type, DollarSign, Layers } from 'lucide-react';
+import { X, Save, Package, Hash, Tag, Type, IndianRupee, Layers } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const MaterialModal = ({ isOpen, onClose, onSave, material, loading, existingCategories }) => {
@@ -152,9 +152,9 @@ const MaterialModal = ({ isOpen, onClose, onSave, material, loading, existingCat
 
                             {/* Price */}
                             <div>
-                                <label className="block text-slate-700 text-xs font-bold uppercase tracking-widest mb-2 px-1">Unit Price ($)</label>
+                                <label className="block text-slate-700 text-xs font-bold uppercase tracking-widest mb-2 px-1">Unit Price (₹)</label>
                                 <div className="relative">
-                                    <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                                    <IndianRupee className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                                     <input 
                                         type="number" name="price" required min="0" step="0.01"
                                         className="w-full bg-white border border-slate-200 rounded-2xl py-3.5 pl-12 pr-4 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all text-sm font-medium"

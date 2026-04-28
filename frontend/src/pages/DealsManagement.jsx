@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { crmService, materialService } from '../services/api';
 import { 
     TrendingUp, Plus, Search, Filter, 
-    Calendar, DollarSign, Target, Loader2,
+    Calendar, IndianRupee, Target, Loader2,
     ChevronRight, CheckCircle2, XCircle, MoreVertical,
     Briefcase, User, Info, LayoutGrid, List
 } from 'lucide-react';
@@ -217,7 +217,7 @@ const DealsManagement = () => {
                                                      className="px-4 py-2 text-emerald-600 hover:bg-emerald-600 hover:text-white bg-white border border-emerald-100 rounded-xl transition-all shadow-sm font-black text-[10px] uppercase tracking-widest flex items-center gap-2"
                                                      title="Finalize Sale"
                                                  >
-                                                     <CheckCircle2 size={16} /> Finalize
+                                                     <IndianRupee size={16} /> Finalize
                                                  </button>
                                                 <button 
                                                     onClick={() => handleUpdateStage(deal._id, 'Lost')}

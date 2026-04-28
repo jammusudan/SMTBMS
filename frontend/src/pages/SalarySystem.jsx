@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { salaryService, hrmsService } from '../services/api';
-import { Banknote, Plus, Loader2, XCircle, Search, User, Clock, CheckCircle2, ChevronDown, ChevronRight, FileText, Download, DollarSign, History, AlertCircle, Calendar, RefreshCcw } from 'lucide-react';
+import { Banknote, Plus, Loader2, XCircle, Search, User, Clock, CheckCircle2, ChevronDown, ChevronRight, FileText, Download, IndianRupee, History, AlertCircle, Calendar, RefreshCcw } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import EmployeeSalary from './EmployeeSalary';
 
@@ -438,7 +438,7 @@ const SalarySystem = () => {
                                                     onClick={() => setIsPayModalOpen(sal)} 
                                                     className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 text-white hover:bg-slate-900 rounded-xl transition-all font-black text-[9px] tracking-widest uppercase shadow-lg shadow-emerald-100"
                                                 >
-                                                    <DollarSign size={12} />
+                                                    <IndianRupee size={12} />
                                                     Process Pay
                                                 </button>
                                             )}
@@ -457,7 +457,7 @@ const SalarySystem = () => {
                                                     <div className="grid grid-cols-2 gap-12">
                                                         <div className="space-y-4">
                                                             <div className="flex items-center justify-between">
-                                                                <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2"><DollarSign size={13} className="text-indigo-500" /> Manual Adjust Logs</h4>
+                                                                <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2"><IndianRupee size={13} className="text-indigo-500" /> Manual Adjust Logs</h4>
                                                                 <span className="text-[10px] font-bold text-slate-400">Audited per Cycle</span>
                                                             </div>
                                                             <div className="space-y-2">

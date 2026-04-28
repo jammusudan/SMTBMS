@@ -60,6 +60,7 @@ export const erpService = {
     getOrderById: (id) => api.get(`/orders/${id}`),
     createOrder: (data) => api.post('/orders', data),
     updateOrderStatus: (id, status) => api.put(`/orders/${id}/status`, { status }),
+    updatePaymentStatus: (id, paymentStatus) => api.put(`/orders/${id}/payment`, { paymentStatus }),
 };
 
 export const crmService = {

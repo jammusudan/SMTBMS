@@ -129,6 +129,12 @@ exports.updateOrderStatus = async (req, res) => {
         if (!order) return res.status(404).json({ message: 'Order not found' });
 
         const oldStatus = order.status;
+        
+        // Locking: COMPLETED orders are read-only
+        if (oldStatus === 'COMPLETED') {
+            return res.status(400).json({ message: 'Order is COMPLETED and locked. No further status changes allowed.' });
+        }
+        
         if (oldStatus === 'CANCELLED') return res.status(400).json({ message: 'Order already cancelled' });
         if (oldStatus === status) return res.status(400).json({ message: `Order already ${status}` });
 
@@ -219,6 +225,40 @@ exports.getOrderById = async (req, res) => {
             .populate('createdByUserId', 'username');
         if (!order) return res.status(404).json({ message: 'Order not found' });
         res.json(order);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// @desc    Update order payment status
+// @route   PUT /api/orders/:id/payment
+exports.updatePaymentStatus = async (req, res) => {
+    const { paymentStatus } = req.body;
+    const orderId = req.params.id;
+
+    if (!['PENDING', 'PAID', 'PARTIAL'].includes(paymentStatus)) {
+        return res.status(400).json({ message: 'Invalid payment status' });
+    }
+
+    try {
+        const order = await Order.findById(orderId);
+        if (!order) return res.status(404).json({ message: 'Order not found' });
+
+        order.paymentStatus = paymentStatus;
+        if (paymentStatus === 'PAID') {
+            order.paidAt = new Date();
+        }
+
+        await order.save();
+
+        await ActivityLog.create({
+            user_id: req.user.id,
+            username: req.user.username || 'System',
+            action: `Order #${order._id.toString().slice(-6).toUpperCase()} Payment: ${paymentStatus}`,
+            module: 'ERP'
+        });
+
+        res.json({ message: `Payment status updated to ${paymentStatus}`, order });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

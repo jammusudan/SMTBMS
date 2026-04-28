@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { crmService } from '../services/api';
 import { 
-    LayoutDashboard, TrendingUp, Users, DollarSign, 
+    LayoutDashboard, TrendingUp, Users, IndianRupee, 
     ArrowUpRight, ArrowDownRight, Target, Activity,
     Calendar, Loader2, BarChart3, PieChart as PieChartIcon
 } from 'lucide-react';
@@ -31,7 +31,10 @@ const StatCard = ({ title, value, subtext, icon: Icon, trend, color }) => (
         </div>
         <div>
             <p className="text-slate-500 text-[13px] font-black uppercase tracking-widest mb-1">{title}</p>
-            <h3 className="text-3xl font-black text-slate-900 tracking-tight">{value}</h3>
+            <h3 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-1">
+                <IndianRupee size={20} className="text-slate-400" />
+                {value}
+            </h3>
             <p className="text-slate-400 text-[11px] font-bold mt-2 uppercase tracking-wider">{subtext}</p>
         </div>
     </motion.div>
@@ -91,15 +94,15 @@ const CRMOverview = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
                 <StatCard 
                     title="Gross Revenue" 
-                    value={`₹${(data?.kpis?.totalRevenue || 0).toLocaleString()}`}
+                    value={(data?.kpis?.totalRevenue || 0).toLocaleString()}
                     subtext="Settled (Won) Deals Only"
-                    icon={DollarSign}
+                    icon={IndianRupee}
                     color="bg-indigo-600"
                     trend={12}
                 />
                 <StatCard 
                     title="Pipeline Value" 
-                    value={`₹${(data?.kpis?.pipelineValue || 0).toLocaleString()}`}
+                    value={(data?.kpis?.pipelineValue || 0).toLocaleString()}
                     subtext="Projected (Active) Revenue"
                     icon={Activity}
                     color="bg-emerald-600"
@@ -123,7 +126,7 @@ const CRMOverview = () => {
                     title="Top Performer" 
                     value={data?.kpis.topPerformer}
                     subtext="Elite Sales Achievement"
-                    icon={Users}
+                    icon={User}
                     color="bg-amber-600"
                 />
             </div>

@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { 
-    Briefcase, Calendar, DollarSign, 
+    Briefcase, Calendar, IndianRupee, 
     MoreVertical, ChevronRight, AlertCircle,
     User, CheckCircle2, XCircle
 } from 'lucide-react';

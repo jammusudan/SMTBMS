@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { dashboardService, crmService, materialService, erpService } from '../services/api';
 import { 
-    TrendingUp, Users, Target, DollarSign, 
+    TrendingUp, Users, Target, IndianRupee, 
     Calendar, CheckCircle2, AlertCircle, 
     Plus, ArrowRight, Phone, Mail, 
     Loader2, X, UserPlus, ShoppingBag, 
-    Package, IndianRupee, ShieldCheck, CheckCircle
+    Package, ShieldCheck, CheckCircle
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
@@ -531,7 +531,7 @@ const SalesDashboard = () => {
                                         <div className="flex items-center justify-between">
                                             <div className="flex items-center gap-3">
                                                 <div className="p-2 bg-white/20 rounded-lg">
-                                                    <DollarSign size={20} />
+                                                    <IndianRupee size={20} />
                                                 </div>
                                                 <span className="text-[10px] font-black uppercase tracking-widest leading-none">Net Sale Value</span>
                                             </div>

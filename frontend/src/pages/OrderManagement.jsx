@@ -17,6 +17,7 @@ const OrderManagement = () => {
     const [loading, setLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+    const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false);
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [actionLoading, setActionLoading] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
@@ -90,9 +91,28 @@ const OrderManagement = () => {
         }
     };
 
+    const handleUpdatePayment = async (id, paymentStatus) => {
+        if (!window.confirm(`Update payment status to ${paymentStatus}?`)) return;
+        setActionLoading(true);
+        try {
+            await erpService.updatePaymentStatus(id, paymentStatus);
+            await fetchData();
+            if (isViewModalOpen) setIsViewModalOpen(false);
+        } catch (error) {
+            alert(error.response?.data?.message || 'Error updating payment status');
+        } finally {
+            setActionLoading(false);
+        }
+    };
+
     const handleViewOrder = (order) => {
         setSelectedOrder(order);
         setIsViewModalOpen(true);
+    };
+
+    const handleGenerateInvoice = (order) => {
+        setSelectedOrder(order);
+        setIsInvoiceModalOpen(true);
     };
 
     const getStatusStyles = (status) => {
@@ -100,6 +120,15 @@ const OrderManagement = () => {
             case 'COMPLETED': return 'text-emerald-600 bg-emerald-50 border-emerald-100';
             case 'CANCELLED': return 'text-rose-600 bg-rose-50 border-rose-100';
             case 'PENDING': return 'text-amber-600 bg-amber-50 border-amber-100';
+            default: return 'text-slate-400 bg-slate-50 border-slate-100';
+        }
+    };
+
+    const getPaymentStyles = (status) => {
+        switch (status) {
+            case 'PAID': return 'text-blue-600 bg-blue-50 border-blue-100';
+            case 'PARTIAL': return 'text-amber-600 bg-amber-50 border-amber-100';
+            case 'PENDING': return 'text-slate-400 bg-slate-50 border-slate-100';
             default: return 'text-slate-400 bg-slate-50 border-slate-100';
         }
     };
@@ -167,6 +196,7 @@ const OrderManagement = () => {
                                 <th className="px-6 py-4 font-black text-center">Qty</th>
                                 <th className="px-6 py-4 font-black text-right">Total Value</th>
                                 <th className="px-6 py-4 font-black text-center">Status</th>
+                                <th className="px-6 py-4 font-black text-center">Payment</th>
                                 <th className="px-6 py-4 font-black text-right pr-10">Actions</th>
                             </tr>
                         </thead>
@@ -210,6 +240,11 @@ const OrderManagement = () => {
                                             {order.status}
                                         </span>
                                     </td>
+                                    <td className="px-6 py-5 text-center">
+                                        <span className={`px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border ${getPaymentStyles(order.paymentStatus)}`}>
+                                            {order.paymentStatus || 'PENDING'}
+                                        </span>
+                                    </td>
                                     <td className="px-6 py-5 text-right pr-10">
                                         <div className="flex justify-end gap-2">
                                             <button 
@@ -219,6 +254,15 @@ const OrderManagement = () => {
                                             >
                                                 <Eye size={18} />
                                             </button>
+                                            {isAdmin && order.paymentStatus !== 'PAID' && (
+                                                <button 
+                                                    onClick={() => handleUpdatePayment(order._id, 'PAID')}
+                                                    className="p-2 text-blue-600 hover:bg-blue-50 bg-white border border-blue-100 rounded-xl shadow-sm transition-all"
+                                                    title="Mark as Paid"
+                                                >
+                                                    <Wallet size={18} />
+                                                </button>
+                                            )}
                                             {order.status === 'PENDING' && (isAdmin || !isEmployee) && (
                                                 <button 
                                                     onClick={() => handleUpdateStatus(order._id, 'COMPLETED')}
@@ -228,7 +272,7 @@ const OrderManagement = () => {
                                                     <CheckCircle size={18} />
                                                 </button>
                                             )}
-                                            {order.status !== 'CANCELLED' && (isAdmin || !isEmployee) && (
+                                            {order.status === 'PENDING' && (isAdmin || !isEmployee) && (
                                                 <button 
                                                     onClick={() => handleUpdateStatus(order._id, 'CANCELLED')}
                                                     className="p-2 text-rose-400 hover:text-rose-600 hover:bg-rose-50 bg-white border border-transparent hover:border-rose-100 rounded-xl transition-all shadow-sm hover:scale-105 active:scale-95"
@@ -273,6 +317,8 @@ const OrderManagement = () => {
                                     <DetailItem icon={<Tag size={12}/>} label="Type" value={selectedOrder.orderType} isType type={selectedOrder.orderType} />
                                     <DetailItem icon={<User size={12}/>} label="Entity" value={selectedOrder.orderType === 'PURCHASE' ? (selectedOrder.vendorId?.name || 'Direct / Internal') : (selectedOrder.customerId?.name || 'Walk-in Customer')} />
                                     <DetailItem icon={<AlertCircle size={12}/>} label="Status" value={selectedOrder.status} isStatus styles={getStatusStyles(selectedOrder.status)} />
+                                    <DetailItem icon={<Wallet size={12}/>} label="Payment" value={selectedOrder.paymentStatus || 'PENDING'} isStatus styles={getPaymentStyles(selectedOrder.paymentStatus)} />
+                                    {selectedOrder.paidAt && <DetailItem icon={<Calendar size={12}/>} label="Paid Date" value={new Date(selectedOrder.paidAt).toLocaleDateString()} />}
                                 </div>
 
                                 {/* Financial Summary */}
@@ -324,7 +370,22 @@ const OrderManagement = () => {
                                             FULFILL_ENTRY
                                         </button>
                                     )}
-                                    {selectedOrder.status !== 'CANCELLED' && (isAdmin || !isEmployee) && (
+                                    {isAdmin && selectedOrder.paymentStatus !== 'PAID' && (
+                                        <button 
+                                            onClick={() => handleUpdatePayment(selectedOrder._id, 'PAID')}
+                                            disabled={actionLoading}
+                                            className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-black py-4 rounded-2xl flex items-center justify-center gap-2 transition-all shadow-lg text-[11px] uppercase tracking-widest disabled:opacity-50 active:scale-95 font-mono"
+                                        >
+                                            MARK_AS_PAID
+                                        </button>
+                                    )}
+                                    <button 
+                                        onClick={() => handleGenerateInvoice(selectedOrder)}
+                                        className="flex-1 bg-slate-900 hover:bg-slate-800 text-white font-black py-4 rounded-2xl flex items-center justify-center gap-2 transition-all shadow-lg text-[11px] uppercase tracking-widest active:scale-95 font-mono"
+                                    >
+                                        GENERATE_INVOICE
+                                    </button>
+                                    {selectedOrder.status === 'PENDING' && (isAdmin || !isEmployee) && (
                                         <button 
                                             onClick={() => handleUpdateStatus(selectedOrder._id, 'CANCELLED')}
                                             disabled={actionLoading}
@@ -472,6 +533,115 @@ const OrderManagement = () => {
                                     </button>
                                 </div>
                             </form>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
+
+            {/* Invoice Modal */}
+            <AnimatePresence>
+                {isInvoiceModalOpen && selectedOrder && (
+                    <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-md">
+                        <motion.div 
+                            initial={{ opacity: 0, scale: 0.9, y: 30 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.9, y: 30 }}
+                            className="bg-white w-full max-w-2xl rounded-[40px] shadow-2xl overflow-hidden border border-white/20"
+                        >
+                            {/* Invoice Header */}
+                            <div className="bg-slate-900 p-10 text-white flex justify-between items-start">
+                                <div>
+                                    <div className="flex items-center gap-3 mb-6">
+                                        <div className="bg-indigo-600 p-2.5 rounded-xl">
+                                            <Package size={24} />
+                                        </div>
+                                        <h1 className="text-2xl font-black tracking-tighter uppercase italic">SMTBMS_INVOICE</h1>
+                                    </div>
+                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Official Transaction Document</p>
+                                </div>
+                                <div className="text-right">
+                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Invoice ID</p>
+                                    <p className="text-lg font-mono font-black text-indigo-400">#INV-{selectedOrder._id.toString().slice(-6).toUpperCase()}</p>
+                                </div>
+                            </div>
+
+                            {/* Invoice Body */}
+                            <div className="p-10 space-y-10">
+                                <div className="grid grid-cols-2 gap-10">
+                                    <div className="space-y-4">
+                                        <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 pb-2">Billing Information</h4>
+                                        <div>
+                                            <p className="text-sm font-black text-slate-900 mb-1">
+                                                {selectedOrder.orderType === 'PURCHASE' ? selectedOrder.vendorId?.name : selectedOrder.customerId?.name}
+                                            </p>
+                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-loose">
+                                                {selectedOrder.orderType === 'PURCHASE' ? 'Service Partner' : 'Customer Entity'}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div className="space-y-4 text-right">
+                                        <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 pb-2 text-right">Transaction Details</h4>
+                                        <div className="space-y-1">
+                                            <p className="text-xs font-black text-slate-900">{new Date(selectedOrder.createdAt).toLocaleDateString()}</p>
+                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Order Placed On</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Table */}
+                                <div className="border border-slate-100 rounded-3xl overflow-hidden">
+                                    <table className="w-full text-left">
+                                        <thead className="bg-slate-50">
+                                            <tr className="text-[9px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">
+                                                <th className="px-6 py-4">Item Description</th>
+                                                <th className="px-6 py-4 text-center">Qty</th>
+                                                <th className="px-6 py-4 text-right">Unit Price</th>
+                                                <th className="px-6 py-4 text-right pr-8">Total</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-slate-50">
+                                            <tr className="text-slate-900">
+                                                <td className="px-6 py-5">
+                                                    <p className="font-black text-sm">{selectedOrder.materialId?.name}</p>
+                                                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-1">{selectedOrder.materialId?.unit}</p>
+                                                </td>
+                                                <td className="px-6 py-5 text-center font-black">{selectedOrder.quantity}</td>
+                                                <td className="px-6 py-5 text-right font-black">₹{formatCurrency(selectedOrder.unitPrice || 0)}</td>
+                                                <td className="px-6 py-5 text-right pr-8 font-black text-indigo-600">₹{formatCurrency(selectedOrder.totalAmount || 0)}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                {/* Total and Footer */}
+                                <div className="flex justify-between items-end">
+                                    <div className="space-y-3">
+                                        <div className={`px-4 py-2 rounded-2xl border text-[10px] font-black uppercase tracking-widest inline-block ${getPaymentStyles(selectedOrder.paymentStatus)}`}>
+                                            Payment: {selectedOrder.paymentStatus || 'PENDING'}
+                                        </div>
+                                        <p className="text-[9px] font-black text-slate-400 max-w-[240px] leading-relaxed italic uppercase">This is a system generated document. No signature required for validation.</p>
+                                    </div>
+                                    <div className="bg-slate-900 p-8 rounded-[32px] text-right min-w-[240px] shadow-2xl shadow-indigo-100">
+                                        <p className="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-2">Grand Total Amount</p>
+                                        <p className="text-3xl font-black text-white tracking-tighter">₹{formatCurrency(selectedOrder.totalAmount || 0)}</p>
+                                    </div>
+                                </div>
+
+                                <div className="flex gap-4 pt-6 no-print">
+                                    <button 
+                                        onClick={() => setIsInvoiceModalOpen(false)}
+                                        className="flex-1 px-8 py-5 rounded-3xl text-slate-400 bg-slate-50 hover:bg-slate-100 transition-all font-black text-[11px] uppercase tracking-widest active:scale-95"
+                                    >
+                                        Close Preview
+                                    </button>
+                                    <button 
+                                        onClick={() => window.print()}
+                                        className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-black py-5 rounded-3xl flex items-center justify-center gap-2 transition-all shadow-xl text-[11px] uppercase tracking-widest active:scale-95"
+                                    >
+                                        Print Document
+                                    </button>
+                                </div>
+                            </div>
                         </motion.div>
                     </div>
                 )}

@@ -231,7 +231,7 @@ const MaterialTracking = () => {
                                                 {currentStatus}
                                             </span>
                                         </td>
-                                        <td className="px-6 py-5 text-slate-900 font-black tracking-tighter">${Number(material.price).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                                        <td className="px-6 py-5 text-slate-900 font-black tracking-tighter">₹{Number(material.price).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
                                         <td className="px-6 py-5 text-right">
                                             <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                                 {isAdmin && (

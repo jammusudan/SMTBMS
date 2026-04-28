@@ -3,7 +3,7 @@ import { crmService, erpService } from '../services/api';
 import { 
     Users, Plus, Search, Loader2, Mail, Phone, 
     MapPin, Edit2, User, Globe, Briefcase, 
-    DollarSign, Filter, MoreVertical, ChevronRight, XCircle,
+    IndianRupee, Filter, MoreVertical, ChevronRight, XCircle,
     CheckCircle2, Info, Target, ShieldCheck
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -327,7 +327,7 @@ const CustomerDirectory = () => {
                                                     </div>
                                                 </div>
                                                 <div className="p-4 bg-white rounded-2xl border border-slate-100 shadow-sm flex items-center gap-3">
-                                                    <div className="p-2 bg-emerald-50 text-emerald-600 rounded-lg"><DollarSign size={16}/></div>
+                                                    <div className="p-2 bg-emerald-50 text-emerald-600 rounded-lg"><IndianRupee size={16}/></div>
                                                     <div>
                                                         <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Est. Valuation</p>
                                                         <p className="text-[11px] font-black text-slate-700">₹{lead.estimatedValue?.toLocaleString() || 0}</p>
