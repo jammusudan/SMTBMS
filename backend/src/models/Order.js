@@ -31,8 +31,16 @@ const orderSchema = new mongoose.Schema({
         enum: ['PENDING', 'PAID', 'PARTIAL'],
         default: 'PENDING'
     },
-    paidAt: {
+    paidAmount: {
+        type: Number,
+        default: 0
+    },
+    paymentDate: {
         type: Date
+    },
+    paymentMode: {
+        type: String,
+        enum: ['Cash', 'UPI', 'Bank Transfer']
     },
     status: {
         type: String,

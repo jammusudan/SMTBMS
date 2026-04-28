@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getOrders, getOrderById, createOrder, updateOrderStatus, updatePaymentStatus } = require('../controllers/orderController');
+const { getOrders, getOrderById, createOrder, updateOrderStatus, updatePaymentDetails } = require('../controllers/orderController');
 const { protect, authorize } = require('../middleware/authMiddleware');
 
 router.route('/')
@@ -14,6 +14,6 @@ router.route('/:id/status')
     .put(protect, authorize('Admin', 'Manager', 'Sales'), updateOrderStatus);
 
 router.route('/:id/payment')
-    .put(protect, authorize('Admin'), updatePaymentStatus);
+    .post(protect, authorize('Admin'), updatePaymentDetails);
 
 module.exports = router;

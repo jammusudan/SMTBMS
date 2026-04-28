@@ -18,9 +18,17 @@ const OrderManagement = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isViewModalOpen, setIsViewModalOpen] = useState(false);
     const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false);
+    const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [actionLoading, setActionLoading] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
+
+    const [paymentFormData, setPaymentFormData] = useState({
+        paymentStatus: 'PAID',
+        paidAmount: '',
+        paymentDate: new Date().toISOString().split('T')[0],
+        paymentMode: 'UPI'
+    });
 
     const [formData, setFormData] = useState({
         materialId: '',
@@ -91,15 +99,33 @@ const OrderManagement = () => {
         }
     };
 
-    const handleUpdatePayment = async (id, paymentStatus) => {
-        if (!window.confirm(`Update payment status to ${paymentStatus}?`)) return;
+    const handleUpdatePayment = (order) => {
+        setSelectedOrder(order);
+        setPaymentFormData({
+            paymentStatus: 'PAID',
+            paidAmount: order.totalAmount,
+            paymentDate: new Date().toISOString().split('T')[0],
+            paymentMode: 'UPI'
+        });
+        setIsPaymentModalOpen(true);
+    };
+
+    const handlePaymentSubmit = async (e) => {
+        e.preventDefault();
+        
+        if (paymentFormData.paidAmount > selectedOrder.totalAmount) {
+            alert(`Error: Paid amount cannot exceed total order value (₹${selectedOrder.totalAmount})`);
+            return;
+        }
+
         setActionLoading(true);
         try {
-            await erpService.updatePaymentStatus(id, paymentStatus);
+            await erpService.updatePaymentDetails(selectedOrder._id, paymentFormData);
             await fetchData();
+            setIsPaymentModalOpen(false);
             if (isViewModalOpen) setIsViewModalOpen(false);
         } catch (error) {
-            alert(error.response?.data?.message || 'Error updating payment status');
+            alert(error.response?.data?.message || 'Error recording payment');
         } finally {
             setActionLoading(false);
         }
@@ -254,11 +280,11 @@ const OrderManagement = () => {
                                             >
                                                 <Eye size={18} />
                                             </button>
-                                            {isAdmin && order.paymentStatus !== 'PAID' && (
+                                            {isAdmin && order.paymentStatus !== 'PAID' && order.status === 'COMPLETED' && (
                                                 <button 
-                                                    onClick={() => handleUpdatePayment(order._id, 'PAID')}
+                                                    onClick={() => handleUpdatePayment(order)}
                                                     className="p-2 text-blue-600 hover:bg-blue-50 bg-white border border-blue-100 rounded-xl shadow-sm transition-all"
-                                                    title="Mark as Paid"
+                                                    title="Record Payment"
                                                 >
                                                     <Wallet size={18} />
                                                 </button>
@@ -317,8 +343,10 @@ const OrderManagement = () => {
                                     <DetailItem icon={<Tag size={12}/>} label="Type" value={selectedOrder.orderType} isType type={selectedOrder.orderType} />
                                     <DetailItem icon={<User size={12}/>} label="Entity" value={selectedOrder.orderType === 'PURCHASE' ? (selectedOrder.vendorId?.name || 'Direct / Internal') : (selectedOrder.customerId?.name || 'Walk-in Customer')} />
                                     <DetailItem icon={<AlertCircle size={12}/>} label="Status" value={selectedOrder.status} isStatus styles={getStatusStyles(selectedOrder.status)} />
-                                    <DetailItem icon={<Wallet size={12}/>} label="Payment" value={selectedOrder.paymentStatus || 'PENDING'} isStatus styles={getPaymentStyles(selectedOrder.paymentStatus)} />
-                                    {selectedOrder.paidAt && <DetailItem icon={<Calendar size={12}/>} label="Paid Date" value={new Date(selectedOrder.paidAt).toLocaleDateString()} />}
+                                    <DetailItem icon={<Wallet size={12}/>} label="Payment Status" value={selectedOrder.paymentStatus || 'PENDING'} isStatus styles={getPaymentStyles(selectedOrder.paymentStatus)} />
+                                    {selectedOrder.paidAmount > 0 && <DetailItem icon={<IndianRupee size={12}/>} label="Paid Amount" value={`₹${formatCurrency(selectedOrder.paidAmount)}`} />}
+                                    {selectedOrder.paymentDate && <DetailItem icon={<Calendar size={12}/>} label="Payment Date" value={new Date(selectedOrder.paymentDate).toLocaleDateString()} />}
+                                    {selectedOrder.paymentMode && <DetailItem icon={<ShieldCheck size={12}/>} label="Payment Mode" value={selectedOrder.paymentMode} />}
                                 </div>
 
                                 {/* Financial Summary */}
@@ -370,13 +398,13 @@ const OrderManagement = () => {
                                             FULFILL_ENTRY
                                         </button>
                                     )}
-                                    {isAdmin && selectedOrder.paymentStatus !== 'PAID' && (
+                                    {isAdmin && selectedOrder.paymentStatus !== 'PAID' && selectedOrder.status === 'COMPLETED' && (
                                         <button 
-                                            onClick={() => handleUpdatePayment(selectedOrder._id, 'PAID')}
+                                            onClick={() => handleUpdatePayment(selectedOrder)}
                                             disabled={actionLoading}
                                             className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-black py-4 rounded-2xl flex items-center justify-center gap-2 transition-all shadow-lg text-[11px] uppercase tracking-widest disabled:opacity-50 active:scale-95 font-mono"
                                         >
-                                            MARK_AS_PAID
+                                            RECORD_PAYMENT
                                         </button>
                                     )}
                                     <button 
@@ -530,6 +558,101 @@ const OrderManagement = () => {
                                     >
                                         {actionLoading ? <Loader2 className="animate-spin" /> : <ShieldCheck size={20} />}
                                         Initialize Order
+                                    </button>
+                                </div>
+                            </form>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
+
+            {/* Payment Details Modal */}
+            <AnimatePresence>
+                {isPaymentModalOpen && selectedOrder && (
+                    <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-md">
+                        <motion.div 
+                            initial={{ opacity: 0, scale: 0.9, y: 30 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.9, y: 30 }}
+                            className="bg-white w-full max-w-lg rounded-[40px] shadow-2xl overflow-hidden border border-white/20"
+                        >
+                            <div className="bg-blue-600 p-8 text-white">
+                                <h3 className="text-xl font-black tracking-tight uppercase italic flex items-center gap-3">
+                                    <Wallet size={24} />
+                                    Payment Settlement
+                                </h3>
+                                <p className="text-[10px] font-black text-blue-100 uppercase tracking-widest mt-2">Order Ref: #{selectedOrder._id.toString().slice(-6).toUpperCase()}</p>
+                            </div>
+
+                            <form onSubmit={handlePaymentSubmit} className="p-10 space-y-6">
+                                <div>
+                                    <label className="block text-slate-500 text-[10px] font-black uppercase tracking-widest mb-3 px-1">Payment Status</label>
+                                    <select 
+                                        required
+                                        className="w-full bg-slate-50 border border-slate-100 rounded-2xl py-3.5 px-4 text-slate-900 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all text-xs font-black appearance-none"
+                                        value={paymentFormData.paymentStatus} 
+                                        onChange={(e) => setPaymentFormData({...paymentFormData, paymentStatus: e.target.value})}
+                                    >
+                                        <option value="PAID">Full Payment (PAID)</option>
+                                        <option value="PARTIAL">Partial Payment (PARTIAL)</option>
+                                        <option value="PENDING">Clear / Reset (PENDING)</option>
+                                    </select>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-6">
+                                    <div>
+                                        <label className="block text-slate-500 text-[10px] font-black uppercase tracking-widest mb-2 px-1">Paid Amount (₹)</label>
+                                        <input 
+                                            type="number" required min="1"
+                                            className="w-full bg-slate-50 border border-slate-100 rounded-2xl py-4 px-5 text-slate-900 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all text-sm font-black"
+                                            value={paymentFormData.paidAmount} 
+                                            onChange={(e) => setPaymentFormData({...paymentFormData, paidAmount: Number(e.target.value)})}
+                                        />
+                                        <p className="text-[9px] text-slate-400 mt-2 font-black uppercase tracking-widest px-1">Total Due: ₹{formatCurrency(selectedOrder.totalAmount)}</p>
+                                    </div>
+                                    <div>
+                                        <label className="block text-slate-500 text-[10px] font-black uppercase tracking-widest mb-2 px-1">Payment Date</label>
+                                        <input 
+                                            type="date" required
+                                            className="w-full bg-slate-50 border border-slate-100 rounded-2xl py-4 px-5 text-slate-900 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all text-sm font-black"
+                                            value={paymentFormData.paymentDate} 
+                                            onChange={(e) => setPaymentFormData({...paymentFormData, paymentDate: e.target.value})}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label className="block text-slate-500 text-[10px] font-black uppercase tracking-widest mb-3 px-1">Payment Mode</label>
+                                    <div className="grid grid-cols-3 gap-3">
+                                        {['Cash', 'UPI', 'Bank Transfer'].map(mode => (
+                                            <button 
+                                                key={mode}
+                                                type="button"
+                                                onClick={() => setPaymentFormData({...paymentFormData, paymentMode: mode})}
+                                                className={`py-3 rounded-2xl border font-black text-[10px] uppercase tracking-widest transition-all ${
+                                                    paymentFormData.paymentMode === mode ? 'bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-100' : 'bg-white text-slate-400 border-slate-100'
+                                                }`}
+                                            >
+                                                {mode}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <div className="flex gap-4 pt-6">
+                                    <button 
+                                        type="button" onClick={() => setIsPaymentModalOpen(false)}
+                                        className="flex-1 px-8 py-5 rounded-3xl text-slate-400 bg-slate-50 hover:bg-slate-100 transition-all font-black text-[11px] uppercase tracking-widest active:scale-95 border border-slate-100"
+                                    >
+                                        Discard
+                                    </button>
+                                    <button 
+                                        type="submit" 
+                                        disabled={actionLoading}
+                                        className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-black py-5 rounded-3xl flex items-center justify-center gap-2 transition-all shadow-xl text-[11px] uppercase tracking-widest active:scale-95"
+                                    >
+                                        {actionLoading ? <Loader2 className="animate-spin" /> : <ShieldCheck size={20} />}
+                                        Save Settlement
                                     </button>
                                 </div>
                             </form>

@@ -230,10 +230,10 @@ exports.getOrderById = async (req, res) => {
     }
 };
 
-// @desc    Update order payment status
-// @route   PUT /api/orders/:id/payment
-exports.updatePaymentStatus = async (req, res) => {
-    const { paymentStatus } = req.body;
+// @desc    Update order payment details
+// @route   POST /api/orders/:id/payment
+exports.updatePaymentDetails = async (req, res) => {
+    const { paymentStatus, paidAmount, paymentDate, paymentMode } = req.body;
     const orderId = req.params.id;
 
     if (!['PENDING', 'PAID', 'PARTIAL'].includes(paymentStatus)) {
@@ -244,21 +244,47 @@ exports.updatePaymentStatus = async (req, res) => {
         const order = await Order.findById(orderId);
         if (!order) return res.status(404).json({ message: 'Order not found' });
 
-        order.paymentStatus = paymentStatus;
-        if (paymentStatus === 'PAID') {
-            order.paidAt = new Date();
+        // Validation Rules:
+        // 1. Prevent updating payment if order is not COMPLETED
+        if (order.status !== 'COMPLETED') {
+            return res.status(400).json({ message: 'Payment can only be recorded for COMPLETED orders.' });
         }
+
+        // 2. paidAmount must be <= total order value
+        if (paidAmount > order.totalAmount) {
+            return res.status(400).json({ message: `Paid amount (₹${paidAmount}) cannot exceed total order value (₹${order.totalAmount}).` });
+        }
+
+        // 3. paidAmount must be > 0
+        if (paidAmount <= 0) {
+            return res.status(400).json({ message: 'Paid amount must be greater than 0.' });
+        }
+
+        // 4. All fields required when marking as Paid
+        if (paymentStatus === 'PAID') {
+            if (!paidAmount || !paymentDate || !paymentMode) {
+                return res.status(400).json({ message: 'All payment fields are required to mark as PAID.' });
+            }
+            if (paidAmount < order.totalAmount) {
+                return res.status(400).json({ message: 'Full amount must be paid to set status to PAID.' });
+            }
+        }
+
+        order.paymentStatus = paymentStatus;
+        order.paidAmount = paidAmount;
+        order.paymentDate = paymentDate;
+        order.paymentMode = paymentMode;
 
         await order.save();
 
         await ActivityLog.create({
             user_id: req.user.id,
             username: req.user.username || 'System',
-            action: `Order #${order._id.toString().slice(-6).toUpperCase()} Payment: ${paymentStatus}`,
+            action: `Order #${order._id.toString().slice(-6).toUpperCase()} Payment: ${paymentStatus} (₹${paidAmount})`,
             module: 'ERP'
         });
 
-        res.json({ message: `Payment status updated to ${paymentStatus}`, order });
+        res.json({ message: `Payment recorded as ${paymentStatus}`, order });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
