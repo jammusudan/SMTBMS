@@ -51,9 +51,9 @@ const LeadsManagement = () => {
                 crmService.getCustomers(),
                 staffService.getByRole('Sales')
             ]);
-            setLeads(leadsRes.data);
-            setCustomers(custRes.data);
-            setSalesReps(staffRes.data);
+            setLeads(leadsRes.data || []);
+            setCustomers(custRes.data || []);
+            setSalesReps(staffRes.data || []);
         } catch (error) {
             console.error('Error fetching data:', error);
         } finally {
@@ -128,17 +128,13 @@ const LeadsManagement = () => {
         if (!window.confirm('Convert this qualified lead to a formal Opportunity (Deal)?')) return;
         setActionLoading(true);
         try {
-            await crmService.convertLead(id); // Backend now handles Lead -> Deal
+            await crmService.convertLead(id);
             alert('Lead converted to Opportunity successfully!');
             fetchData();
         } catch (error) {
             const errorData = error.response?.data;
             const errorMsg = errorData?.message || error.message || 'Unknown error';
-            const detail = errorData?.error ? `\nDetail: ${errorData.error}` : '';
-            const stack = errorData?.stack ? `\n\nStack: ${errorData.stack.substring(0, 200)}...` : '';
-            
-            alert(`Conversion Failed: ${errorMsg}${detail}${stack}`);
-            console.error('Conversion Error Detail:', error);
+            alert(`Conversion Failed: ${errorMsg}`);
         } finally {
             setActionLoading(false);
         }
@@ -175,7 +171,6 @@ const LeadsManagement = () => {
                 </button>
             </header>
 
-            {/* Filter Bar */}
             <div className="flex flex-col md:flex-row gap-4 mb-8">
                 <div className="flex-1 relative group">
                     <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={20} />
@@ -225,7 +220,7 @@ const LeadsManagement = () => {
                                     <td className="px-8 py-6">
                                         <div className="space-y-1">
                                             <p className="text-slate-700 font-black text-[12px] uppercase tracking-widest">{lead.source}</p>
-                                            <p className="text-indigo-600 font-black text-[13px]">₹{lead.estimatedValue?.toLocaleString() || 0}</p>
+                                            <p className="text-indigo-600 font-black text-[13px]">Rs. {lead.estimatedValue?.toLocaleString() || 0}</p>
                                         </div>
                                     </td>
                                     <td className="px-8 py-6">
@@ -268,7 +263,6 @@ const LeadsManagement = () => {
                 </div>
             </div>
 
-            {/* Redesigned Capture Lead Modal */}
             <AnimatePresence>
                 {isModalOpen && (
                     <div className="fixed inset-0 z-[1001] flex items-center justify-center p-6">
@@ -281,7 +275,6 @@ const LeadsManagement = () => {
                             initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 20, opacity: 0 }}
                             className="bg-white w-full max-w-2xl rounded-[48px] shadow-2xl relative overflow-hidden flex flex-col max-h-[90vh] border border-white/20"
                         >
-                            {/* Header */}
                             <div className="p-10 pb-6 flex justify-between items-start border-b border-slate-50 bg-slate-50/30">
                                 <div>
                                     <div className="flex items-center gap-3 mb-2">
@@ -295,9 +288,7 @@ const LeadsManagement = () => {
                                 <button onClick={() => setIsModalOpen(false)} className="p-3 hover:bg-white hover:shadow-md rounded-2xl transition-all text-slate-300 hover:text-rose-500"><XCircle size={24} /></button>
                             </div>
 
-                            {/* Form Body */}
                             <div className="flex-1 overflow-y-auto p-10 space-y-12">
-                                {/* Section 1: Customer Info */}
                                 <div className="space-y-6">
                                     <div className="flex items-center gap-3 border-l-4 border-indigo-600 pl-4">
                                         <h3 className="text-[12px] font-black text-slate-900 uppercase tracking-widest">Customer Information</h3>
@@ -341,7 +332,6 @@ const LeadsManagement = () => {
                                     )}
                                 </div>
 
-                                {/* Section 2: Lead Info */}
                                 <div className="space-y-6">
                                     <div className="flex items-center gap-3 border-l-4 border-emerald-600 pl-4">
                                         <h3 className="text-[12px] font-black text-slate-900 uppercase tracking-widest">Requirement Details</h3>
@@ -386,7 +376,7 @@ const LeadsManagement = () => {
                                         </div>
 
                                         <div>
-                                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block ml-1 mb-3">Estimated Value (₹)</label>
+                                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block ml-1 mb-3">Estimated Value (Rs.)</label>
                                             <input 
                                                 type="number" placeholder="Optional Value"
                                                 className="w-full bg-slate-50/80 border border-slate-100 rounded-2xl py-4.5 px-6 text-sm font-black text-slate-800 focus:outline-none focus:border-indigo-100 focus:bg-white transition-all shadow-sm"
@@ -409,7 +399,6 @@ const LeadsManagement = () => {
                                     </div>
                                 </div>
 
-                                {/* Section 3: Assignment */}
                                 <div className="space-y-6">
                                     <div className="flex items-center gap-3 border-l-4 border-amber-600 pl-4">
                                         <h3 className="text-[12px] font-black text-slate-900 uppercase tracking-widest">Strategic Assignment</h3>
@@ -439,7 +428,6 @@ const LeadsManagement = () => {
                                 </div>
                             </div>
 
-                            {/* Footer Actions */}
                             <div className="p-10 bg-slate-50/50 border-t border-slate-50 flex gap-4">
                                 <button 
                                     type="button" onClick={() => setIsModalOpen(false)}
