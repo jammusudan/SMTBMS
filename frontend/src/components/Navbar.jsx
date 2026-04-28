@@ -123,115 +123,116 @@ const Navbar = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
             </AnimatePresence>
 
             <nav className={`fixed left-0 top-0 h-screen w-64 bg-white flex flex-col pt-4 z-50 border-r border-slate-100 shadow-sm transition-transform duration-300 lg:translate-x-0 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
-            {/* BRANDING - Compacted */}
-            <div className="flex items-center justify-between mb-4 px-6">
-                <div className="flex items-center gap-3">
-                    <div className="bg-gradient-to-br from-indigo-600 to-violet-700 p-2 rounded-xl text-white shadow-lg shadow-indigo-100 italic">
-                        <Package size={18} strokeWidth={2.5} />
+                {/* BRANDING - Compacted */}
+                <div className="flex items-center justify-between mb-4 px-6">
+                    <div className="flex items-center gap-3">
+                        <div className="bg-gradient-to-br from-indigo-600 to-violet-700 p-2 rounded-xl text-white shadow-lg shadow-indigo-100 italic">
+                            <Package size={18} strokeWidth={2.5} />
+                        </div>
+                        <h1 className="text-xl font-black text-slate-800 tracking-tighter">SMTBMS</h1>
                     </div>
-                    <h1 className="text-xl font-black text-slate-800 tracking-tighter">SMTBMS</h1>
-                </div>
-                
-                <div className="flex items-center gap-2">
-                    <div className="relative">
+                    
+                    <div className="flex items-center gap-2">
+                        <div className="relative">
+                            <button 
+                                onClick={() => setShowNotifications(!showNotifications)}
+                                className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-50 rounded-lg transition relative"
+                            >
+                                <Bell size={18} />
+                                {unreadCount > 0 && (
+                                    <span className="absolute top-0.5 right-0.5 w-2 h-2 bg-rose-500 rounded-full border-2 border-white"></span>
+                                )}
+                            </button>
+                        </div>
                         <button 
-                            onClick={() => setShowNotifications(!showNotifications)}
-                            className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-50 rounded-lg transition relative"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                            className="lg:hidden p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-50 rounded-lg transition"
                         >
-                            <Bell size={18} />
-                            {unreadCount > 0 && (
-                                <span className="absolute top-0.5 right-0.5 w-2 h-2 bg-rose-500 rounded-full border-2 border-white"></span>
-                            )}
+                            <X size={20} />
                         </button>
                     </div>
-                    <button 
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        className="lg:hidden p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-50 rounded-lg transition"
-                    >
-                        <X size={20} />
-                    </button>
                 </div>
-            </div>
 
-            {/* QUICK SEARCH - Compacted */}
-            <div className="px-4 mb-4">
-                <div className="relative group">
-                    <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors" size={14} />
-                    <input 
-                        type="text" 
-                        placeholder="Search..." 
-                        className="w-full bg-slate-50 border border-slate-100 rounded-xl py-2 pl-10 pr-3 text-xs font-medium text-slate-700 focus:outline-none focus:border-indigo-100 transition-all placeholder:text-slate-300"
-                    />
+                {/* QUICK SEARCH - Compacted */}
+                <div className="px-4 mb-4">
+                    <div className="relative group">
+                        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors" size={14} />
+                        <input 
+                            type="text" 
+                            placeholder="Search..." 
+                            className="w-full bg-slate-50 border border-slate-100 rounded-xl py-2 pl-10 pr-3 text-xs font-medium text-slate-700 focus:outline-none focus:border-indigo-100 transition-all placeholder:text-slate-300"
+                        />
+                    </div>
                 </div>
-            </div>
 
-            {/* NAV MENU - Compacted spacing */}
-            <div className="flex-1 space-y-4 overflow-y-auto px-3 pb-4 custom-scrollbar">
-                {filteredMenu.map((group, idx) => (
-                    <div key={idx} className="space-y-1.5">
-                        <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] pl-3 mb-1 opacity-70">{group.section}</h4>
-                        <div className="space-y-1">
-                            {group.items.map((item) => {
-                                const Icon = item.icon;
-                                const isActive = location.pathname === item.path || (item.path !== '/' && location.pathname.startsWith(item.path));
-                                return (
-                                    <Link 
-                                        key={item.name}
-                                        to={item.path}
-                                        onClick={() => setIsMobileMenuOpen(false)}
-                                        className={`flex items-center gap-3 px-3 py-3 rounded-xl transition-all font-black text-[15px] tracking-tight relative group ${
-                                            isActive 
-                                            ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-100' 
-                                            : 'text-slate-500 hover:text-indigo-600 hover:bg-slate-50'
-                                        }`}
-                                    >
-                                        <Icon size={20} strokeWidth={isActive ? 2.5 : 2} className={isActive ? 'text-white' : 'text-slate-300 group-hover:text-indigo-600'} />
-                                        <span>{(item.name === 'Payroll' && role === 'Employee') ? 'My Salary' : item.name}</span>
-                                    </Link>
-                                );
-                            })}
+                {/* NAV MENU - Compacted spacing */}
+                <div className="flex-1 space-y-4 overflow-y-auto px-3 pb-4 custom-scrollbar">
+                    {filteredMenu.map((group, idx) => (
+                        <div key={idx} className="space-y-1.5">
+                            <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] pl-3 mb-1 opacity-70">{group.section}</h4>
+                            <div className="space-y-1">
+                                {group.items.map((item) => {
+                                    const Icon = item.icon;
+                                    const isActive = location.pathname === item.path || (item.path !== '/' && location.pathname.startsWith(item.path));
+                                    return (
+                                        <Link 
+                                            key={item.name}
+                                            to={item.path}
+                                            onClick={() => setIsMobileMenuOpen(false)}
+                                            className={`flex items-center gap-3 px-3 py-3 rounded-xl transition-all font-black text-[15px] tracking-tight relative group ${
+                                                isActive 
+                                                ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-100' 
+                                                : 'text-slate-500 hover:text-indigo-600 hover:bg-slate-50'
+                                            }`}
+                                        >
+                                            <Icon size={20} strokeWidth={isActive ? 2.5 : 2} className={isActive ? 'text-white' : 'text-slate-300 group-hover:text-indigo-600'} />
+                                            <span>{(item.name === 'Payroll' && role === 'Employee') ? 'My Salary' : item.name}</span>
+                                        </Link>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+
+                {/* FOOTER / USER PROFILE - Optimized for space */}
+                <div className="mt-auto p-3 flex flex-col gap-2 border-t border-slate-50 bg-slate-50/30">
+                    <div className="flex items-center gap-4 px-4 py-3 bg-white rounded-xl border border-slate-100 shadow-sm transition-all hover:border-indigo-100">
+                        <div className="bg-slate-100 p-2 rounded-lg text-slate-500">
+                            <User size={18} />
+                        </div>
+                        <div className="overflow-hidden">
+                            <p className="text-[13px] font-black text-slate-800 tracking-tight truncate uppercase leading-none">{user.username}</p>
+                            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest truncate mt-1.5">{user.role}</p>
                         </div>
                     </div>
-                ))}
-            </div>
-
-            {/* FOOTER / USER PROFILE - Optimized for space */}
-            <div className="mt-auto p-3 flex flex-col gap-2 border-t border-slate-50 bg-slate-50/30">
-                <div className="flex items-center gap-4 px-4 py-3 bg-white rounded-xl border border-slate-100 shadow-sm transition-all hover:border-indigo-100">
-                    <div className="bg-slate-100 p-2 rounded-lg text-slate-500">
-                        <User size={18} />
-                    </div>
-                    <div className="overflow-hidden">
-                        <p className="text-[13px] font-black text-slate-800 tracking-tight truncate uppercase leading-none">{user.username}</p>
-                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest truncate mt-1.5">{user.role}</p>
-                    </div>
+                    
+                    <button 
+                        onClick={logout}
+                        className="w-full flex items-center justify-center gap-2 px-4 py-3.5 text-rose-500 hover:bg-rose-50 hover:text-rose-600 rounded-xl transition-all font-black text-[12px] uppercase tracking-widest border border-transparent shadow-sm active:scale-[0.98]"
+                    >
+                        <LogOut size={16} strokeWidth={3} />
+                        Sign Out
+                    </button>
                 </div>
-                
-                <button 
-                    onClick={logout}
-                    className="w-full flex items-center justify-center gap-2 px-4 py-3.5 text-rose-500 hover:bg-rose-50 hover:text-rose-600 rounded-xl transition-all font-black text-[12px] uppercase tracking-widest border border-transparent shadow-sm active:scale-[0.98]"
-                >
-                    <LogOut size={16} strokeWidth={3} />
-                    Sign Out
-                </button>
-            </div>
 
-            <style>{`
-                .custom-scrollbar::-webkit-scrollbar { 
-                    width: 6px; 
-                }
-                .custom-scrollbar::-webkit-scrollbar-track { 
-                    background: #f8fafc; 
-                }
-                .custom-scrollbar::-webkit-scrollbar-thumb { 
-                    background: #cbd5e1; 
-                    border-radius: 20px;
-                }
-                .custom-scrollbar::-webkit-scrollbar-thumb:hover { 
-                    background: #94a3b8; 
-                }
-            `}</style>
-        </nav>
+                <style>{`
+                    .custom-scrollbar::-webkit-scrollbar { 
+                        width: 6px; 
+                    }
+                    .custom-scrollbar::-webkit-scrollbar-track { 
+                        background: #f8fafc; 
+                    }
+                    .custom-scrollbar::-webkit-scrollbar-thumb { 
+                        background: #cbd5e1; 
+                        border-radius: 20px;
+                    }
+                    .custom-scrollbar::-webkit-scrollbar-thumb:hover { 
+                        background: #94a3b8; 
+                    }
+                `}</style>
+            </nav>
+        </>
     );
 };
 

@@ -17,6 +17,7 @@ const ManagerDashboard = () => {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [pendingVerifications, setPendingVerifications] = useState(0);
+    const [pendingLeaves, setPendingLeaves] = useState(0);
     const [filter, setFilter] = useState('ALL'); // ALL, PENDING_PAYMENT, HIGH_VALUE, COMPLETED
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [isViewModalOpen, setIsViewModalOpen] = useState(false);
@@ -24,11 +25,12 @@ const ManagerDashboard = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [statsRes, notifRes, custRes, orderRes] = await Promise.all([
+                const [statsRes, notifRes, custRes, orderRes, leaveRes] = await Promise.all([
                     dashboardService.getStats(),
                     notificationService.getAll(),
                     crmService.getCustomers(),
-                    erpService.getOrders()
+                    erpService.getOrders(),
+                    hrmsService.getLeaves({ status: 'Pending' })
                 ]);
                 setStats(statsRes.data || {});
                 setNotifications(notifRes.data || []);
@@ -37,6 +39,7 @@ const ManagerDashboard = () => {
                 // Count customers awaiting Manager approval
                 const pending = custRes.data.filter(c => c.adminApproved && !c.managerApproved).length;
                 setPendingVerifications(pending);
+                setPendingLeaves(leaveRes.data?.filter(l => l.status === 'Pending').length || 0);
             } catch (error) {
                 console.error('Error fetching manager dashboard stats:', error);
             } finally {
@@ -101,24 +104,18 @@ const ManagerDashboard = () => {
             </header>
 
             {/* TOP METRICS GRID */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6 mb-8">
-                <StatCard 
-                    title="Verification Hub" 
-                    value={pendingVerifications}
-                    icon={ShieldCheck} highlight link="/crm/customers" 
-                    subtext="Awaiting Manager Seal"
-                />
-                <StatCard 
-                    title="Total Team" 
-                    value={stats.employees.total}
-                    icon={Users} color="indigo" link="/hrms" 
-                    subtext="Assigned Employees"
-                />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 <StatCard 
                     title="Active Floor" 
                     value={activeEmpCount}
-                    icon={Clock} color="emerald" link="/attendance" 
+                    icon={Clock} highlight link="/attendance" 
                     subtext="Clocked in today"
+                />
+                <StatCard 
+                    title="Pending Leaves" 
+                    value={pendingLeaves}
+                    icon={Calendar} color="indigo" link="/leaves" 
+                    subtext="Awaiting Approval"
                 />
                 <StatCard 
                     title="Pending Tasks" 

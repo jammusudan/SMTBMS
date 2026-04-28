@@ -310,7 +310,6 @@ const SalarySystem = () => {
                     <button onClick={exportToCSV} className="p-2.5 bg-white border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-50 shadow-sm transition-all md:block hidden"><Download size={18} /></button>
                 </div>
             </header>
-            </header>
 
             {/* KPI Section */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">

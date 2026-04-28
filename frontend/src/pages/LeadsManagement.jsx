@@ -202,69 +202,70 @@ const LeadsManagement = () => {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-50">
-                        {loading ? (
-                            <tr><td colSpan="4" className="py-24 text-center"><Loader2 className="animate-spin text-indigo-600 mx-auto" /></td></tr>
-                        ) : leads.length === 0 ? (
-                            <tr><td colSpan="4" className="py-24 text-center text-slate-400 font-black uppercase text-[11px] tracking-widest">No leads captured yet</td></tr>
-                        ) : leads.map((lead) => (
-                            <tr key={lead.id || lead._id} className="group hover:bg-slate-50/30 transition-all">
-                                <td className="px-10 py-8">
-                                    <div className="flex items-center gap-5">
-                                        <div className="w-14 h-14 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-black text-xl shadow-sm group-hover:scale-110 transition-transform">
-                                            {lead.name?.charAt(0) || '?'}
-                                        </div>
-                                        <div>
-                                            <p className="text-slate-900 font-black text-[16px] tracking-tight">{lead.name}</p>
-                                            <div className="flex items-center gap-4 mt-1.5">
-                                                <span className="flex items-center gap-1.5 text-slate-400 text-[12px] font-bold tracking-tight"><Mail size={14} /> {lead.email || 'N/A'}</span>
-                                                <span className="flex items-center gap-1.5 text-slate-400 text-[12px] font-bold"><Phone size={14} /> {lead.phone || 'N/A'}</span>
+                            {loading ? (
+                                <tr><td colSpan="4" className="py-24 text-center"><Loader2 className="animate-spin text-indigo-600 mx-auto" /></td></tr>
+                            ) : leads.length === 0 ? (
+                                <tr><td colSpan="4" className="py-24 text-center text-slate-400 font-black uppercase text-[11px] tracking-widest">No leads captured yet</td></tr>
+                            ) : leads.map((lead) => (
+                                <tr key={lead.id || lead._id} className="group hover:bg-slate-50/30 transition-all">
+                                    <td className="px-8 py-6">
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-black text-lg shadow-sm group-hover:scale-110 transition-transform">
+                                                {lead.name?.charAt(0) || '?'}
+                                            </div>
+                                            <div>
+                                                <p className="text-slate-900 font-black text-[15px] tracking-tight">{lead.name}</p>
+                                                <div className="flex items-center gap-3 mt-1">
+                                                    <span className="flex items-center gap-1.5 text-slate-400 text-[11px] font-bold tracking-tight"><Mail size={12} /> {lead.email || 'N/A'}</span>
+                                                    <span className="flex items-center gap-1.5 text-slate-400 text-[11px] font-bold"><Phone size={12} /> {lead.phone || 'N/A'}</span>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </td>
-                                <td className="px-10 py-8">
-                                    <div className="space-y-1.5">
-                                        <p className="text-slate-700 font-black text-[13px] uppercase tracking-widest">{lead.source}</p>
-                                        <p className="text-indigo-600 font-black text-[14px]">₹{lead.estimatedValue?.toLocaleString() || 0}</p>
-                                    </div>
-                                </td>
-                                <td className="px-10 py-8">
-                                    <div className="space-y-2.5">
-                                        <span className={`inline-flex px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border ${getStatusStyle(lead.status)}`}>
-                                            {lead.status}
-                                        </span>
-                                        <p className="text-slate-400 text-[11px] font-black uppercase tracking-widest flex items-center gap-2">
-                                            <UserCheck size={14} className="text-indigo-400" /> {typeof lead.assigned_to === 'object' ? (lead.assigned_to?.username || 'Unassigned') : (lead.assigned_to || 'Unassigned')}
-                                        </p>
-                                    </div>
-                                </td>
-                                <td className="px-10 py-8 text-right">
-                                    <div className="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-all">
-                                        {lead.status !== 'Qualified' && lead.status !== 'Lost' && (
-                                            <button 
-                                                onClick={() => handleQualifyLead(lead.id || lead._id)}
-                                                className="px-5 py-2.5 bg-indigo-600 text-white text-[11px] font-black uppercase tracking-widest rounded-xl hover:bg-indigo-700 transition-all flex items-center gap-2 shadow-lg shadow-indigo-100 active:scale-95"
-                                            >
-                                                Qualify <ChevronRight size={14} />
+                                    </td>
+                                    <td className="px-8 py-6">
+                                        <div className="space-y-1">
+                                            <p className="text-slate-700 font-black text-[12px] uppercase tracking-widest">{lead.source}</p>
+                                            <p className="text-indigo-600 font-black text-[13px]">₹{lead.estimatedValue?.toLocaleString() || 0}</p>
+                                        </div>
+                                    </td>
+                                    <td className="px-8 py-6">
+                                        <div className="space-y-2">
+                                            <span className={`inline-flex px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border ${getStatusStyle(lead.status)}`}>
+                                                {lead.status}
+                                            </span>
+                                            <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
+                                                <UserCheck size={12} className="text-indigo-400" /> {typeof lead.assigned_to === 'object' ? (lead.assigned_to?.username || 'Unassigned') : (lead.assigned_to || 'Unassigned')}
+                                            </p>
+                                        </div>
+                                    </td>
+                                    <td className="px-8 py-6 text-right">
+                                        <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all">
+                                            {lead.status !== 'Qualified' && lead.status !== 'Lost' && (
+                                                <button 
+                                                    onClick={() => handleQualifyLead(lead.id || lead._id)}
+                                                    className="px-4 py-2 bg-indigo-600 text-white text-[10px] font-black uppercase tracking-widest rounded-lg hover:bg-indigo-700 transition-all flex items-center gap-2 shadow-lg shadow-indigo-100 active:scale-95"
+                                                >
+                                                    Qualify
+                                                </button>
+                                            )}
+                                            {lead.status === 'Qualified' && (
+                                                <button 
+                                                    onClick={() => handleConvertToDeal(lead.id || lead._id)}
+                                                    className="px-4 py-2 bg-emerald-600 text-white text-[10px] font-black uppercase tracking-widest rounded-lg hover:bg-emerald-700 transition-all flex items-center gap-2 shadow-lg shadow-emerald-100 active:scale-95"
+                                                >
+                                                    Convert
+                                                </button>
+                                            )}
+                                            <button className="p-2 text-slate-400 hover:text-indigo-600 bg-white border border-slate-100 rounded-lg transition-all shadow-sm hover:shadow-md">
+                                                <Edit2 size={16} />
                                             </button>
-                                        )}
-                                        {lead.status === 'Qualified' && (
-                                            <button 
-                                                onClick={() => handleConvertToDeal(lead.id || lead._id)}
-                                                className="px-5 py-2.5 bg-emerald-600 text-white text-[11px] font-black uppercase tracking-widest rounded-xl hover:bg-emerald-700 transition-all flex items-center gap-2 shadow-lg shadow-emerald-100 active:scale-95"
-                                            >
-                                                Convert to Deal <ChevronRight size={14} />
-                                            </button>
-                                        )}
-                                        <button className="p-2.5 text-slate-400 hover:text-indigo-600 bg-white border border-slate-100 rounded-xl transition-all shadow-sm hover:shadow-md">
-                                            <Edit2 size={18} />
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
             {/* Redesigned Capture Lead Modal */}

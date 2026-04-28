@@ -9,7 +9,7 @@ import {
     ClipboardList, Megaphone, Wallet, Umbrella, 
     TrendingUp, ArrowUpRight, Download, Eye, ShieldCheck,
     Plus, LayoutGrid, Zap, Info, MoreHorizontal,
-    Star, Timer, CheckSquare, ListTodo, Play, Check, AlertTriangle
+    Star, Timer, CheckSquare, ListTodo, Play, Check, AlertTriangle, IndianRupee
 } from 'lucide-react';
 
 const EmployeeDashboard = () => {
@@ -219,6 +219,63 @@ const EmployeeDashboard = () => {
                             <p className="text-5xl font-black text-emerald-500 tracking-tighter">{tasks?.metrics?.completed || 0}</p>
                             <p className="text-[9px] font-bold text-slate-400 uppercase mt-2">{tasks?.metrics?.total || 0} Missions Assigned</p>
                         </div>
+                    </div>
+                </div>
+            </div>
+            
+            {/* QUICK ACTIONS & FIELD OPS */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                <div 
+                    onClick={() => navigate('/crm/field-audit')}
+                    className="group bg-indigo-600 p-8 rounded-[40px] border border-indigo-500 shadow-xl shadow-indigo-100 flex items-center justify-between cursor-pointer hover:scale-[1.02] transition-all"
+                >
+                    <div className="flex items-center gap-6">
+                        <div className="w-14 h-14 rounded-2xl bg-white/20 flex items-center justify-center text-white">
+                            <ShieldCheck size={28} />
+                        </div>
+                        <div>
+                            <h3 className="text-xl font-black text-white tracking-tight">FIELD AUDIT</h3>
+                            <p className="text-[10px] font-black text-indigo-100 uppercase tracking-widest mt-1">Submit Field Report</p>
+                        </div>
+                    </div>
+                    <div className="p-3 bg-white/10 rounded-full text-white group-hover:bg-white group-hover:text-indigo-600 transition-all">
+                        <ArrowUpRight size={20} />
+                    </div>
+                </div>
+
+                <div 
+                    onClick={() => navigate('/tasks')}
+                    className="group bg-white p-8 rounded-[40px] border border-slate-100 shadow-sm flex items-center justify-between cursor-pointer hover:border-indigo-100 transition-all"
+                >
+                    <div className="flex items-center gap-6">
+                        <div className="w-14 h-14 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:text-indigo-600 transition-colors">
+                            <ClipboardList size={28} />
+                        </div>
+                        <div>
+                            <h3 className="text-xl font-black text-slate-900 tracking-tight">MY TASKS</h3>
+                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Mission Control</p>
+                        </div>
+                    </div>
+                    <div className="p-3 bg-slate-50 rounded-full text-slate-400 group-hover:bg-indigo-600 group-hover:text-white transition-all">
+                        <ArrowUpRight size={20} />
+                    </div>
+                </div>
+
+                <div 
+                    onClick={() => navigate('/salary')}
+                    className="group bg-white p-8 rounded-[40px] border border-slate-100 shadow-sm flex items-center justify-between cursor-pointer hover:border-indigo-100 transition-all"
+                >
+                    <div className="flex items-center gap-6">
+                        <div className="w-14 h-14 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:text-indigo-600 transition-colors">
+                            <IndianRupee size={28} />
+                        </div>
+                        <div>
+                            <h3 className="text-xl font-black text-slate-900 tracking-tight">PAYSLIPS</h3>
+                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Financial Portfolio</p>
+                        </div>
+                    </div>
+                    <div className="p-3 bg-slate-50 rounded-full text-slate-400 group-hover:bg-indigo-600 group-hover:text-white transition-all">
+                        <ArrowUpRight size={20} />
                     </div>
                 </div>
             </div>
