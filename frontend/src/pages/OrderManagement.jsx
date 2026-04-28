@@ -174,20 +174,21 @@ const OrderManagement = () => {
 
     // Financial Aggregations
     const kpis = {
-        totalOrders: orders.length,
-        totalRevenue: orders.filter(o => o.orderType === 'SALE' && o.status !== 'CANCELLED').reduce((sum, o) => sum + (o.totalAmount || 0), 0),
-        totalPaid: orders.filter(o => o.status !== 'CANCELLED').reduce((sum, o) => sum + (o.paidAmount || 0), 0),
-        totalPending: orders.filter(o => o.status !== 'CANCELLED').reduce((sum, o) => sum + ((o.totalAmount || 0) - (o.paidAmount || 0)), 0)
+        totalOrders: (orders || []).length,
+        totalRevenue: (orders || []).filter(o => o.orderType === 'SALE' && o.status !== 'CANCELLED').reduce((sum, o) => sum + (o.totalAmount || 0), 0),
+        totalPaid: (orders || []).filter(o => o.status !== 'CANCELLED').reduce((sum, o) => sum + (o.paidAmount || 0), 0),
+        totalPending: (orders || []).filter(o => o.status !== 'CANCELLED').reduce((sum, o) => sum + ((o.totalAmount || 0) - (o.paidAmount || 0)), 0)
     };
 
     // Business Intelligence Analytics
     const getAnalytics = () => {
-        if (orders.length === 0) return { topProduct: 'N/A', topCustomer: 'N/A' };
+        const safeOrders = orders || [];
+        if (safeOrders.length === 0) return { topProduct: 'N/A', topCustomer: 'N/A' };
         
         const productStats = {};
         const customerStats = {};
         
-        orders.forEach(o => {
+        safeOrders.forEach(o => {
             if (o.status === 'CANCELLED') return;
             
             // Product Stats
