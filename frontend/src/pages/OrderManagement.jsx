@@ -236,19 +236,19 @@ const OrderManagement = () => {
         });
 
     return (
-        <div className="p-8 min-h-screen">
-            <header className="flex justify-between items-center mb-10">
+        <div className="p-4 md:p-8 min-h-screen">
+            <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-6">
                 <div>
-                    <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-3">
+                    <h1 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight flex items-center gap-3">
                         <ShoppingCart className="text-indigo-600" size={32} />
                         Order Registry
                     </h1>
-                    <p className="text-slate-600 mt-1 uppercase text-[10px] font-black tracking-widest">Full lifecycle audit for procurement & sales.</p>
+                    <p className="text-slate-600 mt-1 uppercase text-[10px] font-black tracking-widest leading-relaxed">Full lifecycle audit for procurement & sales.</p>
                 </div>
                 {!isManager && (
                     <button 
                         onClick={() => setIsModalOpen(true)}
-                        className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-6 rounded-xl transition-all shadow-lg shadow-indigo-200"
+                        className="w-full md:w-auto flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-xl transition-all shadow-lg shadow-indigo-100"
                     >
                         <Plus size={20} />
                         New Entry
@@ -256,7 +256,7 @@ const OrderManagement = () => {
                 )}
             </header>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-10">
                 <KpiCard title="Total Registry" value={kpis.totalOrders} subtitle="Order Volume" icon={Package} color="indigo" />
                 <KpiCard title="Gross Revenue" value={`₹${formatCurrency(kpis.totalRevenue)}`} subtitle="Sales Pipeline" icon={TrendingUp} color="emerald" />
                 <KpiCard title="Settled Amount" value={`₹${formatCurrency(kpis.totalPaid)}`} subtitle="Recovered Funds" icon={ShieldCheck} color="blue" />
@@ -297,13 +297,13 @@ const OrderManagement = () => {
             </div>
 
             {/* Filter & Search Hub */}
-            <div className="flex flex-col xl:flex-row items-stretch xl:items-center gap-4 mb-6">
-                <div className="flex-1 bg-white p-2.5 rounded-2xl flex items-center gap-4 border border-slate-200 shadow-sm transition-all focus-within:border-indigo-100 focus-within:ring-4 focus-within:ring-indigo-50">
+            <div className="flex flex-col lg:flex-row items-stretch lg:items-center gap-4 mb-6">
+                <div className="flex-1 bg-white p-3 rounded-2xl flex items-center gap-4 border border-slate-200 shadow-sm transition-all focus-within:border-indigo-100 focus-within:ring-4 focus-within:ring-indigo-50">
                     <Search className="text-slate-400 ml-2" size={20} />
                     <input 
                         type="text" 
-                        placeholder="Scan registry by material, type, or role..." 
-                        className="bg-transparent border-none outline-none text-slate-900 placeholder-slate-300 w-full font-black text-xs uppercase tracking-wider"
+                        placeholder="Scan registry..." 
+                        className="bg-transparent border-none outline-none text-slate-900 placeholder-slate-300 w-full font-black text-[11px] uppercase tracking-wider"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
@@ -311,48 +311,50 @@ const OrderManagement = () => {
                 
                 <div className="flex flex-wrap items-center gap-2 bg-slate-50 p-2 rounded-2xl border border-slate-200">
                     {[
-                        { id: 'ALL', label: 'All Orders', icon: ShoppingCart },
-                        { id: 'PAID', label: 'Paid Only', icon: ShieldCheck },
-                        { id: 'PENDING_PAYMENT', label: 'Debt Tracking', icon: AlertCircle },
-                        { id: 'HIGH_VALUE', label: 'Whale Deals', icon: TrendingUp }
+                        { id: 'ALL', label: 'All', icon: ShoppingCart },
+                        { id: 'PAID', label: 'Paid', icon: ShieldCheck },
+                        { id: 'PENDING_PAYMENT', label: 'Debt', icon: AlertCircle },
+                        { id: 'HIGH_VALUE', label: 'High Value', icon: TrendingUp }
                     ].map(tab => (
                         <button 
                             key={tab.id}
                             onClick={() => setActiveFilter(tab.id)}
-                            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
+                            className={`flex items-center gap-2 px-3 md:px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all ${
                                 activeFilter === tab.id 
                                 ? 'bg-slate-900 text-white shadow-lg shadow-slate-200' 
                                 : 'text-slate-500 hover:bg-white hover:text-slate-900'
                             }`}
                         >
-                            <tab.icon size={14} />
+                            <tab.icon size={12} className="md:size-14" />
                             {tab.label}
                         </button>
                     ))}
                 </div>
 
-                <div className="relative group">
-                    <div className="flex items-center gap-3 bg-white px-4 py-2.5 rounded-2xl border border-slate-200 shadow-sm font-black text-[10px] uppercase tracking-widest text-slate-600">
-                        <ArrowUpDown size={14} className="text-indigo-600" />
-                        Sort: 
+                <div className="relative group w-full lg:w-auto">
+                    <div className="flex items-center justify-between lg:justify-start gap-3 bg-white px-4 py-3 lg:py-2.5 rounded-2xl border border-slate-200 shadow-sm font-black text-[10px] uppercase tracking-widest text-slate-600">
+                        <div className="flex items-center gap-2">
+                            <ArrowUpDown size={14} className="text-indigo-600" />
+                            Sort: 
+                        </div>
                         <select 
-                            className="bg-transparent border-none outline-none text-slate-900 cursor-pointer"
+                            className="bg-transparent border-none outline-none text-slate-900 cursor-pointer flex-1 lg:flex-none"
                             value={sortBy}
                             onChange={(e) => setSortBy(e.target.value)}
                         >
-                            <option value="DATE_DESC">Newest First</option>
-                            <option value="DATE_ASC">Oldest First</option>
-                            <option value="AMOUNT_DESC">Highest Value</option>
-                            <option value="AMOUNT_ASC">Lowest Value</option>
+                            <option value="DATE_DESC">Latest</option>
+                            <option value="DATE_ASC">Oldest</option>
+                            <option value="AMOUNT_DESC">Highest</option>
+                            <option value="AMOUNT_ASC">Lowest</option>
                         </select>
                     </div>
                 </div>
             </div>
 
             {/* Orders Table */}
-            <div className="bg-white rounded-[24px] overflow-hidden shadow-sm border border-slate-200">
+            <div className="bg-white rounded-[32px] border border-slate-100 shadow-sm overflow-hidden">
                 <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse">
+                    <table className="w-full text-left min-w-[1000px] border-collapse">
                         <thead>
                             <tr className="bg-slate-50 text-slate-400 uppercase text-[10px] font-black tracking-widest border-b border-slate-100">
                                 <th className="px-6 py-4 font-black">Reference</th>

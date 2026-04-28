@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Navbar from './components/Navbar';
+import { Menu, Package, Bell } from 'lucide-react';
 import { ROLES, MODULE_ACCESS } from './utils/roles';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -41,6 +42,7 @@ import InventoryAnalytics from './pages/InventoryAnalytics';
 
 const Layout = ({ children }) => {
   const { user } = useAuth();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
   if (!user) {
     return (
@@ -54,10 +56,29 @@ const Layout = ({ children }) => {
 
   return (
     <div className="flex bg-[#f5f7fa] min-h-screen">
-      <Navbar />
-      <main className="flex-1 ml-64 min-h-screen text-slate-900">
-        {children}
-      </main>
+      <Navbar isMobileMenuOpen={isMobileMenuOpen} setIsMobileMenuOpen={setIsMobileMenuOpen} />
+      
+      <div className="flex-1 flex flex-col min-h-screen">
+        {/* Mobile Header */}
+        <header className="lg:hidden bg-white border-b border-slate-100 px-6 py-4 flex items-center justify-between sticky top-0 z-40">
+          <div className="flex items-center gap-3">
+            <div className="bg-indigo-600 p-1.5 rounded-lg text-white">
+              <Package size={18} />
+            </div>
+            <h1 className="text-lg font-black text-slate-800 tracking-tighter">SMTBMS</h1>
+          </div>
+          <button 
+            onClick={() => setIsMobileMenuOpen(true)}
+            className="p-2 text-slate-500 hover:bg-slate-50 rounded-xl transition-all"
+          >
+            <Menu size={20} />
+          </button>
+        </header>
+
+        <main className="flex-1 lg:ml-64 min-h-screen text-slate-900 overflow-x-hidden">
+          {children}
+        </main>
+      </div>
     </div>
   );
 };

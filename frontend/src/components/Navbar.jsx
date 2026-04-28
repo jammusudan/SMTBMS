@@ -6,14 +6,14 @@ import {
     TrendingUp, Receipt, Bell, Settings as SettingsIcon, 
     Activity, LogOut, Search, ClipboardList, Banknote, 
     Megaphone, BarChart3, User, ShieldCheck, Warehouse,
-    Target, Briefcase, PieChart
+    Target, Briefcase, PieChart, Menu, X
 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { notificationService } from '../services/api';
 import { ROLES, MODULE_ACCESS, hasAccess } from '../utils/roles';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const Navbar = () => {
+const Navbar = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
     const { user, logout } = useAuth();
     const location = useLocation();
     
@@ -108,7 +108,21 @@ const Navbar = () => {
     const unreadCount = notifications.filter(n => !n.isRead).length;
 
     return (
-        <nav className="fixed left-0 top-0 h-screen w-64 bg-white flex flex-col pt-4 z-50 border-r border-slate-100 shadow-sm">
+        <>
+            {/* Mobile Backdrop */}
+            <AnimatePresence>
+                {isMobileMenuOpen && (
+                    <motion.div 
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[45] lg:hidden"
+                    />
+                )}
+            </AnimatePresence>
+
+            <nav className={`fixed left-0 top-0 h-screen w-64 bg-white flex flex-col pt-4 z-50 border-r border-slate-100 shadow-sm transition-transform duration-300 lg:translate-x-0 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
             {/* BRANDING - Compacted */}
             <div className="flex items-center justify-between mb-4 px-6">
                 <div className="flex items-center gap-3">
@@ -118,15 +132,23 @@ const Navbar = () => {
                     <h1 className="text-xl font-black text-slate-800 tracking-tighter">SMTBMS</h1>
                 </div>
                 
-                <div className="relative">
+                <div className="flex items-center gap-2">
+                    <div className="relative">
+                        <button 
+                            onClick={() => setShowNotifications(!showNotifications)}
+                            className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-50 rounded-lg transition relative"
+                        >
+                            <Bell size={18} />
+                            {unreadCount > 0 && (
+                                <span className="absolute top-0.5 right-0.5 w-2 h-2 bg-rose-500 rounded-full border-2 border-white"></span>
+                            )}
+                        </button>
+                    </div>
                     <button 
-                        onClick={() => setShowNotifications(!showNotifications)}
-                        className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-50 rounded-lg transition relative"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className="lg:hidden p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-50 rounded-lg transition"
                     >
-                        <Bell size={18} />
-                        {unreadCount > 0 && (
-                            <span className="absolute top-0.5 right-0.5 w-2 h-2 bg-rose-500 rounded-full border-2 border-white"></span>
-                        )}
+                        <X size={20} />
                     </button>
                 </div>
             </div>
@@ -156,6 +178,7 @@ const Navbar = () => {
                                     <Link 
                                         key={item.name}
                                         to={item.path}
+                                        onClick={() => setIsMobileMenuOpen(false)}
                                         className={`flex items-center gap-3 px-3 py-3 rounded-xl transition-all font-black text-[15px] tracking-tight relative group ${
                                             isActive 
                                             ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-100' 

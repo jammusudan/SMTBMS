@@ -156,51 +156,52 @@ const LeadsManagement = () => {
     const isSubmitDisabled = !formData.notes || (!formData.customer_id && (!formData.name || !formData.phone));
 
     return (
-        <div className="p-8 max-w-[1600px] mx-auto min-h-screen bg-white">
-            <header className="flex justify-between items-end mb-10">
+        <div className="p-4 md:p-8 max-w-[1600px] mx-auto min-h-screen bg-white">
+            <header className="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-10 gap-6">
                 <div>
-                    <div className="flex items-center gap-3 mb-3">
-                        <span className="bg-indigo-50 text-indigo-700 text-[11px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest">Sales CRM</span>
-                        <span className="text-slate-300 text-base font-medium">/</span>
-                        <span className="text-slate-500 text-[11px] font-black uppercase tracking-widest">Lead Intelligence</span>
+                    <div className="flex flex-wrap items-center gap-2 md:gap-3 mb-3">
+                        <span className="bg-indigo-50 text-indigo-700 text-[9px] md:text-[11px] font-black px-3 md:px-4 py-1.5 rounded-full uppercase tracking-widest">Sales CRM</span>
+                        <span className="text-slate-300 text-sm font-medium">/</span>
+                        <span className="text-slate-500 text-[9px] md:text-[11px] font-black uppercase tracking-widest">Lead Intelligence</span>
                     </div>
-                    <h1 className="text-4xl font-black text-slate-900 tracking-tight italic">Prospect Pipeline</h1>
-                    <p className="text-slate-400 font-bold text-[13px] uppercase tracking-[0.2em] mt-3 opacity-80">Capture and nurture high-potential business opportunities</p>
+                    <h1 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight italic">Prospect Pipeline</h1>
+                    <p className="text-slate-400 font-bold text-[11px] md:text-[13px] uppercase tracking-[0.2em] mt-3 opacity-80 leading-relaxed">Capture and nurture high-potential opportunities</p>
                 </div>
                 <button 
                     onClick={() => setIsModalOpen(true)}
-                    className="flex items-center gap-3 bg-slate-900 hover:bg-slate-800 text-white font-black text-[13px] uppercase tracking-widest py-4 px-10 rounded-2xl shadow-2xl shadow-slate-200 transition-all active:scale-[0.98]"
+                    className="w-full lg:w-auto flex items-center justify-center gap-3 bg-slate-900 hover:bg-slate-800 text-white font-black text-[11px] md:text-[13px] uppercase tracking-widest py-4 px-8 md:px-10 rounded-2xl shadow-xl shadow-slate-200 transition-all active:scale-[0.98]"
                 >
-                    <Plus size={18} /> Capture New Lead
+                    <Plus size={18} /> New Lead
                 </button>
             </header>
 
             {/* Filter Bar */}
-            <div className="flex gap-4 mb-8">
+            <div className="flex flex-col md:flex-row gap-4 mb-8">
                 <div className="flex-1 relative group">
                     <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={20} />
                     <input 
                         type="text" 
-                        placeholder="Search leads by name, source or status..." 
-                        className="w-full bg-slate-50/50 border border-slate-100 rounded-[24px] py-5 pl-14 pr-6 text-sm font-black text-slate-700 focus:outline-none focus:border-indigo-100 focus:bg-white focus:ring-8 focus:ring-indigo-50/30 transition-all placeholder:text-slate-400"
+                        placeholder="Search leads..." 
+                        className="w-full bg-slate-50/50 border border-slate-100 rounded-[20px] py-4 pl-14 pr-6 text-sm font-black text-slate-700 focus:outline-none focus:border-indigo-100 focus:bg-white transition-all placeholder:text-slate-400"
                     />
                 </div>
-                <button className="flex items-center gap-2 px-8 bg-white border border-slate-100 rounded-[24px] text-slate-600 font-black text-[11px] uppercase tracking-widest hover:bg-slate-50 transition-all shadow-sm">
+                <button className="flex items-center justify-center gap-2 px-8 py-4 bg-white border border-slate-100 rounded-[20px] text-slate-600 font-black text-[11px] uppercase tracking-widest hover:bg-slate-50 transition-all shadow-sm">
                     <Filter size={16} /> Filter
                 </button>
             </div>
 
-            <div className="bg-white rounded-[40px] overflow-hidden border border-slate-100 shadow-[0_4px_25px_-5px_rgba(0,0,0,0.02)]">
-                <table className="w-full text-left border-collapse">
-                    <thead>
-                        <tr className="bg-slate-50/50 border-b border-slate-100">
-                            <th className="px-10 py-6 text-[11px] font-black text-slate-400 uppercase tracking-widest">Prospect</th>
-                            <th className="px-10 py-6 text-[11px] font-black text-slate-400 uppercase tracking-widest">Lead Source</th>
-                            <th className="px-10 py-6 text-[11px] font-black text-slate-400 uppercase tracking-widest">Status & Assignment</th>
-                            <th className="px-10 py-6 text-[11px] font-black text-slate-400 uppercase tracking-widest text-right">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-50">
+            <div className="bg-white rounded-[32px] overflow-hidden border border-slate-100 shadow-sm">
+                <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse min-w-[1000px]">
+                        <thead>
+                            <tr className="bg-slate-50/50 border-b border-slate-100">
+                                <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Prospect</th>
+                                <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Lead Source</th>
+                                <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Status & Assignment</th>
+                                <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-50">
                         {loading ? (
                             <tr><td colSpan="4" className="py-24 text-center"><Loader2 className="animate-spin text-indigo-600 mx-auto" /></td></tr>
                         ) : leads.length === 0 ? (

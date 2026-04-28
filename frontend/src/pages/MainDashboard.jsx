@@ -93,8 +93,8 @@ const MainDashboard = () => {
     );
 
     return (
-        <div className="p-6 max-w-[1600px] mx-auto min-h-screen bg-white">
-            <header className="mb-10 flex justify-between items-center bg-slate-50 p-6 rounded-3xl border border-slate-100 shadow-sm">
+        <div className="p-4 md:p-8 max-w-[1600px] mx-auto min-h-screen bg-white">
+            <header className="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center bg-slate-50 p-6 rounded-3xl border border-slate-100 shadow-sm gap-6">
                 <div className="flex items-center gap-4">
                     <div className="p-3 bg-white rounded-xl border border-slate-100 text-slate-600 shadow-sm">
                         <ShieldCheck size={22} />
@@ -106,23 +106,23 @@ const MainDashboard = () => {
                         <span className="text-slate-400 text-[11px] font-bold uppercase tracking-widest mt-2 opacity-70">Operational Oversight | {new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
                     </div>
                 </div>
-                <div className="flex gap-4">
-                    <Link to="/announcements" className="flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-8 py-4 rounded-2xl font-black text-[13px] uppercase tracking-widest transition shadow-sm active:scale-[0.98]">
-                        <Megaphone size={18} /> Broadcast
+                <div className="flex flex-wrap gap-3 w-full md:w-auto">
+                    <Link to="/announcements" className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-6 py-4 rounded-2xl font-black text-[11px] uppercase tracking-widest transition shadow-sm active:scale-[0.98]">
+                        <Megaphone size={16} /> Broadcast
                     </Link>
                     {isSuperAdmin && (
-                        <Link to="/settings" className="flex items-center gap-2 bg-white text-slate-700 border border-slate-200 px-8 py-4 rounded-2xl font-black text-[13px] uppercase tracking-widest hover:bg-slate-50 transition shadow-sm active:scale-[0.98]">
-                            <Settings size={18} /> Config
+                        <Link to="/settings" className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-white text-slate-700 border border-slate-200 px-6 py-4 rounded-2xl font-black text-[11px] uppercase tracking-widest hover:bg-slate-50 transition shadow-sm active:scale-[0.98]">
+                            <Settings size={16} /> Config
                         </Link>
                     )}
                 </div>
             </header>
 
             <div className="mb-10 px-2">
-                <h1 className="text-4xl font-black text-slate-900 tracking-tight italic flex items-center gap-4 underline decoration-indigo-500/20 underline-offset-8 decoration-4">
+                <h1 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight italic flex items-center gap-4 underline decoration-indigo-500/20 underline-offset-8 decoration-4">
                     Operational Intelligence Center
                 </h1>
-                <p className="text-slate-400 font-black uppercase text-[12px] tracking-[0.4em] mt-4 opacity-80">Strategic Data Visualization & Monitoring Portfolio</p>
+                <p className="text-slate-400 font-black uppercase text-[10px] md:text-[12px] tracking-[0.4em] mt-4 opacity-80 leading-relaxed">Strategic Data Visualization & Monitoring Portfolio</p>
             </div>
 
             {/* CORE METRICS GRID */}

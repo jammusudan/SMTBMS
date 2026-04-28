@@ -246,8 +246,8 @@ const SalarySystem = () => {
     const years = [2024, 2025, 2026];
 
     return (
-        <div className="p-8 max-w-[1400px] mx-auto min-h-screen bg-[#F9FAFB]">
-            <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+        <div className="p-4 md:p-8 max-w-[1400px] mx-auto min-h-screen bg-[#F9FAFB]">
+            <header className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 gap-6">
                 <div>
                     <div className="flex items-center gap-3 mb-1">
                         <div className="bg-indigo-600 p-2 rounded-xl text-white shadow-lg shadow-indigo-100"><Banknote size={24} /></div>
@@ -259,66 +259,57 @@ const SalarySystem = () => {
                     </div>
                 </div>
 
-                <div className="flex items-center gap-3 w-full md:w-auto">
+                <div className="flex flex-wrap items-center gap-3 w-full lg:w-auto">
                     {activeJob && !jobError && (
-                        <div className="flex flex-col items-end gap-1 mr-4">
-                            <span className="text-[10px] font-black text-indigo-600 uppercase tracking-widest animate-pulse">Computing Payroll ({Math.round(jobProgress)}%)</span>
-                            <div className="w-32 h-1.5 bg-slate-200 rounded-full overflow-hidden">
+                        <div className="flex flex-col items-end gap-1 mr-2">
+                            <span className="text-[9px] font-black text-indigo-600 uppercase tracking-widest animate-pulse">Syncing ({Math.round(jobProgress)}%)</span>
+                            <div className="w-24 h-1 bg-slate-200 rounded-full overflow-hidden">
                                 <div className="h-full bg-indigo-600 transition-all duration-500" style={{ width: `${jobProgress}%` }}></div>
                             </div>
                         </div>
                     )}
                     {jobError && (
-                        <div className="flex items-center gap-3 mr-4 bg-rose-50 px-3 py-1.5 rounded-xl border border-rose-100">
-                             <div className="flex flex-col">
-                                 <span className="text-[8px] font-black text-rose-600 uppercase tracking-widest leading-none">Job Failed</span>
-                                 <span className="text-[10px] font-bold text-slate-700 truncate max-w-[120px]">{jobError}</span>
-                             </div>
-                             <button 
-                                onClick={() => { setActiveJob(null); setJobError(null); setIsGenerateModalOpen(true); }}
-                                className="p-1.5 bg-rose-600 text-white rounded-lg hover:bg-slate-900 transition-all shadow-lg shadow-rose-100"
-                                title="Retry Job"
-                             >
-                                <RefreshCcw size={12} />
-                             </button>
-                             <button onClick={() => { setActiveJob(null); setJobError(null); }} className="text-slate-400 hover:text-slate-900"><XCircle size={14} /></button>
+                        <div className="flex items-center gap-2 bg-rose-50 px-2 py-1.5 rounded-xl border border-rose-100">
+                             <span className="text-[9px] font-bold text-rose-600 truncate max-w-[80px]">{jobError}</span>
+                             <button onClick={() => { setActiveJob(null); setJobError(null); }} className="text-slate-400 hover:text-slate-900"><XCircle size={12} /></button>
                         </div>
                     )}
-                    <div className="flex bg-white border border-slate-200 rounded-xl p-1 shadow-sm">
+                    <div className="flex bg-white border border-slate-200 rounded-xl p-1 shadow-sm flex-1 md:flex-none">
                         <select 
                             value={selectedMonth} onChange={(e) => setSelectedMonth(Number(e.target.value))}
-                            className="bg-transparent text-sm font-bold text-slate-700 py-1.5 px-3 focus:outline-none border-r border-slate-100"
+                            className="bg-transparent text-xs font-bold text-slate-700 py-1.5 px-2 focus:outline-none border-r border-slate-100 flex-1 md:flex-none"
                         >
-                            {months.map((m, i) => <option key={m} value={i + 1}>{m}</option>)}
+                            {months.map((m, i) => <option key={m} value={i + 1}>{m.slice(0, 3)}</option>)}
                         </select>
                         <select 
                             value={selectedYear} onChange={(e) => setSelectedYear(Number(e.target.value))}
-                            className="bg-transparent text-sm font-bold text-slate-700 py-1.5 px-3 focus:outline-none"
+                            className="bg-transparent text-xs font-bold text-slate-700 py-1.5 px-2 focus:outline-none flex-1 md:flex-none"
                         >
                             {years.map(y => <option key={y} value={y}>{y}</option>)}
                         </select>
                     </div>
                     {user?.role === 'HR' && (
-                        <>
+                        <div className="flex items-center gap-2 w-full md:w-auto">
                             <button 
                                 onClick={() => setIsGenerateModalOpen(true)}
                                 disabled={activeJob && !jobError}
-                                className={`flex items-center gap-2 font-bold py-2.5 px-5 rounded-xl transition-all shadow-lg text-sm ml-auto md:ml-0 ${activeJob && !jobError ? 'bg-slate-100 text-slate-400 cursor-not-allowed shadow-none' : 'bg-indigo-600 text-white hover:bg-slate-900 shadow-indigo-100'}`}
+                                className={`flex-1 md:flex-none flex items-center justify-center gap-2 font-bold py-2.5 px-4 rounded-xl transition-all shadow-lg text-xs ${activeJob && !jobError ? 'bg-slate-100 text-slate-400 cursor-not-allowed shadow-none' : 'bg-indigo-600 text-white hover:bg-slate-900 shadow-indigo-100'}`}
                             >
-                                <RefreshCcw size={16} className={activeJob && !jobError ? 'animate-spin' : ''} />
-                                Run Batch
+                                <RefreshCcw size={14} className={activeJob && !jobError ? 'animate-spin' : ''} />
+                                Batch
                             </button>
                             <button 
                                 onClick={() => setIsRollbackModalOpen(true)}
-                                className="flex items-center gap-2 bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white font-bold py-2.5 px-5 rounded-xl border border-rose-100 transition-all shadow-lg shadow-rose-100 text-sm"
+                                className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white font-bold py-2.5 px-4 rounded-xl border border-rose-100 transition-all shadow-lg shadow-rose-100 text-xs"
                             >
-                                <AlertCircle size={16} />
-                                Rollback
+                                <AlertCircle size={14} />
+                                Roll
                             </button>
-                        </>
+                        </div>
                     )}
-                    <button onClick={exportToCSV} className="p-2.5 bg-white border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-50 shadow-sm transition-all"><Download size={18} /></button>
+                    <button onClick={exportToCSV} className="p-2.5 bg-white border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-50 shadow-sm transition-all md:block hidden"><Download size={18} /></button>
                 </div>
+            </header>
             </header>
 
             {/* KPI Section */}
@@ -351,13 +342,13 @@ const SalarySystem = () => {
 
             {/* Main Table Area */}
             <div className="bg-white rounded-[28px] border border-slate-200 shadow-sm overflow-hidden">
-                <div className="p-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
-                    <div className="flex items-center gap-4 flex-1">
-                        <div className="relative flex-1 max-w-md">
+                <div className="p-4 border-b border-slate-100 bg-slate-50/50 flex flex-col md:flex-row justify-between items-stretch md:items-center gap-4">
+                    <div className="flex flex-col md:flex-row items-stretch md:items-center gap-4 flex-1">
+                        <div className="relative flex-1">
                             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
                             <input 
-                                type="text" placeholder="Search by employee name..."
-                                className="w-full bg-white border border-slate-200 rounded-full py-2.5 pl-11 pr-4 text-xs font-bold text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                                type="text" placeholder="Search employee..."
+                                className="w-full bg-white border border-slate-200 rounded-xl py-2.5 pl-11 pr-4 text-xs font-bold text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
                                 value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
                             />
                         </div>
@@ -365,7 +356,7 @@ const SalarySystem = () => {
                              {['Active', 'Reverted'].map(t => (
                                 <button 
                                     key={t} onClick={() => setStatusFilter(t)}
-                                    className={`px-4 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all ${statusFilter === t ? 'bg-white text-indigo-600 shadow-sm border border-slate-200' : 'text-slate-400 hover:text-slate-600'}`}
+                                    className={`flex-1 md:flex-none px-4 py-2 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all ${statusFilter === t ? 'bg-white text-indigo-600 shadow-sm border border-slate-200' : 'text-slate-400 hover:text-slate-600'}`}
                                 >
                                     {t}
                                 </button>
@@ -375,7 +366,7 @@ const SalarySystem = () => {
                 </div>
 
                 <div className="overflow-x-auto">
-                    <table className="w-full text-left">
+                    <table className="w-full text-left min-w-[1000px]">
                         <thead>
                             <tr className="bg-slate-50/50 border-b border-slate-100">
                                 <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Compliance Identity</th>
