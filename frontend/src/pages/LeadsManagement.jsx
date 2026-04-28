@@ -15,7 +15,6 @@ const LeadsManagement = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [actionLoading, setActionLoading] = useState(false);
     
-    // Default review date = current + 2 days
     const getDefaultReviewDate = () => {
         const d = new Date();
         d.setDate(d.getDate() + 2);
@@ -89,7 +88,6 @@ const LeadsManagement = () => {
         }
     };
 
-    // Auto-fill customer details if existing selected
     useEffect(() => {
         if (formData.customer_id) {
             const selected = customers.find(c => (c._id || c.id) === formData.customer_id);
@@ -125,16 +123,15 @@ const LeadsManagement = () => {
     };
 
     const handleConvertToDeal = async (id) => {
-        if (!window.confirm('Convert this qualified lead to a formal Opportunity (Deal)?')) return;
+        if (!window.confirm('Convert this qualified lead to a formal Opportunity?')) return;
         setActionLoading(true);
         try {
             await crmService.convertLead(id);
-            alert('Lead converted to Opportunity successfully!');
+            alert('Lead converted successfully!');
             fetchData();
         } catch (error) {
-            const errorData = error.response?.data;
-            const errorMsg = errorData?.message || error.message || 'Unknown error';
-            alert(`Conversion Failed: ${errorMsg}`);
+            const errorMsg = error.response?.data?.message || 'Error converting lead';
+            alert(errorMsg);
         } finally {
             setActionLoading(false);
         }
@@ -295,7 +292,7 @@ const LeadsManagement = () => {
                                     </div>
                                     
                                     <div className="space-y-4">
-                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block ml-1">Customer / Prospect <span className="text-rose-500">*</span></label>
+                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block ml-1">Customer / Prospect *</label>
                                         <select 
                                             className="w-full bg-slate-50/80 border border-slate-100 rounded-2xl py-4.5 px-6 text-sm font-black text-slate-800 focus:outline-none focus:border-indigo-100 focus:bg-white transition-all appearance-none shadow-sm"
                                             value={formData.customer_id} onChange={e => setFormData({...formData, customer_id: e.target.value})}
@@ -339,10 +336,10 @@ const LeadsManagement = () => {
 
                                     <div className="grid grid-cols-2 gap-6">
                                         <div className="col-span-2">
-                                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block ml-1 mb-3">Requirement / Notes <span className="text-rose-500">*</span></label>
+                                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block ml-1 mb-3">Requirement / Notes *</label>
                                             <textarea 
                                                 required rows="4" 
-                                                placeholder="What is the customer looking for? Mention material types, grades, and specific needs."
+                                                placeholder="What is the customer looking for?"
                                                 className="w-full bg-slate-50/80 border border-slate-100 rounded-3xl py-5 px-6 text-sm font-black text-slate-800 focus:outline-none focus:border-indigo-100 focus:bg-white transition-all shadow-sm resize-none"
                                                 value={formData.context || formData.notes} onChange={e => setFormData({...formData, context: e.target.value, notes: e.target.value})}
                                             />
@@ -406,7 +403,7 @@ const LeadsManagement = () => {
 
                                     <div className="grid grid-cols-2 gap-6">
                                         <div>
-                                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block ml-1 mb-3">Assigned Sales Executive <span className="text-rose-500">*</span></label>
+                                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block ml-1 mb-3">Assigned Executive *</label>
                                             <select 
                                                 required className="w-full bg-slate-50/80 border border-slate-100 rounded-2xl py-4.5 px-6 text-sm font-black text-slate-800 focus:outline-none focus:border-indigo-100 focus:bg-white transition-all appearance-none shadow-sm"
                                                 value={formData.assigned_to} onChange={e => setFormData({...formData, assigned_to: e.target.value})}
@@ -417,7 +414,7 @@ const LeadsManagement = () => {
                                         </div>
 
                                         <div>
-                                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block ml-1 mb-3">Next Follow-up Date <span className="text-rose-500">*</span></label>
+                                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block ml-1 mb-3">Follow-up Date *</label>
                                             <input 
                                                 type="date" required 
                                                 className="w-full bg-slate-50/80 border border-slate-100 rounded-2xl py-4.5 px-6 text-sm font-black text-slate-800 focus:outline-none focus:border-indigo-100 focus:bg-white transition-all shadow-sm"
@@ -433,7 +430,7 @@ const LeadsManagement = () => {
                                     type="button" onClick={() => setIsModalOpen(false)}
                                     className="flex-1 bg-white border border-slate-200 text-slate-600 font-black text-[13px] uppercase tracking-widest py-5 rounded-3xl hover:bg-slate-50 transition-all active:scale-95 shadow-sm"
                                 >
-                                    Discard Entry
+                                    Discard
                                 </button>
                                 <button 
                                     onClick={handleCreateLead}
@@ -443,7 +440,7 @@ const LeadsManagement = () => {
                                     }`}
                                 >
                                     {actionLoading ? <Loader2 className="animate-spin" /> : <Plus size={20} />}
-                                    Create Formal Lead
+                                    Create Lead
                                 </button>
                             </div>
                         </motion.div>
