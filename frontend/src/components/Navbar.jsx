@@ -74,6 +74,7 @@ const Navbar = () => {
             section: 'TASKS',
             items: [
                 { name: 'Daily Tasks', icon: ClipboardList, path: '/tasks', accessGroup: MODULE_ACCESS.TASKS },
+                { name: 'Field Audit', icon: ShieldCheck, path: '/crm/field-audit', accessGroup: MODULE_ACCESS.FIELD_AUDIT },
                 { name: 'Payroll', icon: Banknote, path: '/salary', accessGroup: MODULE_ACCESS.PAYROLL },
             ]
         },
