@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { erpService, materialService } from '../services/api';
+import { erpService, materialService, crmService } from '../services/api';
 import { ShoppingCart, Plus, Search, Loader2, CheckCircle, Package, ArrowUpRight, ArrowDownRight, User, XCircle, AlertCircle, Eye, Calendar, Tag, ShieldCheck, IndianRupee, Wallet, UserCog } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
@@ -12,6 +12,7 @@ const OrderManagement = () => {
     
     const [orders, setOrders] = useState([]);
     const [vendors, setVendors] = useState([]);
+    const [customers, setCustomers] = useState([]);
     const [materials, setMaterials] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -25,6 +26,7 @@ const OrderManagement = () => {
         quantity: '',
         orderType: 'PURCHASE',
         vendorId: '',
+        customerId: '',
         totalAmount: 0
     });
 
@@ -37,14 +39,16 @@ const OrderManagement = () => {
     const fetchData = async () => {
         setLoading(true);
         try {
-            const [orderRes, vendorRes, matRes] = await Promise.all([
+            const [orderRes, vendorRes, matRes, custRes] = await Promise.all([
                 erpService.getOrders(),
                 erpService.getVendors(),
-                materialService.getAll()
+                materialService.getAll(),
+                crmService.getCustomers()
             ]);
             setOrders(orderRes.data);
             setVendors(vendorRes.data);
             setMaterials(matRes.data);
+            setCustomers(custRes.data);
         } catch (error) {
             console.error('Error fetching data:', error);
         } finally {
@@ -59,7 +63,7 @@ const OrderManagement = () => {
             await erpService.createOrder(formData);
             await fetchData();
             setIsModalOpen(false);
-            setFormData({ materialId: '', quantity: '', orderType: 'PURCHASE', vendorId: '', totalAmount: 0 });
+            setFormData({ materialId: '', quantity: '', orderType: 'PURCHASE', vendorId: '', customerId: '', totalAmount: 0 });
         } catch (error) {
             setError(error.response?.data?.message || 'Error creating order');
         } finally {
@@ -413,10 +417,14 @@ const OrderManagement = () => {
                                         <select 
                                             required={formData.orderType === 'PURCHASE'}
                                             className="w-full bg-slate-50 border border-slate-100 rounded-2xl py-4 px-5 text-slate-900 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all text-xs font-black appearance-none"
-                                            value={formData.vendorId} onChange={(e) => setFormData({...formData, vendorId: e.target.value})}
+                                            value={formData.orderType === 'PURCHASE' ? formData.vendorId : formData.customerId} 
+                                            onChange={(e) => setFormData({...formData, [formData.orderType === 'PURCHASE' ? 'vendorId' : 'customerId']: e.target.value})}
                                         >
                                             <option value="">Select Entity...</option>
-                                            {vendors.map(v => <option key={v.id || v._id} value={v.id || v._id}>{v.name}</option>)}
+                                            {formData.orderType === 'PURCHASE' 
+                                                ? vendors.map(v => <option key={v.id || v._id} value={v.id || v._id}>{v.name}</option>)
+                                                : customers.map(c => <option key={c.id || c._id} value={c.id || c._id}>{c.name} {c.status === 'PENDING' ? '(Pending Approval)' : ''}</option>)
+                                            }
                                         </select>
                                     </div>
                                 </div>
