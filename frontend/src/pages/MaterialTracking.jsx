@@ -113,6 +113,7 @@ const MaterialTracking = () => {
     const totalItems = materials.length;
     const lowStockCount = materials.filter(m => calculateStockStatus(m.quantity, m.min_stock_level) === 'Low Stock').length;
     const outOfStockCount = materials.filter(m => calculateStockStatus(m.quantity, m.min_stock_level) === 'Out of Stock').length;
+    const categories = [...new Set(materials.map(m => m.category))].filter(Boolean);
 
     return (
         <div className="p-8 min-h-screen">
@@ -284,6 +285,7 @@ const MaterialTracking = () => {
                 onSave={handleSaveMaterial}
                 material={selectedMaterial}
                 loading={modalLoading}
+                existingCategories={categories}
             />
 
             <StockUpdateModal 
