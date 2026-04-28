@@ -4,7 +4,7 @@ import {
     Users, Plus, Search, Loader2, Mail, Phone, 
     MapPin, Edit2, User, Globe, Briefcase, 
     IndianRupee, Filter, MoreVertical, ChevronRight, XCircle,
-    CheckCircle2, Info, Target, ShieldCheck
+    CheckCircle2, Info, Target, ShieldCheck, ShoppingCart, TrendingUp, Package
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
@@ -12,9 +12,9 @@ import { useAuth } from '../context/AuthContext';
 const CustomerDirectory = () => {
     const { user } = useAuth();
     const [customers, setCustomers] = useState([]);
-    const [orders, setOrders] = useState([]);
     const [deals, setDeals] = useState([]);
     const [leads, setLeads] = useState([]);
+    const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
@@ -285,58 +285,157 @@ const CustomerDirectory = () => {
                                 </div>
                             </div>
 
-                            <div className="p-10 overflow-y-auto space-y-10">
-                                {leads.filter(l => (l.converted_customer_id?._id || l.converted_customer_id || l.customer_id?._id || l.customer_id) === (selectedCustomer._id || selectedCustomer.id)).length === 0 ? (
-                                    <div className="py-20 text-center space-y-4">
-                                        <div className="w-16 h-16 bg-slate-50 rounded-3xl flex items-center justify-center mx-auto text-slate-300 border border-slate-100">
-                                            <Info size={32} />
-                                        </div>
-                                        <p className="text-slate-400 font-bold text-[11px] uppercase tracking-widest leading-loose">
-                                            This customer was created directly.<br/>No historical lead acquisition data found.
-                                        </p>
-                                    </div>
-                                ) : leads.filter(l => (l.converted_customer_id?._id || l.converted_customer_id || l.customer_id?._id || l.customer_id) === (selectedCustomer._id || selectedCustomer.id)).map((lead, idx) => (
-                                    <div key={lead.id || lead._id} className="relative pl-8 border-l-2 border-indigo-100 pb-2">
-                                        <div className="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-indigo-600 border-4 border-white shadow-sm shadow-indigo-100" />
-                                        <div className="bg-slate-50 border border-slate-100 rounded-[32px] p-8 space-y-6">
-                                            <div className="flex justify-between items-center">
-                                                <span className="bg-white border border-slate-100 text-slate-600 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest shadow-sm">
-                                                    Event #{idx + 1} | {new Date(lead.created_at || lead.createdAt).toLocaleDateString()}
-                                                </span>
-                                                <span className={`px-2.5 py-0.5 rounded text-[9px] font-black uppercase tracking-widest ${
-                                                    lead.priority === 'High' ? 'bg-rose-100 text-rose-700' : 
-                                                    lead.priority === 'Medium' ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-600'
-                                                }`}>
-                                                    {lead.priority || 'Medium'} Priority
-                                                </span>
-                                            </div>
-
-                                            <div className="space-y-2">
-                                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Strategic Deal Context</label>
-                                                <p className="text-slate-800 text-[15px] font-bold leading-relaxed italic pr-6 group">
-                                                    "{lead.context || 'No specific context requirement recorded for this acquisition.'}"
-                                                </p>
-                                            </div>
-
-                                            <div className="grid grid-cols-2 gap-4">
-                                                <div className="p-4 bg-white rounded-2xl border border-slate-100 shadow-sm flex items-center gap-3">
-                                                    <div className="p-2 bg-indigo-50 text-indigo-600 rounded-lg"><Globe size={16}/></div>
-                                                    <div>
-                                                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Lead Source</p>
-                                                        <p className="text-[11px] font-black text-slate-700">{lead.source}</p>
-                                                    </div>
-                                                </div>
-                                                <div className="p-4 bg-white rounded-2xl border border-slate-100 shadow-sm flex items-center gap-3">
-                                                    <div className="p-2 bg-emerald-50 text-emerald-600 rounded-lg"><IndianRupee size={16}/></div>
-                                                    <div>
-                                                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Est. Valuation</p>
-                                                        <p className="text-[11px] font-black text-slate-700">₹{lead.estimatedValue?.toLocaleString() || 0}</p>
-                                                    </div>
-                                                </div>
-                                            </div>
+                            <div className="p-10 overflow-y-auto space-y-12">
+                                {/* Section 1: Customer Profile Overview */}
+                                <div className="grid grid-cols-2 gap-6 bg-slate-50/50 p-8 rounded-[32px] border border-slate-100">
+                                    <div className="space-y-4">
+                                        <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 pb-2">Primary Entity</h4>
+                                        <div className="space-y-1">
+                                            <p className="text-sm font-black text-slate-900">{selectedCustomer.name}</p>
+                                            <p className="text-[10px] font-black text-indigo-500 uppercase tracking-widest">Active Partner</p>
                                         </div>
                                     </div>
-                                ))}
+                                    <div className="space-y-4 text-right">
+                                        <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 pb-2">Connection Metadata</h4>
+                                        <div className="space-y-1">
+                                            <p className="text-xs font-bold text-slate-600">{selectedCustomer.email || 'No Email Recorded'}</p>
+                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{selectedCustomer.phone || 'No Phone Link'}</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Section 2: Acquisition Intel (Leads) */}
+                                <div className="space-y-6">
+                                    <h3 className="text-xs font-black text-slate-900 flex items-center gap-2 uppercase tracking-[0.1em]">
+                                        <TrendingUp size={16} className="text-indigo-600" />
+                                        Historical Acquisition Intel
+                                    </h3>
+                                    
+                                    {leads.filter(l => (l.converted_customer_id?._id || l.converted_customer_id || l.customer_id?._id || l.customer_id) === (selectedCustomer._id || selectedCustomer.id)).length === 0 ? (
+                                        <div className="py-8 text-center bg-slate-50/30 rounded-[32px] border border-dashed border-slate-200">
+                                            <p className="text-slate-400 font-bold text-[10px] uppercase tracking-widest italic">
+                                                Direct Creation Record - No Lead Phase Found
+                                            </p>
+                                        </div>
+                                    ) : leads.filter(l => (l.converted_customer_id?._id || l.converted_customer_id || l.customer_id?._id || l.customer_id) === (selectedCustomer._id || selectedCustomer.id)).map((lead, idx) => (
+                                        <div key={lead.id || lead._id} className="relative pl-8 border-l-2 border-indigo-100 pb-2">
+                                            <div className="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-indigo-600 border-4 border-white shadow-sm shadow-indigo-100" />
+                                            <div className="bg-slate-50 border border-slate-100 rounded-[32px] p-8 space-y-6">
+                                                <div className="flex justify-between items-center">
+                                                    <span className="bg-white border border-slate-100 text-slate-600 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest shadow-sm">
+                                                        Event #{idx + 1} | {new Date(lead.created_at || lead.createdAt).toLocaleDateString()}
+                                                    </span>
+                                                    <span className={`px-2.5 py-0.5 rounded text-[9px] font-black uppercase tracking-widest ${
+                                                        lead.priority === 'High' ? 'bg-rose-100 text-rose-700' : 
+                                                        lead.priority === 'Medium' ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-600'
+                                                    }`}>
+                                                        {lead.priority || 'Medium'} Priority
+                                                    </span>
+                                                </div>
+
+                                                <div className="space-y-2">
+                                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Strategic Deal Context</label>
+                                                    <p className="text-slate-800 text-[15px] font-bold leading-relaxed italic pr-6 group">
+                                                        "{lead.context || 'No specific context requirement recorded for this acquisition.'}"
+                                                    </p>
+                                                </div>
+
+                                                <div className="grid grid-cols-2 gap-4">
+                                                    <div className="p-4 bg-white rounded-2xl border border-slate-100 shadow-sm flex items-center gap-3">
+                                                        <div className="p-2 bg-indigo-50 text-indigo-600 rounded-lg"><Globe size={16}/></div>
+                                                        <div>
+                                                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Lead Source</p>
+                                                            <p className="text-[11px] font-black text-slate-700">{lead.source}</p>
+                                                        </div>
+                                                    </div>
+                                                    <div className="p-4 bg-white rounded-2xl border border-slate-100 shadow-sm flex items-center gap-3">
+                                                        <div className="p-2 bg-emerald-50 text-emerald-600 rounded-lg"><IndianRupee size={16}/></div>
+                                                        <div>
+                                                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Est. Valuation</p>
+                                                            <p className="text-[11px] font-black text-slate-700">₹{lead.estimatedValue?.toLocaleString() || 0}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                {/* Section 3: Commercial Lifecycle (Orders) */}
+                                <div className="space-y-6">
+                                    <h3 className="text-xs font-black text-slate-900 flex items-center gap-2 uppercase tracking-[0.1em]">
+                                        <ShoppingCart size={16} className="text-emerald-600" />
+                                        Commercial Lifecycle
+                                    </h3>
+                                    
+                                    {orders.filter(o => (o.customerId?._id || o.customerId) === (selectedCustomer._id || selectedCustomer.id)).length === 0 ? (
+                                        <div className="py-8 text-center bg-slate-50/30 rounded-[32px] border border-dashed border-slate-200">
+                                            <p className="text-slate-400 font-bold text-[10px] uppercase tracking-widest italic">
+                                                Zero Transaction History - Preliminary Stage
+                                            </p>
+                                        </div>
+                                    ) : (
+                                        <div className="space-y-4">
+                                            {orders.filter(o => (o.customerId?._id || o.customerId) === (selectedCustomer._id || selectedCustomer.id)).slice(0, 5).map((order) => (
+                                                <div key={order._id} className="bg-white border border-slate-100 rounded-2xl p-5 flex justify-between items-center shadow-sm">
+                                                    <div className="flex items-center gap-4">
+                                                        <div className="p-3 bg-slate-50 text-slate-400 rounded-xl">
+                                                            <Package size={18} />
+                                                        </div>
+                                                        <div>
+                                                            <p className="text-[11px] font-black text-slate-900 uppercase tracking-tight">{order.materialId?.name || 'Material Entry'}</p>
+                                                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-0.5">{new Date(order.createdAt).toLocaleDateString()} | Qty: {order.quantity}</p>
+                                                        </div>
+                                                    </div>
+                                                    <div className="text-right">
+                                                        <p className="text-sm font-black text-indigo-600">₹{order.totalAmount?.toLocaleString()}</p>
+                                                        <span className={`text-[8px] font-black uppercase tracking-[0.15em] ${order.status === 'COMPLETED' ? 'text-emerald-500' : 'text-amber-500'}`}>
+                                                            {order.status}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                            {orders.filter(o => (o.customerId?._id || o.customerId) === (selectedCustomer._id || selectedCustomer.id)).length > 5 && (
+                                                <p className="text-center text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] pt-2">+ More transactions available in ERP</p>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+                                {/* Section 4: Strategic Pipeline (Deals) */}
+                                <div className="space-y-6">
+                                    <h3 className="text-xs font-black text-slate-900 flex items-center gap-2 uppercase tracking-[0.1em]">
+                                        <Briefcase size={16} className="text-indigo-600" />
+                                        Strategic Pipeline
+                                    </h3>
+                                    
+                                    {deals.filter(d => (d.lead_id?.converted_customer_id || d.lead_id?.customer_id) === (selectedCustomer._id || selectedCustomer.id)).length === 0 ? (
+                                        <div className="py-8 text-center bg-slate-50/30 rounded-[32px] border border-dashed border-slate-200">
+                                            <p className="text-slate-400 font-bold text-[10px] uppercase tracking-widest italic">
+                                                No Active Opportunities In Pipeline
+                                            </p>
+                                        </div>
+                                    ) : (
+                                        <div className="space-y-4">
+                                            {deals.filter(d => (d.lead_id?.converted_customer_id || d.lead_id?.customer_id) === (selectedCustomer._id || selectedCustomer.id)).map((deal) => (
+                                                <div key={deal._id} className="bg-white border border-slate-100 rounded-2xl p-5 flex justify-between items-center shadow-sm relative overflow-hidden group">
+                                                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-indigo-600" />
+                                                    <div className="flex items-center gap-4">
+                                                        <div className="p-3 bg-indigo-50 text-indigo-600 rounded-xl">
+                                                            <Target size={18} />
+                                                        </div>
+                                                        <div>
+                                                            <p className="text-[11px] font-black text-slate-900 uppercase tracking-tight">{deal.title}</p>
+                                                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-0.5">Stage: {deal.stage} | Value: ₹{deal.amount?.toLocaleString()}</p>
+                                                        </div>
+                                                    </div>
+                                                    <div className="text-right">
+                                                        <ArrowUpRight size={16} className="text-slate-300 group-hover:text-indigo-600 transition-colors" />
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
                             </div>
 
                             <div className="p-10 bg-slate-50/50 border-t border-slate-50 flex justify-end">
