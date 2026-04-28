@@ -2,30 +2,37 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { crmService, dashboardService, logService, notificationService } from '../services/api';
+import { crmService, dashboardService, erpService, notificationService } from '../services/api';
 import { 
     Users, ClipboardList, ShoppingCart, 
     AlertTriangle, CheckCircle2, Clock, 
-    Calendar, Package, Activity, Bell, Info, ShieldCheck
+    Calendar, Package, Activity, Bell, Info, ShieldCheck, Eye, ArrowUpRight, ArrowDownRight, IndianRupee, Wallet, XCircle, Tag, User as UserIcon
 } from 'lucide-react';
+import { AnimatePresence } from 'framer-motion';
 
 const ManagerDashboard = () => {
     const { user } = useAuth();
     const [stats, setStats] = useState(null);
     const [notifications, setNotifications] = useState([]);
+    const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [pendingVerifications, setPendingVerifications] = useState(0);
+    const [filter, setFilter] = useState('ALL'); // ALL, PENDING_PAYMENT, HIGH_VALUE, COMPLETED
+    const [selectedOrder, setSelectedOrder] = useState(null);
+    const [isViewModalOpen, setIsViewModalOpen] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [statsRes, notifRes, custRes] = await Promise.all([
+                const [statsRes, notifRes, custRes, orderRes] = await Promise.all([
                     dashboardService.getStats(),
                     notificationService.getAll(),
-                    crmService.getCustomers()
+                    crmService.getCustomers(),
+                    erpService.getOrders()
                 ]);
                 setStats(statsRes.data || {});
                 setNotifications(notifRes.data || []);
+                setOrders(orderRes.data || []);
                 
                 // Count customers awaiting Manager approval
                 const pending = custRes.data.filter(c => c.adminApproved && !c.managerApproved).length;
@@ -121,7 +128,7 @@ const ManagerDashboard = () => {
                 />
                 <StatCard 
                     title="Active Orders" 
-                    value={stats.erp.active_orders || 0}
+                    value={orders.filter(o => o.status !== 'COMPLETED').length}
                     icon={ShoppingCart} color="sky" link="/erp" 
                     subtext="Processing / Shipped"
                 />
@@ -216,8 +223,211 @@ const ManagerDashboard = () => {
                 </div>
 
             </div>
+
+            {/* RECENT ORDERS PORTFOLIO */}
+            <div className="mt-8 bg-white p-8 rounded-[32px] border border-slate-200 shadow-sm">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+                    <div>
+                        <h3 className="text-xl font-black text-slate-900 flex items-center gap-3">
+                            <ShoppingCart className="text-indigo-600" size={24} />
+                            Strategic Order Portfolio
+                        </h3>
+                        <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest mt-1">Real-time lifecycle monitoring for business operations.</p>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                        {[
+                            { id: 'ALL', label: 'All Records' },
+                            { id: 'PENDING_PAYMENT', label: 'Pending Payment' },
+                            { id: 'HIGH_VALUE', label: 'High Value (>₹50k)' },
+                            { id: 'COMPLETED', label: 'Completed' }
+                        ].map(f => (
+                            <button 
+                                key={f.id}
+                                onClick={() => setFilter(f.id)}
+                                className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border ${
+                                    filter === f.id ? 'bg-slate-900 text-white border-slate-900 shadow-lg' : 'bg-white text-slate-400 border-slate-100 hover:border-slate-200'
+                                }`}
+                            >
+                                {f.label}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse">
+                        <thead>
+                            <tr className="text-slate-400 uppercase text-[9px] font-black tracking-widest border-b border-slate-50">
+                                <th className="px-6 py-4 font-black">Ref ID</th>
+                                <th className="px-6 py-4 font-black">Customer / Vendor</th>
+                                <th className="px-6 py-4 font-black">Material</th>
+                                <th className="px-6 py-4 font-black text-center">Qty</th>
+                                <th className="px-6 py-4 font-black text-right">Value</th>
+                                <th className="px-6 py-4 font-black text-center">Status</th>
+                                <th className="px-6 py-4 font-black text-center">Payment</th>
+                                <th className="px-6 py-4 font-black text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-50">
+                            {orders
+                                .filter(o => {
+                                    if (filter === 'PENDING_PAYMENT') return o.paymentStatus !== 'PAID';
+                                    if (filter === 'HIGH_VALUE') return o.totalAmount > 50000;
+                                    if (filter === 'COMPLETED') return o.status === 'COMPLETED';
+                                    return true;
+                                })
+                                .slice(0, 10)
+                                .map((order) => (
+                                    <tr key={order._id} className="hover:bg-slate-50/50 transition-colors group">
+                                        <td className="px-6 py-5 text-slate-400 font-mono text-[10px] font-black uppercase tracking-tighter">#{order._id.toString().slice(-6)}</td>
+                                        <td className="px-6 py-5">
+                                            <div className="font-black text-slate-900 text-xs">
+                                                {order.orderType === 'PURCHASE' ? (order.vendorId?.name || 'Internal') : (order.customerId?.name || 'Walk-in')}
+                                            </div>
+                                            <div className={`text-[8px] font-black uppercase tracking-widest mt-1 ${order.orderType === 'PURCHASE' ? 'text-indigo-500' : 'text-orange-500'}`}>
+                                                {order.orderType}
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-5">
+                                            <p className="font-bold text-slate-700 text-xs">{order.materialId?.name || 'N/A'}</p>
+                                        </td>
+                                        <td className="px-6 py-5 text-center font-black text-slate-900 text-xs">{order.quantity}</td>
+                                        <td className="px-6 py-5 text-right font-black text-slate-900 text-xs">
+                                            ₹{Number(order.totalAmount || 0).toLocaleString()}
+                                        </td>
+                                        <td className="px-6 py-5 text-center">
+                                            <span className={`px-2 py-0.5 rounded-lg text-[8px] font-black uppercase tracking-widest border ${
+                                                order.status === 'COMPLETED' ? 'text-emerald-600 bg-emerald-50 border-emerald-100' : 
+                                                order.status === 'CANCELLED' ? 'text-rose-600 bg-rose-50 border-rose-100' : 'text-amber-600 bg-amber-50 border-amber-100'
+                                            }`}>
+                                                {order.status}
+                                            </span>
+                                        </td>
+                                        <td className="px-6 py-5 text-center">
+                                            <span className={`px-2 py-0.5 rounded-lg text-[8px] font-black uppercase tracking-widest border ${
+                                                order.paymentStatus === 'PAID' ? 'text-blue-600 bg-blue-50 border-blue-100' : 
+                                                order.paymentStatus === 'PARTIAL' ? 'text-amber-600 bg-amber-50 border-amber-100' : 'text-slate-400 bg-slate-50 border-slate-100'
+                                            }`}>
+                                                {order.paymentStatus || 'PENDING'}
+                                            </span>
+                                        </td>
+                                        <td className="px-6 py-5 text-right">
+                                            <button 
+                                                onClick={() => { setSelectedOrder(order); setIsViewModalOpen(true); }}
+                                                className="p-2 text-slate-400 hover:text-slate-900 hover:bg-white border border-transparent hover:border-slate-100 rounded-xl transition-all shadow-sm"
+                                            >
+                                                <Eye size={16} />
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            {orders.length === 0 && (
+                                <tr><td colSpan="8" className="py-20 text-center text-slate-400 font-black uppercase text-[10px] tracking-widest">No matching order data found.</td></tr>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+                <div className="mt-8 flex justify-center">
+                    <Link to="/erp" className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-600 hover:text-indigo-700 bg-indigo-50 px-8 py-4 rounded-2xl transition-all hover:scale-105 active:scale-95 shadow-lg shadow-indigo-100/50">
+                        Access Full ERP Registry
+                    </Link>
+                </div>
+            </div>
+
+            {/* Read-Only View Modal */}
+            <AnimatePresence>
+                {isViewModalOpen && selectedOrder && (
+                    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-950/40 backdrop-blur-sm">
+                        <motion.div 
+                            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                            className="bg-white w-full max-w-xl rounded-[32px] overflow-hidden shadow-2xl border border-slate-100"
+                        >
+                            <div className="p-6 border-b border-slate-50 flex justify-between items-center bg-slate-50/50">
+                                <div>
+                                    <h2 className="text-lg font-black text-slate-900 flex items-center gap-2 tracking-tight">
+                                        <Package className="text-indigo-600" size={20} />
+                                        Order Breakdown
+                                    </h2>
+                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Global ID: {selectedOrder._id}</p>
+                                </div>
+                                <button onClick={() => setIsViewModalOpen(false)} className="text-slate-400 hover:text-slate-900 p-1"><XCircle size={20} /></button>
+                            </div>
+
+                            <div className="px-8 py-6 space-y-6">
+                                <div className="grid grid-cols-2 gap-x-8 gap-y-4">
+                                    <DetailItem icon={<Package size={12}/>} label="Material" value={selectedOrder.materialId?.name || 'Manual Reference'} />
+                                    <DetailItem icon={<Tag size={12}/>} label="Type" value={selectedOrder.orderType} isType type={selectedOrder.orderType} />
+                                    <DetailItem icon={<UserIcon size={12}/>} label="Entity" value={selectedOrder.orderType === 'PURCHASE' ? (selectedOrder.vendorId?.name || 'Direct / Internal') : (selectedOrder.customerId?.name || 'Walk-in Customer')} />
+                                    <DetailItem icon={<Activity size={12}/>} label="Status" value={selectedOrder.status} isStatus styles={orderStatusStyles(selectedOrder.status)} />
+                                    <DetailItem icon={<Wallet size={12}/>} label="Payment" value={selectedOrder.paymentStatus || 'PENDING'} isStatus styles={paymentStatusStyles(selectedOrder.paymentStatus)} />
+                                    {selectedOrder.paymentDate && <DetailItem icon={<Calendar size={12}/>} label="Paid Date" value={new Date(selectedOrder.paymentDate).toLocaleDateString()} />}
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="bg-slate-50 p-5 rounded-[24px] border border-slate-100">
+                                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 flex items-center gap-1.5"><IndianRupee size={12}/> Unit Price</p>
+                                        <p className="text-lg font-black text-slate-900 tracking-tight">₹{Number(selectedOrder.unitPrice || 0).toLocaleString()}</p>
+                                    </div>
+                                    <div className="bg-indigo-50 border border-indigo-100 p-5 rounded-[24px]">
+                                        <p className="text-[9px] font-black text-indigo-400 uppercase tracking-widest mb-1 flex items-center gap-1.5"><Wallet size={12}/> Total Amount</p>
+                                        <p className="text-xl font-black text-indigo-600 tracking-tight">₹{Number(selectedOrder.totalAmount || 0).toLocaleString()}</p>
+                                    </div>
+                                </div>
+
+                                <div className="p-4 bg-slate-50/50 rounded-2xl border border-slate-100 flex items-center justify-between">
+                                    <div>
+                                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none">Originator Role</p>
+                                        <p className="text-xs font-black text-slate-900 mt-1 uppercase">{selectedOrder.createdByRole || 'SYSTEM'}</p>
+                                    </div>
+                                    <span className="text-[10px] font-bold text-slate-400">{new Date(selectedOrder.createdAt).toLocaleString()}</span>
+                                </div>
+                                
+                                <div className="bg-blue-50/50 p-4 rounded-2xl border border-blue-100 flex items-center gap-3">
+                                    <Info className="text-blue-500" size={16} />
+                                    <p className="text-[10px] font-bold text-blue-700 uppercase tracking-tight">Manager Mode: This view is read-only. For modifications, please contact Admin.</p>
+                                </div>
+                            </div>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
         </div>
     );
+};
+
+const DetailItem = ({ icon, label, value, isType, type, isStatus, styles }) => (
+    <div className="space-y-1">
+        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-1.5">{icon} {label}</p>
+        {isStatus ? (
+            <span className={`px-2 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-widest border inline-block ${styles}`}>
+                {value}
+            </span>
+        ) : (
+            <p className={`text-xs font-black uppercase tracking-wide ${isType ? (type === 'PURCHASE' ? 'text-indigo-600' : 'text-orange-600') : 'text-slate-900'}`}>
+                {value}
+            </p>
+        )}
+    </div>
+);
+
+const orderStatusStyles = (status) => {
+    switch (status) {
+        case 'COMPLETED': return 'text-emerald-600 bg-emerald-50 border-emerald-100';
+        case 'CANCELLED': return 'text-rose-600 bg-rose-50 border-rose-100';
+        case 'PENDING': return 'text-amber-600 bg-amber-50 border-amber-100';
+        default: return 'text-slate-400 bg-slate-50 border-slate-100';
+    }
+};
+
+const paymentStatusStyles = (status) => {
+    switch (status) {
+        case 'PAID': return 'text-blue-600 bg-blue-50 border-blue-100';
+        case 'PARTIAL': return 'text-amber-600 bg-amber-50 border-amber-100';
+        case 'PENDING': return 'text-slate-400 bg-slate-50 border-slate-100';
+        default: return 'text-slate-400 bg-slate-50 border-slate-100';
+    }
 };
 
 export default ManagerDashboard;
