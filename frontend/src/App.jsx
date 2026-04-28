@@ -75,7 +75,7 @@ const Layout = ({ children }) => {
           </button>
         </header>
 
-        <main className="flex-1 lg:ml-64 min-h-screen text-slate-900 overflow-x-hidden">
+        <main className="flex-1 lg:ml-64 min-h-screen text-slate-900 overflow-x-hidden p-4 md:p-6 lg:p-10">
           {children}
         </main>
       </div>

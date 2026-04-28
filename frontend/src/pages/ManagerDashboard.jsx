@@ -100,22 +100,24 @@ const ManagerDashboard = () => {
     const activeEmpCount = stats.employees.attendance_today?.find(a => a.status === 'Present')?.count || 0;
     
     return (
-        <div className="p-8 max-w-[1600px] mx-auto min-h-screen">
-            <header className="mb-10">
-                <div className="flex items-center gap-2 mb-2">
-                    <span className="bg-indigo-100 text-indigo-700 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-widest">
-                        Manager Portal
-                    </span>
-                    <span className="text-slate-400 text-sm font-medium">| {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}</span>
+        <div className="max-w-[1600px] mx-auto min-h-screen">
+            <header className="mb-10 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+                <div>
+                    <div className="flex flex-wrap items-center gap-2 mb-2">
+                        <span className="bg-indigo-100 text-indigo-700 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-widest">
+                            Manager Portal
+                        </span>
+                        <span className="text-slate-400 text-sm font-medium">| {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}</span>
+                    </div>
+                    <h1 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight flex items-center gap-3">
+                        Welcome back, {user.username}!
+                    </h1>
+                    <p className="text-slate-500 font-medium mt-2">Here is a quick overview of your team and material operations today.</p>
                 </div>
-                <h1 className="text-4xl font-black text-slate-900 tracking-tight flex items-center gap-3">
-                    Welcome back, {user.username}!
-                </h1>
-                <p className="text-slate-500 font-medium mt-2">Here is a quick overview of your team and material operations today.</p>
             </header>
 
             {/* TOP METRICS GRID */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 <StatCard 
                     title="Active Floor" 
                     value={activeEmpCount}
@@ -233,7 +235,7 @@ const ManagerDashboard = () => {
             </div>
 
             {/* RECENT ORDERS PORTFOLIO */}
-            <div className="mt-8 bg-white p-8 rounded-[32px] border border-slate-200 shadow-sm">
+            <div className="mt-8 bg-white p-4 md:p-8 rounded-[32px] border border-slate-200 shadow-sm">
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
                     <div>
                         <h3 className="text-xl font-black text-slate-900 flex items-center gap-3">

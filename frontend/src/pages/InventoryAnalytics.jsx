@@ -50,10 +50,10 @@ const InventoryAnalytics = () => {
     ].filter(item => item.value > 0);
 
     return (
-        <div className="p-8 min-h-screen">
-            <header className="flex justify-between items-center mb-10">
+        <div className="max-w-[1600px] mx-auto min-h-screen">
+            <header className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-10 gap-6">
                 <div>
-                    <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-3">
+                    <h1 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight flex items-center gap-3 italic">
                         <BarChart3 className="text-indigo-600" size={32} />
                         Inventory Analytics
                     </h1>
@@ -61,7 +61,7 @@ const InventoryAnalytics = () => {
                 </div>
                 <button 
                     onClick={fetchAnalytics}
-                    className="flex items-center gap-2 bg-white hover:bg-slate-50 text-slate-900 border border-slate-200 font-bold py-2.5 px-6 rounded-xl transition-all shadow-sm active:scale-95"
+                    className="w-full lg:w-auto flex items-center justify-center gap-2 bg-white hover:bg-slate-50 text-slate-900 border border-slate-200 font-bold py-2.5 px-6 rounded-xl transition-all shadow-sm active:scale-95"
                 >
                     <RefreshCw size={18} />
                     Refresh Data
@@ -69,7 +69,7 @@ const InventoryAnalytics = () => {
             </header>
 
             {/* Financial Overview */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
                 <StatCard 
                     title="Total Purchase" 
                     value={financials.total_purchase} 
@@ -106,12 +106,12 @@ const InventoryAnalytics = () => {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10">
                 {/* Main Trend Chart */}
                 <div className="lg:col-span-2 bg-white p-8 rounded-[32px] border border-slate-100 shadow-sm relative overflow-hidden">
-                    <div className="flex justify-between items-start mb-10">
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-4">
                         <div>
                             <h3 className="text-lg font-black text-slate-900 tracking-tight">Purchase vs Sales Trend</h3>
                             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Monthly financial flow analysis</p>
                         </div>
-                        <div className="flex gap-4">
+                        <div className="flex flex-wrap gap-4">
                             <LegendItem color="#6366f1" label="Purchase" />
                             <LegendItem color="#10b981" label="Sales" />
                         </div>

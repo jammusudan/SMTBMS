@@ -167,31 +167,31 @@ const FieldAudit = () => {
     );
 
     return (
-        <div className="p-8 min-h-screen bg-[#f8fafc] pb-32">
-            <header className="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="min-h-screen pb-32">
+            <header className="mb-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
                 <div>
                     <div className="flex items-center gap-3 mb-2">
                         <div className="p-2.5 bg-slate-900 rounded-xl text-white shadow-lg">
                             <ShieldCheck size={20} strokeWidth={2.5} />
                         </div>
-                        <h1 className="text-3xl font-black text-slate-900 tracking-tight">System Integrity Audit</h1>
+                        <h1 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight italic">System Integrity Audit</h1>
                     </div>
-                    <p className="text-slate-500 font-bold text-sm uppercase tracking-widest opacity-70 flex items-center gap-2">
+                    <p className="text-slate-500 font-bold text-[10px] md:text-sm uppercase tracking-widest opacity-70 flex items-center gap-2">
                         Verification Layer <ChevronRight size={14} /> Cross-Reference Engine
                     </p>
                 </div>
 
-                <div className="flex items-center gap-4">
+                <div className="flex flex-col sm:flex-row items-center gap-4 w-full lg:w-auto">
                     <button 
                         onClick={fetchHistory}
-                        className="bg-white border border-slate-200 text-slate-600 font-bold text-[11px] uppercase tracking-widest py-3 px-6 rounded-2xl flex items-center gap-2 hover:bg-slate-50 transition-all shadow-sm"
+                        className="w-full sm:w-auto bg-white border border-slate-200 text-slate-600 font-bold text-[11px] uppercase tracking-widest py-3 px-6 rounded-2xl flex items-center justify-center gap-2 hover:bg-slate-50 transition-all shadow-sm"
                     >
                         <History size={16} /> Audit Logs
                     </button>
                     <button 
                         onClick={handleSubmitAudit}
                         disabled={submitting}
-                        className="bg-indigo-600 hover:bg-indigo-700 text-white font-black text-[11px] uppercase tracking-widest py-3.5 px-8 rounded-2xl flex items-center gap-2 shadow-xl shadow-indigo-200 transition-all active:scale-95 disabled:opacity-50"
+                        className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-black text-[11px] uppercase tracking-widest py-3.5 px-8 rounded-2xl flex items-center justify-center gap-2 shadow-xl shadow-indigo-200 transition-all active:scale-95 disabled:opacity-50"
                     >
                         {submitting ? <Loader2 className="animate-spin" size={16} /> : <><Save size={16} /> Seal Report</>}
                     </button>
@@ -199,7 +199,7 @@ const FieldAudit = () => {
             </header>
 
             {/* Dashboard Stats Panel */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
                 <div className="bg-white p-6 rounded-[32px] border border-slate-100 shadow-sm flex items-center gap-4">
                     <div className="p-3 bg-indigo-50 text-indigo-600 rounded-2xl"><Package size={24} /></div>
                     <div>
@@ -234,7 +234,7 @@ const FieldAudit = () => {
 
             {/* Tabbed Interface */}
             <div className="bg-white rounded-[40px] border border-slate-100 shadow-xl overflow-hidden min-h-[600px] flex flex-col">
-                <div className="flex border-b border-slate-100 p-3 bg-slate-50/50">
+                <div className="flex flex-wrap border-b border-slate-100 p-2 md:p-3 bg-slate-50/50">
                     {[
                         { id: 'inventory', label: 'Inventory Audit', icon: Package },
                         { id: 'sales', label: 'Sales Verification', icon: ShoppingBag },
@@ -243,13 +243,13 @@ const FieldAudit = () => {
                         <button
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id)}
-                            className={`flex items-center gap-2.5 px-8 py-4 rounded-3xl text-[11px] font-black uppercase tracking-[0.1em] transition-all ${
+                            className={`flex-1 sm:flex-none flex items-center justify-center gap-2.5 px-4 md:px-8 py-3 md:py-4 rounded-2xl md:rounded-3xl text-[10px] md:text-[11px] font-black uppercase tracking-[0.1em] transition-all ${
                                 activeTab === tab.id 
                                 ? 'bg-white text-indigo-600 shadow-md shadow-slate-100 scale-[1.02]' 
                                 : 'text-slate-400 hover:text-slate-600'
                             }`}
                         >
-                            <tab.icon size={16} /> {tab.label}
+                            <tab.icon size={16} /> <span className="hidden xs:inline">{tab.label}</span><span className="xs:hidden">{tab.label.split(' ')[0]}</span>
                         </button>
                     ))}
                 </div>
@@ -416,17 +416,17 @@ const FieldAudit = () => {
             </div>
 
             {/* Float Bottom Bar */}
-            <div className="fixed bottom-10 left-1/2 -translate-x-1/2 w-full max-w-lg z-[1000]">
-                <div className="bg-slate-900/90 backdrop-blur-xl rounded-[40px] p-4 flex items-center justify-between border border-white/10 shadow-2xl">
-                    <div className="pl-6">
-                        <p className="text-white font-black text-lg tracking-tighter flex items-center gap-2">
-                             Verification Pulse <span className={`w-2 h-2 rounded-full animate-pulse bg-emerald-500`}></span>
+            <div className="fixed bottom-6 md:bottom-10 left-1/2 -translate-x-1/2 w-[90%] max-w-lg z-[1000]">
+                <div className="bg-slate-900/90 backdrop-blur-xl rounded-[32px] md:rounded-[40px] p-3 md:p-4 flex items-center justify-between border border-white/10 shadow-2xl">
+                    <div className="pl-4 md:pl-6">
+                        <p className="text-white font-black text-sm md:text-lg tracking-tighter flex items-center gap-2">
+                             Pulse <span className={`w-2 h-2 rounded-full animate-pulse bg-emerald-500`}></span>
                         </p>
-                        <p className="text-white/40 text-[10px] font-black uppercase tracking-widest">Active Audit Session</p>
+                        <p className="text-white/40 text-[8px] md:text-[10px] font-black uppercase tracking-widest">Active Audit</p>
                     </div>
                     <button 
                         onClick={handleSubmitAudit}
-                        className="bg-white text-slate-900 font-black text-[11px] uppercase tracking-widest py-4 px-8 rounded-[30px] hover:bg-indigo-400 hover:text-white transition-all shadow-xl"
+                        className="bg-white text-slate-900 font-black text-[10px] md:text-[11px] uppercase tracking-widest py-3 md:py-4 px-6 md:px-8 rounded-[24px] md:rounded-[30px] hover:bg-indigo-400 hover:text-white transition-all shadow-xl"
                     >
                         Submit Report
                     </button>

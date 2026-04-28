@@ -74,15 +74,15 @@ const CRMOverview = () => {
     const COLORS = ['#6366f1', '#8b5cf6', '#ec4899', '#f43f5e', '#f59e0b'];
 
     return (
-        <div className="p-8 max-w-[1600px] mx-auto min-h-screen bg-[#f8fafc]">
-            <header className="flex justify-between items-end mb-10">
+        <div className="max-w-[1600px] mx-auto min-h-screen">
+            <header className="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-10 gap-6">
                 <div>
-                    <div className="flex items-center gap-3 mb-3">
-                        <span className="bg-indigo-600 text-white text-[13px] font-black px-3 py-1 rounded-full uppercase tracking-widest shadow-lg shadow-indigo-100">Market Intelligence</span>
-                        <span className="text-slate-400 text-base font-bold">| CRM Dashboard</span>
+                    <div className="flex flex-wrap items-center gap-3 mb-3">
+                        <span className="bg-indigo-600 text-white text-[10px] md:text-[13px] font-black px-3 py-1 rounded-full uppercase tracking-widest shadow-lg shadow-indigo-100">Market Intelligence</span>
+                        <span className="text-slate-400 text-sm md:text-base font-bold">| CRM Dashboard</span>
                     </div>
-                    <h1 className="text-4xl font-black text-slate-900 tracking-tight italic">Strategic Overview</h1>
-                    <p className="text-slate-500 font-black text-[13px] uppercase tracking-[0.2em] mt-3 opacity-80">Real-time Sales Performance & Revenue Attribution</p>
+                    <h1 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight italic">Strategic Overview</h1>
+                    <p className="text-slate-500 font-black text-[10px] md:text-[13px] uppercase tracking-[0.2em] mt-3 opacity-80">Real-time Sales Performance & Revenue Attribution</p>
                 </div>
                 <div className="flex items-center gap-3 bg-white p-2 rounded-2xl shadow-sm border border-slate-100">
                     <Calendar size={18} className="text-slate-400 ml-2" />

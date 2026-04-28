@@ -116,8 +116,8 @@ const MaterialTracking = () => {
     const categories = [...new Set(materials.map(m => m.category))].filter(Boolean);
 
     return (
-        <div className="p-8 min-h-screen">
-            <header className="flex justify-between items-center mb-10">
+        <div className="min-h-screen">
+            <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-6">
                 <div>
                     <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-3">
                         <Package className="text-indigo-600" size={32} />
@@ -128,7 +128,7 @@ const MaterialTracking = () => {
                 {!isEmployee && !isManager && (
                     <button 
                         onClick={() => handleOpenModal()}
-                        className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-6 rounded-xl transition-all shadow-lg shadow-indigo-200"
+                        className="w-full md:w-auto flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-black py-4 md:py-2.5 px-8 rounded-2xl md:rounded-xl transition-all shadow-lg shadow-indigo-200 text-xs uppercase tracking-widest"
                     >
                         <Plus size={20} />
                         Add Material
@@ -137,7 +137,7 @@ const MaterialTracking = () => {
             </header>
 
             {/* Stats Overview */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
                 <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm relative overflow-hidden group">
                     <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                         <Package size={48} className="text-slate-400" />

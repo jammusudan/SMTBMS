@@ -105,19 +105,19 @@ const CustomerDirectory = () => {
     );
 
     return (
-        <div className="p-8 max-w-[1600px] mx-auto min-h-screen bg-white">
-            <header className="flex justify-between items-end mb-10">
+        <div className="max-w-[1600px] mx-auto min-h-screen">
+            <header className="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-10 gap-6">
                 <div>
-                    <div className="flex items-center gap-3 mb-3">
-                        <span className="bg-slate-100 text-slate-700 text-[13px] font-black px-3 py-1 rounded-full uppercase tracking-widest">Client Ecosystem</span>
-                        <span className="text-slate-400 text-base font-bold">| Enterprise Directory</span>
+                    <div className="flex flex-wrap items-center gap-3 mb-3">
+                        <span className="bg-slate-100 text-slate-700 text-[10px] md:text-[13px] font-black px-3 py-1 rounded-full uppercase tracking-widest">Client Ecosystem</span>
+                        <span className="text-slate-400 text-sm md:text-base font-bold">| Enterprise Directory</span>
                     </div>
-                    <h1 className="text-4xl font-black text-slate-900 tracking-tight italic">Customer Management</h1>
-                    <p className="text-slate-500 font-black text-[13px] uppercase tracking-[0.2em] mt-3 opacity-80">Maintain deep client profiles and historical purchase intelligence</p>
+                    <h1 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight italic">Customer Management</h1>
+                    <p className="text-slate-500 font-black text-[10px] md:text-[13px] uppercase tracking-[0.2em] mt-3 opacity-80">Maintain deep client profiles and historical purchase intelligence</p>
                 </div>
                 <button 
                     onClick={() => handleOpenModal()}
-                    className="flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white font-black text-[13px] uppercase tracking-widest py-4 px-10 rounded-2xl shadow-xl shadow-slate-100 transition-all active:scale-[0.98]"
+                    className="w-full lg:w-auto flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-white font-black text-[11px] md:text-[13px] uppercase tracking-widest py-4 px-10 rounded-2xl shadow-xl shadow-slate-100 transition-all active:scale-[0.98]"
                 >
                     <Plus size={18} /> New Profile
                 </button>

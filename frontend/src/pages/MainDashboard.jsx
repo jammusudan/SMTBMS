@@ -93,8 +93,8 @@ const MainDashboard = () => {
     );
 
     return (
-        <div className="p-4 md:p-8 max-w-[1600px] mx-auto min-h-screen bg-white">
-            <header className="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center bg-slate-50 p-6 rounded-3xl border border-slate-100 shadow-sm gap-6">
+        <div className="max-w-[1600px] mx-auto min-h-screen">
+            <header className="mb-8 flex flex-col lg:flex-row justify-between items-start lg:items-center bg-slate-50 p-4 md:p-6 rounded-3xl border border-slate-100 shadow-sm gap-6">
                 <div className="flex items-center gap-4">
                     <div className="p-3 bg-white rounded-xl border border-slate-100 text-slate-600 shadow-sm">
                         <ShieldCheck size={22} />
@@ -106,12 +106,12 @@ const MainDashboard = () => {
                         <span className="text-slate-400 text-[11px] font-bold uppercase tracking-widest mt-2 opacity-70">Operational Oversight | {new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
                     </div>
                 </div>
-                <div className="flex flex-wrap gap-3 w-full md:w-auto">
-                    <Link to="/announcements" className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-6 py-4 rounded-2xl font-black text-[11px] uppercase tracking-widest transition shadow-sm active:scale-[0.98]">
+                <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
+                    <Link to="/announcements" className="flex-1 lg:flex-none flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-6 py-4 rounded-2xl font-black text-[11px] uppercase tracking-widest transition shadow-sm active:scale-[0.98]">
                         <Megaphone size={16} /> Broadcast
                     </Link>
                     {isSuperAdmin && (
-                        <Link to="/settings" className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-white text-slate-700 border border-slate-200 px-6 py-4 rounded-2xl font-black text-[11px] uppercase tracking-widest hover:bg-slate-50 transition shadow-sm active:scale-[0.98]">
+                        <Link to="/settings" className="flex-1 lg:flex-none flex items-center justify-center gap-2 bg-white text-slate-700 border border-slate-200 px-6 py-4 rounded-2xl font-black text-[11px] uppercase tracking-widest hover:bg-slate-50 transition shadow-sm active:scale-[0.98]">
                             <Settings size={16} /> Config
                         </Link>
                     )}
@@ -157,8 +157,8 @@ const MainDashboard = () => {
                 {/* Main Content Area (Revenue + System Intelligence) */}
                 <div className="lg:col-span-2 space-y-8">
                     {/* Revenue Intelligence Chart */}
-                    <div className="bg-white p-8 rounded-[40px] border border-slate-100 shadow-sm relative overflow-hidden group">
-                        <div className="flex justify-between items-center mb-10">
+                    <div className="bg-white p-6 md:p-8 rounded-[40px] border border-slate-100 shadow-sm relative overflow-hidden group">
+                        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-6">
                             <div>
                                 <h3 className="text-2xl font-black text-slate-900 italic flex items-center gap-2">
                                     <Activity size={24} className="text-indigo-600" />
@@ -166,11 +166,11 @@ const MainDashboard = () => {
                                 </h3>
                                 <p className="text-slate-400 text-[12px] font-bold uppercase tracking-widest mt-2">12-Month Fiscal Performance Matrix</p>
                             </div>
-                            <div className="flex gap-2 bg-slate-50 p-2 rounded-xl border border-slate-100">
+                            <div className="flex gap-2 bg-slate-50 p-2 rounded-xl border border-slate-100 w-full sm:w-auto">
                                 {['Revenue', 'Payroll'].map(tab => (
                                     <button 
                                         key={tab} 
-                                        className={`px-5 py-2.5 rounded-lg text-[12px] font-black uppercase tracking-widest transition-all ${tab === 'Revenue' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                                        className={`flex-1 sm:flex-none px-5 py-2.5 rounded-lg text-[12px] font-black uppercase tracking-widest transition-all ${tab === 'Revenue' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
                                     >
                                         {tab}
                                     </button>

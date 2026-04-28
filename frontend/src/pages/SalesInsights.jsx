@@ -55,22 +55,22 @@ const SalesInsights = () => {
     } = data || {};
 
     return (
-        <div className="p-8 max-w-[1600px] mx-auto min-h-screen printable-area">
-            <header className="flex justify-between items-center mb-10 no-print">
+        <div className="max-w-[1600px] mx-auto min-h-screen printable-area">
+            <header className="flex flex-col lg:flex-row justify-between lg:items-center mb-10 no-print gap-6">
                 <div>
-                    <h1 className="text-3xl font-black text-slate-900 flex items-center gap-3 tracking-tight">
+                    <h1 className="text-2xl md:text-3xl font-black text-slate-900 flex items-center gap-3 tracking-tight italic">
                         <BarChart3 className="text-indigo-600" size={32} />
                         Sales Intelligence
                     </h1>
                     <p className="text-slate-500 font-medium mt-1">12-month performance analysis and representative leaderboard.</p>
                 </div>
-                <div className="flex items-center gap-3">
-                    <button className="flex items-center gap-2 px-5 py-2.5 bg-white border border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-50 transition shadow-sm">
+                <div className="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto">
+                    <button className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-3.5 bg-white border border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-50 transition shadow-sm">
                         <Filter size={18} /> Filter Period
                     </button>
                     <button 
                         onClick={handlePrint}
-                        className="flex items-center gap-2 px-5 py-2.5 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition shadow-lg shadow-indigo-200"
+                        className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-3.5 bg-indigo-600 text-white font-black text-[11px] uppercase tracking-widest rounded-2xl hover:bg-indigo-700 transition shadow-xl shadow-indigo-100 active:scale-95"
                     >
                         <Download size={18} /> Export Intelligence
                     </button>
@@ -78,7 +78,7 @@ const SalesInsights = () => {
             </header>
 
             {/* Top KPIs Summary */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
                 <div className="bg-white p-8 rounded-[32px] border border-slate-200 shadow-sm relative overflow-hidden group">
                     <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-3xl -mr-10 -mt-10"></div>
                     <div className="flex items-center gap-4 mb-4">
@@ -125,7 +125,7 @@ const SalesInsights = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
                 {/* 12-Month Trends Visualization (Simplified CSS Bars) */}
                 <div className="bg-white p-8 rounded-[34px] border border-slate-200 shadow-sm">
-                    <div className="flex justify-between items-center mb-8">
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
                         <h3 className="text-xl font-black text-slate-900 flex items-center gap-3">
                             <TrendingUp className="text-indigo-600" size={24} />
                             Conversion Trends
@@ -157,7 +157,7 @@ const SalesInsights = () => {
 
                 {/* Sales Representative Leaderboard */}
                 <div className="bg-white p-8 rounded-[34px] border border-slate-200 shadow-sm">
-                    <div className="flex justify-between items-center mb-8">
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
                         <h3 className="text-xl font-black text-slate-900 flex items-center gap-3">
                             <Award className="text-amber-500" size={24} />
                             Top Performing Reps
@@ -258,7 +258,7 @@ const SalesInsights = () => {
 
             {/* Loyalty & Retention Section */}
             <div className="mt-10 grid grid-cols-1 lg:grid-cols-3 gap-8 pb-20">
-                <div className="bg-white p-10 rounded-[40px] border border-slate-200 shadow-sm col-span-1 lg:col-span-1">
+                <div className="bg-white p-6 md:p-10 rounded-[40px] border border-slate-200 shadow-sm col-span-1 lg:col-span-1">
                     <h3 className="text-xl font-black text-slate-900 mb-8 flex items-center gap-3">
                         <Users className="text-emerald-500" size={24} />
                         Retention Rate
@@ -294,7 +294,7 @@ const SalesInsights = () => {
                     </div>
                 </div>
 
-                <div className="bg-white p-10 rounded-[40px] border border-slate-200 shadow-sm col-span-1 lg:col-span-2">
+                <div className="bg-white p-6 md:p-10 rounded-[40px] border border-slate-200 shadow-sm col-span-1 lg:col-span-2">
                     <div className="flex justify-between items-center mb-8">
                         <h3 className="text-xl font-black text-slate-900 flex items-center gap-3">
                             <Award className="text-indigo-600" size={24} />

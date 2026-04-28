@@ -99,10 +99,10 @@ const HRDashboard = () => {
         : 0;
 
     return (
-        <div className="p-8 max-w-[1600px] mx-auto min-h-screen bg-[#F9FAFB]">
-            <header className="mb-12 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+        <div className="max-w-[1600px] mx-auto min-h-screen">
+            <header className="mb-12 flex flex-col lg:flex-row justify-between lg:items-center gap-10">
                 <div>
-                    <div className="flex items-center gap-3 mb-3">
+                    <div className="flex flex-wrap items-center gap-3 mb-3">
                         <div className="bg-indigo-600 p-2.5 rounded-2xl text-white shadow-lg shadow-indigo-200">
                             <ShieldAlert size={24} />
                         </div>
@@ -115,14 +115,14 @@ const HRDashboard = () => {
                             </span>
                         </div>
                     </div>
-                    <h1 className="text-4xl font-black text-slate-900 tracking-tight leading-none">
+                    <h1 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight italic">
                         HR Command Center
                     </h1>
-                    <p className="text-slate-500 font-medium mt-3 text-lg">Strict operational oversight and payroll governance.</p>
+                    <p className="text-slate-500 font-medium mt-3 text-lg leading-tight">Strict operational oversight and payroll governance.</p>
                 </div>
 
                 {/* QUICK ACTIONS BAR */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full md:w-auto">
+                <div className="grid grid-cols-1 sm:grid-cols-3 lg:flex lg:flex-row gap-4 w-full lg:w-auto">
                     <QuickAction 
                         title="Add Employee" 
                         desc="Onboard personnel" 
@@ -145,7 +145,7 @@ const HRDashboard = () => {
             </header>
 
             {/* TOP METRICS GRID */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
                 <StatCard 
                     title="Total Workforce" 
                     value={metrics.total_employees || 0}

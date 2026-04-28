@@ -246,14 +246,14 @@ const SalarySystem = () => {
     const years = [2024, 2025, 2026];
 
     return (
-        <div className="p-4 md:p-8 max-w-[1400px] mx-auto min-h-screen bg-[#F9FAFB]">
+        <div className="max-w-[1400px] mx-auto min-h-screen">
             <header className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 gap-6">
                 <div>
                     <div className="flex items-center gap-3 mb-1">
                         <div className="bg-indigo-600 p-2 rounded-xl text-white shadow-lg shadow-indigo-100"><Banknote size={24} /></div>
                         <h1 className="text-2xl font-black text-slate-900 tracking-tight">HR Payroll Command Center</h1>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-2">
                         <span className="bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider border border-indigo-100">Enterprise Edition</span>
                         <p className="text-slate-500 text-sm font-medium">Automated salary computation & financial audit.</p>
                     </div>

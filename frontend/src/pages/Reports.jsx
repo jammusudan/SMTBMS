@@ -35,20 +35,20 @@ const Reports = () => {
     };
 
     return (
-        <div className="p-8 max-w-7xl mx-auto printable-area">
-            <div className="flex justify-between items-center mb-8">
+        <div className="max-w-[1600px] mx-auto min-h-screen printable-area">
+            <header className="flex flex-col lg:flex-row justify-between lg:items-center mb-10 gap-6">
                 <div>
-                    <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
-                        <FileText className="text-indigo-600" /> Executive Reports
+                    <h1 className="text-2xl md:text-3xl font-black text-slate-900 flex items-center gap-2 italic">
+                        <FileText className="text-indigo-600" size={32} /> Executive Reports
                     </h1>
                     <p className="text-slate-500 text-sm mt-1">Exportable summary of all key business modules</p>
                 </div>
-                <button onClick={handlePrint} className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white font-medium rounded-xl hover:bg-indigo-700 transition">
-                    <Download size={16} /> Export to PDF
+                <button onClick={handlePrint} className="w-full lg:w-auto flex items-center justify-center gap-2 px-6 py-3.5 bg-indigo-600 text-white font-black text-[11px] uppercase tracking-widest rounded-2xl hover:bg-indigo-700 transition shadow-xl shadow-indigo-100 active:scale-95">
+                    <Download size={18} /> Export to PDF
                 </button>
-            </div>
+            </header>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
                 <div className="bg-white p-6 rounded-[32px] border border-slate-200 shadow-sm hover:border-indigo-200 transition-all">
                     <div className="flex items-center gap-3 mb-6">
                         <div className="p-3 bg-indigo-50 text-indigo-600 rounded-2xl"><TrendingUp size={20} /></div>
@@ -133,7 +133,7 @@ const Reports = () => {
                             <p className="text-indigo-300 text-[10px] font-black uppercase tracking-[0.2em]">Generate Statutory Compliance & Audit Documents</p>
                         </div>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                         <button 
                             onClick={async () => {
                                 const { salaryService } = await import('../services/api');
@@ -271,7 +271,7 @@ const Reports = () => {
                     </div>
 
                     {/* Payroll Summary Analytics Header-style */}
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                         {[
                             { label: 'Avg Monthly Salary', value: payrollData.summary.avgNetPay, icon: Banknote, color: 'indigo' },
                             { label: 'Total TDS Collected', value: payrollData.summary.totalTax, icon: FileText, color: 'rose' },

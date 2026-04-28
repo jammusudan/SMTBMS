@@ -112,41 +112,44 @@ const DealsManagement = () => {
     const totalPipeline = deals.reduce((acc, curr) => acc + (curr.stage !== 'Lost' ? curr.amount : 0), 0);
 
     return (
-        <div className="p-8 max-w-[1600px] mx-auto min-h-screen bg-[#f8fafc]">
-            <header className="flex justify-between items-end mb-10">
+    return (
+        <div className="max-w-[1600px] mx-auto min-h-screen">
+            <header className="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-10 gap-8">
                 <div>
-                    <div className="flex items-center gap-3 mb-3">
-                        <span className="bg-indigo-600 text-white text-[13px] font-black px-3 py-1 rounded-full uppercase tracking-widest shadow-lg shadow-indigo-100">Revenue Pipeline</span>
-                        <span className="text-slate-400 text-base font-bold">| Opportunity Tracking</span>
+                    <div className="flex flex-wrap items-center gap-3 mb-3">
+                        <span className="bg-indigo-600 text-white text-[10px] md:text-[13px] font-black px-3 py-1 rounded-full uppercase tracking-widest shadow-lg shadow-indigo-100">Revenue Pipeline</span>
+                        <span className="text-slate-400 text-sm md:text-base font-bold">| Opportunity Tracking</span>
                     </div>
-                    <h1 className="text-4xl font-black text-slate-900 tracking-tight italic">Deals Portfolio</h1>
-                    <p className="text-slate-500 font-black text-[13px] uppercase tracking-[0.2em] mt-3 opacity-80">Strategic deal flow management and expected revenue forecasting</p>
+                    <h1 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight italic">Deals Portfolio</h1>
+                    <p className="text-slate-500 font-black text-[10px] md:text-[13px] uppercase tracking-[0.2em] mt-3 opacity-80">Strategic deal flow management and expected revenue forecasting</p>
                 </div>
-                <div className="flex items-center gap-6">
-                    <div className="text-right">
-                        <p className="text-slate-400 font-black text-[11px] uppercase tracking-widest mb-1">Total Weighted Pipeline</p>
-                        <p className="text-3xl font-black text-slate-900 tracking-tight">₹{totalPipeline.toLocaleString()}</p>
+                <div className="w-full lg:w-auto flex flex-col md:flex-row items-stretch md:items-center gap-6">
+                    <div className="text-left md:text-right bg-white p-4 rounded-2xl border border-slate-100 shadow-sm md:bg-transparent md:p-0 md:border-0 md:shadow-none">
+                        <p className="text-slate-400 font-black text-[10px] uppercase tracking-widest mb-1">Total Weighted Pipeline</p>
+                        <p className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">₹{totalPipeline.toLocaleString()}</p>
                     </div>
-                    <div className="flex bg-white border border-slate-200 p-1 rounded-2xl shadow-sm mr-4">
+                    <div className="flex items-center gap-4">
+                        <div className="flex bg-white border border-slate-200 p-1 rounded-2xl shadow-sm">
+                            <button 
+                                onClick={() => setView('table')}
+                                className={`p-2.5 rounded-xl transition-all ${view === 'table' ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-100' : 'text-slate-400 hover:bg-slate-50'}`}
+                            >
+                                <List size={20} />
+                            </button>
+                            <button 
+                                onClick={() => setView('kanban')}
+                                className={`p-2.5 rounded-xl transition-all ${view === 'kanban' ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-100' : 'text-slate-400 hover:bg-slate-50'}`}
+                            >
+                                <LayoutGrid size={20} />
+                            </button>
+                        </div>
                         <button 
-                            onClick={() => setView('table')}
-                            className={`p-2.5 rounded-xl transition-all ${view === 'table' ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-100' : 'text-slate-400 hover:bg-slate-50'}`}
+                            onClick={() => setIsModalOpen(true)}
+                            className="flex-1 lg:flex-none flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-white font-black text-[11px] md:text-[13px] uppercase tracking-widest py-4 px-6 md:px-10 rounded-2xl shadow-xl shadow-slate-100 transition-all active:scale-[0.98]"
                         >
-                            <List size={20} />
-                        </button>
-                        <button 
-                            onClick={() => setView('kanban')}
-                            className={`p-2.5 rounded-xl transition-all ${view === 'kanban' ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-100' : 'text-slate-400 hover:bg-slate-50'}`}
-                        >
-                            <LayoutGrid size={20} />
+                            <Plus size={18} /> Initialize
                         </button>
                     </div>
-                    <button 
-                        onClick={() => setIsModalOpen(true)}
-                        className="flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white font-black text-[13px] uppercase tracking-widest py-4 px-10 rounded-2xl shadow-xl shadow-slate-100 transition-all active:scale-[0.98]"
-                    >
-                        <Plus size={18} /> Initialize Deal
-                    </button>
                 </div>
             </header>
 

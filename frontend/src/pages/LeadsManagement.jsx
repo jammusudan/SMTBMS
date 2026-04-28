@@ -149,7 +149,7 @@ const LeadsManagement = () => {
     const isSubmitDisabled = !formData.notes || (!formData.customer_id && (!formData.name || !formData.phone));
 
     return (
-        <div className="p-4 md:p-8 max-w-[1600px] mx-auto min-h-screen bg-white">
+        <div className="max-w-[1600px] mx-auto min-h-screen bg-white">
             <header className="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-10 gap-6">
                 <div>
                     <div className="flex flex-wrap items-center gap-2 md:gap-3 mb-3">
@@ -157,7 +157,7 @@ const LeadsManagement = () => {
                         <span className="text-slate-300 text-sm font-medium">/</span>
                         <span className="text-slate-500 text-[9px] md:text-[11px] font-black uppercase tracking-widest">Lead Intelligence</span>
                     </div>
-                    <h1 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight italic">Prospect Pipeline</h1>
+                    <h1 className="text-2xl md:text-4xl font-black text-slate-900 tracking-tight italic">Prospect Pipeline</h1>
                     <p className="text-slate-400 font-bold text-[11px] md:text-[13px] uppercase tracking-[0.2em] mt-3 opacity-80 leading-relaxed">Capture and nurture high-potential opportunities</p>
                 </div>
                 <button 

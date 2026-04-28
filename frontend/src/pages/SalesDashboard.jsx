@@ -149,7 +149,7 @@ const SalesDashboard = () => {
     const isSaleValid = saleForm.materialId && saleForm.customerId && Number(saleForm.quantity) > 0 && (!selectedMaterial || Number(saleForm.quantity) <= selectedMaterial.quantity);
 
     return (
-        <div className="p-8 max-w-[1600px] mx-auto min-h-screen relative">
+        <div className="max-w-[1600px] mx-auto min-h-screen relative">
             {/* SUCCESS TOAST */}
             <AnimatePresence>
                 {successMessage && (
@@ -165,27 +165,27 @@ const SalesDashboard = () => {
                 )}
             </AnimatePresence>
 
-            <header className="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <header className="mb-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
                 <div>
-                    <div className="flex items-center gap-2 mb-2">
+                    <div className="flex flex-wrap items-center gap-2 mb-2">
                         <span className="bg-indigo-100 text-indigo-700 text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-widest">
                             Sales Dashboard
                         </span>
                         <span className="text-slate-400 text-[11px] font-black uppercase tracking-widest">| {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</span>
                     </div>
-                    <h1 className="text-4xl font-black text-slate-900 tracking-tight">Welcome, {user.username}</h1>
+                    <h1 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight italic">Welcome, {user.username}</h1>
                     <p className="text-slate-500 font-medium mt-1">Manage leads, track customers, and execute finalized sales.</p>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto">
                     <button 
                         onClick={() => setIsLeadModalOpen(true)}
-                        className="flex items-center gap-2 bg-white hover:bg-slate-50 text-indigo-600 border border-slate-200 font-black py-3.5 px-6 rounded-2xl transition-all shadow-sm active:scale-95 text-[11px] uppercase tracking-widest"
+                        className="w-full sm:w-auto flex items-center justify-center gap-2 bg-white hover:bg-slate-50 text-indigo-600 border border-slate-200 font-black py-3.5 px-6 rounded-2xl transition-all shadow-sm active:scale-95 text-[11px] uppercase tracking-widest"
                     >
                         <UserPlus size={18} /> New Lead
                     </button>
                     <button 
                         onClick={() => setIsSaleModalOpen(true)}
-                        className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-black py-3.5 px-6 rounded-2xl transition-all shadow-xl shadow-emerald-100 active:scale-95 text-[11px] uppercase tracking-widest"
+                        className="w-full sm:w-auto flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-black py-3.5 px-6 rounded-2xl transition-all shadow-xl shadow-emerald-100 active:scale-95 text-[11px] uppercase tracking-widest"
                     >
                         <ShoppingBag size={18} /> Finalize Sale
                     </button>

@@ -236,8 +236,8 @@ const OrderManagement = () => {
         });
 
     return (
-        <div className="p-4 md:p-8 min-h-screen">
-            <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-6">
+        <div className="min-h-screen">
+            <header className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-10 gap-6">
                 <div>
                     <h1 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight flex items-center gap-3">
                         <ShoppingCart className="text-indigo-600" size={32} />
@@ -248,7 +248,7 @@ const OrderManagement = () => {
                 {!isManager && (
                     <button 
                         onClick={() => setIsModalOpen(true)}
-                        className="w-full md:w-auto flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-xl transition-all shadow-lg shadow-indigo-100"
+                        className="w-full lg:w-auto flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-xl transition-all shadow-lg shadow-indigo-100"
                     >
                         <Plus size={20} />
                         New Entry

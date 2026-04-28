@@ -71,14 +71,14 @@ const AttendanceDashboard = () => {
     const todayRecord = Array.isArray(history) ? history.find(h => h.date && h.date.split('T')[0] === todayStr) : null;
 
     return (
-        <div className="p-8 max-w-[1600px] mx-auto min-h-screen bg-white">
-            <header className="mb-10 flex justify-between items-end">
+        <div className="max-w-[1600px] mx-auto min-h-screen">
+            <header className="mb-10 flex flex-col lg:flex-row justify-between lg:items-center gap-6">
                 <div>
-                    <div className="flex items-center gap-3 mb-3">
-                        <span className="bg-emerald-100 text-emerald-700 text-[13px] font-black px-3 py-1 rounded-full uppercase tracking-widest leading-none">Real-time Sync</span>
-                        <span className="text-slate-400 text-base font-bold">| {isAdmin ? 'Enterprise Oversight' : 'Personal Attendance'}</span>
+                    <div className="flex flex-wrap items-center gap-3 mb-3">
+                        <span className="bg-emerald-100 text-emerald-700 text-[11px] md:text-[13px] font-black px-3 py-1 rounded-full uppercase tracking-widest leading-none">Real-time Sync</span>
+                        <span className="text-slate-400 text-sm md:text-base font-bold">| {isAdmin ? 'Enterprise Oversight' : 'Personal Attendance'}</span>
                     </div>
-                    <h1 className="text-4xl font-black text-slate-900 tracking-tight flex items-center gap-4 italic opacity-90">
+                    <h1 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight flex items-center gap-4 italic opacity-90">
                         Attendance Intelligence
                     </h1>
                 </div>
@@ -88,7 +88,7 @@ const AttendanceDashboard = () => {
                 {/* Left Column: Management Stats (If Admin) or Personal Status */}
                 <div className="lg:col-span-3 space-y-8">
                     {isAdmin && (
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                             <div className="bg-slate-50 p-6 rounded-3xl border border-slate-100 shadow-sm relative overflow-hidden group hover:bg-white transition-all">
                                 <p className="text-slate-400 text-[10px] font-black uppercase tracking-[0.2em] mb-2">Currently Present</p>
                                 <h3 className="text-4xl font-black text-emerald-600 tracking-tighter">{attendanceStats.present}</h3>

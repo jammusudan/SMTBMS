@@ -15,7 +15,7 @@ const InsightCard = ({ title, value, subtext, icon: Icon, color, children }) => 
     <motion.div 
         initial={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="bg-white p-8 rounded-[36px] border border-slate-100 shadow-sm flex flex-col h-full overflow-hidden"
+        className="bg-white p-4 md:p-8 rounded-[36px] border border-slate-100 shadow-sm flex flex-col h-full overflow-hidden"
     >
         <div className="flex justify-between items-start mb-8">
             <div className="flex items-center gap-4">
@@ -74,21 +74,21 @@ const CRMInsights = () => {
     const COLORS = ['#6366f1', '#8b5cf6', '#ec4899', '#f43f5e', '#f59e0b', '#10b981'];
 
     return (
-        <div className="p-8 max-w-[1600px] mx-auto min-h-screen bg-[#fcfdfe]">
-            <header className="flex justify-between items-center mb-12">
+        <div className="max-w-[1600px] mx-auto min-h-screen">
+            <header className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-12 gap-8">
                 <div>
-                    <div className="flex items-center gap-3 mb-3">
-                        <span className="bg-slate-900 text-white text-[12px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest shadow-xl shadow-slate-100">Executive Intelligence</span>
-                        <span className="text-slate-400 text-base font-bold">| Advanced Sales Analytics</span>
+                    <div className="flex flex-wrap items-center gap-3 mb-3">
+                        <span className="bg-slate-900 text-white text-[10px] md:text-[12px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest shadow-xl shadow-slate-100">Executive Intelligence</span>
+                        <span className="text-slate-400 text-sm md:text-base font-bold">| Advanced Sales Analytics</span>
                     </div>
-                    <h1 className="text-5xl font-black text-slate-900 tracking-tight italic">Business Insights</h1>
-                    <p className="text-slate-500 font-black text-[13px] uppercase tracking-[0.2em] mt-4 opacity-80 decoration-indigo-200 decoration-2 underline-offset-8">Critical metrics & performance benchmarks</p>
+                    <h1 className="text-3xl md:text-5xl font-black text-slate-900 tracking-tight italic">Business Insights</h1>
+                    <p className="text-slate-500 font-black text-[10px] md:text-[13px] uppercase tracking-[0.2em] mt-4 opacity-80 decoration-indigo-200 decoration-2 underline-offset-8">Critical metrics & performance benchmarks</p>
                 </div>
-                <div className="flex gap-4">
-                    <button className="flex items-center gap-3 bg-white border border-slate-100 px-6 py-4 rounded-2xl text-slate-600 font-black text-[11px] uppercase tracking-widest hover:bg-slate-50 shadow-sm transition-all">
+                <div className="w-full lg:w-auto flex flex-col sm:flex-row gap-4">
+                    <button className="flex items-center justify-center gap-3 bg-white border border-slate-100 px-6 py-4 rounded-2xl text-slate-600 font-black text-[11px] uppercase tracking-widest hover:bg-slate-50 shadow-sm transition-all">
                         <Download size={18} /> Export Intel
                     </button>
-                    <div className="bg-indigo-600 text-white px-8 py-4 rounded-2xl flex items-center gap-3 shadow-xl shadow-indigo-100 cursor-default">
+                    <div className="bg-indigo-600 text-white px-8 py-4 rounded-2xl flex items-center justify-center gap-3 shadow-xl shadow-indigo-100 cursor-default">
                         <Calendar size={18} className="opacity-80" />
                         <span className="font-black text-[11px] uppercase tracking-widest">Q2 | 2026</span>
                     </div>

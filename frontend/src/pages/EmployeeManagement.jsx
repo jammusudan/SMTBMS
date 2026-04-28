@@ -221,21 +221,21 @@ const EmployeeManagement = () => {
         : ['Employee', 'Sales', 'Manager', 'HR', 'Admin'];
 
     return (
-        <div className="p-8 min-h-screen bg-[#F9FAFB]">
-            <header className="mb-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+        <div className="max-w-[1600px] mx-auto min-h-screen">
+            <header className="mb-10 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
                 <div className="flex items-center gap-5">
-                    <div className="p-4 bg-indigo-600 rounded-[24px] text-white shadow-xl shadow-indigo-100">
-                        <Users size={28} strokeWidth={2.5} />
+                    <div className="p-3 md:p-4 bg-indigo-600 rounded-2xl md:rounded-[24px] text-white shadow-xl shadow-indigo-100">
+                        <Users size={24} className="md:w-7 md:h-7" strokeWidth={2.5} />
                     </div>
                     <div>
-                        <h1 className="text-3xl font-black text-slate-900 tracking-tight">Personnel Directory</h1>
-                        <p className="text-slate-500 font-bold text-xs uppercase tracking-[0.2em] mt-1">HRMS Workforce Governance</p>
+                        <h1 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight italic">Personnel Directory</h1>
+                        <p className="text-slate-500 font-bold text-[10px] md:text-xs uppercase tracking-[0.2em] mt-1">HRMS Workforce Governance</p>
                     </div>
                 </div>
                 {canEdit && (
                     <button 
                         onClick={() => setIsModalOpen(true)}
-                        className="flex items-center gap-2 bg-slate-900 hover:bg-indigo-600 text-white font-black py-4 px-8 rounded-2xl transition-all text-xs uppercase tracking-widest shadow-2xl shadow-slate-200 active:scale-95"
+                        className="w-full lg:w-auto flex items-center justify-center gap-2 bg-slate-900 hover:bg-indigo-600 text-white font-black py-4 px-8 rounded-2xl transition-all text-xs uppercase tracking-widest shadow-2xl shadow-slate-200 active:scale-95"
                     >
                         <UserPlus size={18} />
                         Onboard Personnel
@@ -244,8 +244,8 @@ const EmployeeManagement = () => {
             </header>
 
             {/* ADVANCED FILTERS */}
-            <div className="bg-white p-6 rounded-[32px] border border-slate-100 shadow-sm mb-8 flex flex-col md:flex-row gap-4 items-end">
-                <div className="flex-1 w-full">
+            <div className="bg-white p-4 md:p-6 rounded-[32px] border border-slate-100 shadow-sm mb-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
+                <div className="lg:col-span-1">
                     <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Search Employee</label>
                     <div className="relative group">
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={18} />
@@ -258,7 +258,7 @@ const EmployeeManagement = () => {
                         />
                     </div>
                 </div>
-                <div className="w-full md:w-56">
+                <div>
                     <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Unit / Dept</label>
                     <select 
                         value={deptFilter}
@@ -269,7 +269,7 @@ const EmployeeManagement = () => {
                         {departments.map(d => <option key={d._id} value={d._id}>{d.name}</option>)}
                     </select>
                 </div>
-                <div className="w-full md:w-48">
+                <div>
                     <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Hierarchy Role</label>
                     <select 
                         value={roleFilter}
@@ -285,7 +285,7 @@ const EmployeeManagement = () => {
                 </div>
                 <button 
                     onClick={() => {setSearchTerm(''); setDeptFilter(''); setRoleFilter('');}}
-                    className="p-3.5 bg-slate-50 text-slate-400 hover:text-slate-900 rounded-2xl border border-slate-100 transition-all"
+                    className="w-full md:w-auto p-4 bg-slate-50 text-slate-400 hover:text-slate-900 rounded-2xl border border-slate-100 transition-all flex items-center justify-center"
                 >
                     <X size={20} />
                 </button>

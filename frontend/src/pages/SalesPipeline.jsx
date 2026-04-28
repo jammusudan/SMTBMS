@@ -84,10 +84,10 @@ const SalesPipeline = () => {
     };
 
     return (
-        <div className="p-8 min-h-screen bg-[#f8fafc]">
-            <header className="flex justify-between items-center mb-10">
+        <div className="max-w-[1600px] mx-auto min-h-screen">
+            <header className="flex flex-col lg:flex-row justify-between lg:items-center mb-10 gap-6">
                 <div>
-                    <h1 className="text-3xl font-black text-slate-900 flex items-center gap-3 tracking-tight">
+                    <h1 className="text-2xl md:text-3xl font-black text-slate-900 flex items-center gap-3 tracking-tight italic">
                         <TrendingUp className="text-indigo-600" size={32} />
                         Sales Pipeline
                     </h1>
@@ -95,7 +95,7 @@ const SalesPipeline = () => {
                 </div>
                 <button 
                     onClick={() => setIsModalOpen(true)}
-                    className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-2xl transition-all shadow-xl shadow-indigo-200 active:scale-95"
+                    className="w-full lg:w-auto flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-2xl transition-all shadow-xl shadow-indigo-200 active:scale-95"
                 >
                     <Plus size={20} />
                     Create Admission
@@ -108,9 +108,9 @@ const SalesPipeline = () => {
                     <p className="text-lg font-bold tracking-tight">Loading Pipeline Infrastructure...</p>
                 </div>
             ) : (
-                <div className="flex gap-6 overflow-x-auto pb-8 snap-x">
+                <div className="flex gap-4 md:gap-6 overflow-x-auto pb-8 snap-x scrollbar-hide">
                     {columns.map(column => (
-                        <div key={column.id} className="flex-shrink-0 w-80 snap-start">
+                        <div key={column.id} className="flex-shrink-0 w-[85vw] sm:w-80 snap-start">
                             <div className="flex items-center justify-between mb-4 px-2">
                                 <div className="flex items-center gap-2">
                                     <span className={`w-2 h-2 rounded-full bg-${column.color}-500 shadow-[0_0_10px_rgba(var(--tw-color-${column.color}-500),0.5)]`}></span>
