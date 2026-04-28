@@ -365,7 +365,10 @@ const OrderManagement = () => {
                                         <div className="grid grid-cols-2 gap-3">
                                             <button 
                                                 type="button"
-                                                onClick={() => setFormData(prev => ({ ...prev, orderType: 'PURCHASE' }))}
+                                                onClick={() => {
+                                                    setFormData(prev => ({ ...prev, orderType: 'PURCHASE', vendorId: '', customerId: '' }));
+                                                    setError('');
+                                                }}
                                                 className={`flex items-center justify-center gap-2 py-3.5 rounded-2xl border font-black text-[11px] uppercase tracking-widest transition-all ${
                                                     formData.orderType === 'PURCHASE' ? 'bg-indigo-600 text-white border-indigo-600 shadow-lg shadow-indigo-100' : 'bg-white text-slate-400 border-slate-100'
                                                 }`}
@@ -374,7 +377,10 @@ const OrderManagement = () => {
                                             </button>
                                             <button 
                                                 type="button"
-                                                onClick={() => setFormData(prev => ({ ...prev, orderType: 'SALE' }))}
+                                                onClick={() => {
+                                                    setFormData(prev => ({ ...prev, orderType: 'SALE', vendorId: '', customerId: '' }));
+                                                    setError('');
+                                                }}
                                                 className={`flex items-center justify-center gap-2 py-3.5 rounded-2xl border font-black text-[11px] uppercase tracking-widest transition-all ${
                                                     formData.orderType === 'SALE' ? 'bg-orange-600 text-white border-orange-600 shadow-lg shadow-orange-100' : 'bg-white text-slate-400 border-slate-100'
                                                 }`}
@@ -422,8 +428,8 @@ const OrderManagement = () => {
                                         >
                                             <option value="">Select Entity...</option>
                                             {formData.orderType === 'PURCHASE' 
-                                                ? vendors.map(v => <option key={v.id || v._id} value={v.id || v._id}>{v.name}</option>)
-                                                : customers.map(c => <option key={c.id || c._id} value={c.id || c._id}>{c.name} {c.status === 'PENDING' ? '(Pending Approval)' : ''}</option>)
+                                                ? (vendors.length > 0 ? vendors.map(v => <option key={v.id || v._id} value={v.id || v._id}>{v.name}</option>) : <option disabled>No vendors found</option>)
+                                                : (customers.length > 0 ? customers.map(c => <option key={c.id || c._id} value={c.id || c._id}>{c.name} {c.status === 'PENDING' ? '(Pending Approval)' : ''}</option>) : <option disabled>No customers found</option>)
                                             }
                                         </select>
                                     </div>
