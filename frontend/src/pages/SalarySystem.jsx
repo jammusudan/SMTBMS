@@ -231,6 +231,7 @@ const SalarySystem = () => {
     // Note: Filtering is handled by the server for better performance in production.
     // However, we still support local filtering for the current page's results.
     const filteredSalaries = Array.isArray(salaries) ? salaries.filter(s => 
+        s.employee_id && s.employee_id.first_name &&
         `${s.employee_id?.first_name} ${s.employee_id?.last_name}`.toLowerCase().includes(searchQuery.toLowerCase())
     ) : [];
 
