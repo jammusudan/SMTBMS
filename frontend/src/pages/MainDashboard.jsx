@@ -4,7 +4,7 @@ import {
     LayoutDashboard, Package, Users, TrendingUp, ShoppingCart, 
     AlertTriangle, CheckCircle2, IndianRupee, ArrowUpRight, 
     Calendar, ArrowDownRight, Loader2, Clock, XCircle, Activity,
-    Megaphone, Settings, UserPlus, FileBarChart, ShieldCheck
+    Megaphone, Settings, UserPlus, FileBarChart, ShieldCheck, Target
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
