@@ -441,7 +441,14 @@ const OrderManagement = () => {
                                         </div>
                                     </div>
                                 )}
-
+                                
+                                {error && (
+                                    <div className="bg-rose-50 border border-rose-100 p-4 rounded-2xl flex items-center gap-3 text-rose-600 mt-4">
+                                        <XCircle size={18} />
+                                        <p className="text-[10px] font-black uppercase tracking-widest">{error}</p>
+                                    </div>
+                                )}
+                                
                                 <div className="flex gap-4 pt-4">
                                     <button 
                                         type="button" onClick={() => setIsModalOpen(false)}

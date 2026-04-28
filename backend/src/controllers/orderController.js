@@ -99,6 +99,7 @@ exports.createOrder = async (req, res) => {
             quantity: qty,
             orderType,
             vendorId: orderType === 'PURCHASE' ? vendorId : undefined,
+            customerId: orderType === 'SALE' ? (customerId || undefined) : undefined,
             unitPrice: material.price,
             totalAmount: qty * material.price,
             createdByUserId: req.user.id,
