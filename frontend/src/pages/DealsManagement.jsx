@@ -112,7 +112,6 @@ const DealsManagement = () => {
     const totalPipeline = deals.reduce((acc, curr) => acc + (curr.stage !== 'Lost' ? curr.amount : 0), 0);
 
     return (
-    return (
         <div className="max-w-[1600px] mx-auto min-h-screen">
             <header className="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-10 gap-8">
                 <div>
