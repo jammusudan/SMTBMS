@@ -134,10 +134,10 @@ const MainDashboard = () => {
                     subtext="Consolidated Units" trend={12.5}
                 />
                 <StatCard 
-                    title="Personnel" 
-                    value={stats.employees.total}
-                    icon={Users} color="indigo" link="/hrms" 
-                    subtext={`${stats.employees.attendance_today.find(a => a.status === 'Present')?.count || 0} Active Personnel`}
+                    title="Pipeline" 
+                    value={stats.crm.leads_count || 0}
+                    icon={Target} color="indigo" link="/crm/leads" 
+                    subtext={`${stats.crm.active_deals || 0} Strategic Deals`}
                 />
                 <StatCard 
                     title="Inventory" 
@@ -146,10 +146,10 @@ const MainDashboard = () => {
                     subtext={`${stats.materials.out_of_stock_count} Critical | ${stats.materials.low_stock_count} Low`}
                 />
                 <StatCard 
-                    title="Payroll" 
-                    value={`₹${(stats.finances?.monthly_payout / 100000 || 0).toFixed(1)}L`}
-                    icon={IndianRupee} color="rose" link="/salary" 
-                    subtext="Monthly Fiscal Projection"
+                    title="Conversion" 
+                    value={`${stats.crm.conversion_rate || 0}%`}
+                    icon={Activity} color="rose" link="/crm/overview" 
+                    subtext="Lead Success Velocity" trend={2.4}
                 />
             </div>
 
@@ -233,17 +233,62 @@ const MainDashboard = () => {
                             </div>
                         </div>
 
+                        {/* Strategic CRM Pulse */}
+                        <div className="bg-slate-900 p-10 rounded-[40px] text-white flex flex-col justify-between relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 rounded-full blur-3xl"></div>
+                            <div>
+                                <div className="flex justify-between items-center mb-6">
+                                    <h4 className="text-[11px] font-black uppercase tracking-[0.4em] text-indigo-400">Market Intelligence</h4>
+                                    <Link to="/crm/overview" className="p-2 bg-white/10 rounded-lg hover:bg-white/20 transition-all">
+                                        <ArrowUpRight size={18} />
+                                    </Link>
+                                </div>
+                                <h3 className="text-2xl font-black italic mb-2">Lead Velocity</h3>
+                                <p className="text-white/40 text-[11px] font-bold uppercase tracking-widest mb-8">Monthly Acquisition Performance</p>
+                                
+                                <div className="space-y-6">
+                                    <div className="flex justify-between items-end">
+                                        <div className="flex flex-col">
+                                            <span className="text-3xl font-black tracking-tighter">+{stats.crm.monthly_leads || 0}</span>
+                                            <span className="text-white/40 text-[9px] font-black uppercase tracking-widest mt-1">New Leads</span>
+                                        </div>
+                                        <div className="h-12 w-24 flex items-end gap-1">
+                                            {[30, 50, 40, 70, 45, 90].map((h, i) => (
+                                                <div key={i} className="flex-1 bg-indigo-500/40 rounded-t-sm" style={{ height: `${h}%` }}></div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="pt-6 border-t border-white/5 space-y-4">
+                                        <div className="flex justify-between items-center">
+                                            <span className="text-[11px] font-black uppercase tracking-widest text-white/60">Target Accuracy</span>
+                                            <span className="text-[11px] font-black text-emerald-400">92%</span>
+                                        </div>
+                                        <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden">
+                                            <div className="h-full bg-emerald-500 w-[92%]"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div className="mt-8 flex items-center gap-3 bg-white/5 p-4 rounded-2xl border border-white/5">
+                                <Target size={18} className="text-indigo-400" />
+                                <span className="text-[11px] font-black uppercase tracking-widest">Q2 Forecast: On Track</span>
+                            </div>
+                        </div>
+
                         {/* Quick Command Console */}
-                        <div className="bg-slate-50 p-10 rounded-[40px] border border-slate-100 flex flex-col justify-between">
+                        <div className="bg-white p-10 rounded-[40px] border border-slate-100 flex flex-col justify-between shadow-sm">
                             <h4 className="text-[11px] font-black uppercase tracking-[0.4em] mb-8 text-slate-400">Unit Commands</h4>
                             <div className="space-y-4">
                                 {[
+                                    { label: 'CRM Overview', icon: FileBarChart, path: '/crm/overview' },
                                     { label: 'Security Logs', icon: ShieldCheck, path: '/logs' },
                                     { label: 'Employee Hub', icon: Users, path: '/hrms' }
                                 ].map((cmd) => (
-                                    <Link key={cmd.label} to={cmd.path} className="flex items-center justify-between p-5 bg-white hover:bg-slate-100 rounded-[24px] border border-slate-100 transition-all group shadow-sm active:scale-[0.98]">
+                                    <Link key={cmd.label} to={cmd.path} className="flex items-center justify-between p-5 bg-slate-50 hover:bg-slate-100 rounded-[24px] border border-slate-100 transition-all group active:scale-[0.98]">
                                         <div className="flex items-center gap-4">
-                                            <cmd.icon size={20} className="text-indigo-600" />
+                                            <cmd.icon size={20} className="text-slate-600 group-hover:text-indigo-600 transition-colors" />
                                             <span className="text-[12px] font-black uppercase tracking-widest text-slate-900">{cmd.label}</span>
                                         </div>
                                         <ArrowUpRight size={18} className="text-slate-300 group-hover:text-indigo-600 transition-colors" />
@@ -252,7 +297,7 @@ const MainDashboard = () => {
                             </div>
                             <div className="mt-8 flex items-center gap-3 opacity-60 font-black text-[10px] uppercase tracking-widest text-slate-900 italic">
                                 <CheckCircle2 size={16} className="text-emerald-500" />
-                                All Systems Operative
+                                Neural Link Active
                             </div>
                         </div>
                     </div>

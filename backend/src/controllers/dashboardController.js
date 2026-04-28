@@ -36,7 +36,12 @@ exports.getStats = async (req, res) => {
             salesSummary,
             
             pendingTasks,
-            activeOrders
+            activeOrders,
+
+            totalLeads,
+            wonLeads,
+            monthlyLeads,
+            activeDeals
         ] = await Promise.all([
             Material.countDocuments(),
             Material.find({}, 'quantity min_stock_level').lean(),
@@ -66,7 +71,12 @@ exports.getStats = async (req, res) => {
             ]),
 
             Task.countDocuments({ status: { $ne: 'Completed' } }),
-            Order.countDocuments({ status: { $in: ['Pending', 'Processing', 'Shipped'] } })
+            Order.countDocuments({ status: { $in: ['Pending', 'Processing', 'Shipped'] } }),
+
+            Lead.countDocuments(),
+            Lead.countDocuments({ status: 'Won' }),
+            Lead.countDocuments({ createdAt: { $gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1) } }),
+            Lead.countDocuments({ status: { $nin: ['Won', 'Lost'] } })
         ]);
 
         // Process Materials
@@ -120,7 +130,11 @@ exports.getStats = async (req, res) => {
             },
             crm: {
                 revenue: totalRevenue,
-                leads: [] 
+                leads_count: totalLeads,
+                won_leads: wonLeads,
+                monthly_leads: monthlyLeads,
+                active_deals: activeDeals,
+                conversion_rate: totalLeads > 0 ? ((wonLeads / totalLeads) * 100).toFixed(1) : 0
             },
             finances: {
                 monthly_payout: await Salary.aggregate([
