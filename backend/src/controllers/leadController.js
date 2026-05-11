@@ -104,14 +104,28 @@ exports.convertToDeal = async (req, res) => {
         // 1. Create or Find Customer
         let customerId = lead.customer_id;
         if (!customerId) {
-            console.log('Creating new customer profile from lead data...');
-            const newCustomer = await Customer.create({
-                name: lead.name,
-                email: lead.email,
-                phone: lead.phone,
-                isApproved: true // Converted leads are considered verified
+            console.log('Searching for existing customer profile...');
+            // Try to find by email or phone first to avoid duplicates
+            const existingCustomer = await Customer.findOne({
+                $or: [
+                    { email: lead.email },
+                    { phone: lead.phone }
+                ]
             });
-            customerId = newCustomer._id;
+
+            if (existingCustomer) {
+                console.log(`Matching customer found: ${existingCustomer._id}`);
+                customerId = existingCustomer._id;
+            } else {
+                console.log('No matching customer found. Creating new profile...');
+                const newCustomer = await Customer.create({
+                    name: lead.name,
+                    email: lead.email,
+                    phone: lead.phone,
+                    isApproved: true
+                });
+                customerId = newCustomer._id;
+            }
         }
 
         // 2. Create Deal data linked to customer

@@ -105,6 +105,8 @@ export const crmService = {
 
     // Analytics
     getAnalytics: () => api.get('/crm/analytics'),
+    // Sales
+    getSales: () => api.get('/sales'),
     recordSale: (data) => api.post('/sales', data),
     getTrends: () => api.get('/crm/trends'),
 };

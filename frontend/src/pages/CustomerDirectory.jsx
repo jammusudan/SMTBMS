@@ -15,6 +15,7 @@ const CustomerDirectory = () => {
     const [deals, setDeals] = useState([]);
     const [leads, setLeads] = useState([]);
     const [orders, setOrders] = useState([]);
+    const [sales, setSales] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
@@ -35,16 +36,18 @@ const CustomerDirectory = () => {
 
     const fetchData = async () => {
         try {
-            const [custRes, dealsRes, ordersRes, leadsRes] = await Promise.all([
+            const [custRes, dealsRes, ordersRes, leadsRes, salesRes] = await Promise.all([
                 crmService.getCustomers(),
                 crmService.getDeals(),
                 erpService.getOrders(),
-                crmService.getLeads()
+                crmService.getLeads(),
+                crmService.getSales()
             ]);
             setCustomers(custRes.data);
             setDeals(dealsRes.data);
             setOrders(ordersRes.data);
             setLeads(leadsRes.data);
+            setSales(salesRes.data);
         } catch (error) {
             console.error('Error fetching data:', error);
         } finally {
@@ -81,22 +84,29 @@ const CustomerDirectory = () => {
     };
 
     const getCustomerStats = (customerId) => {
+        const idStr = String(customerId);
+
         // Count Deals
-        const custDeals = deals.filter(d => (d.customer_id?._id || d.customer_id) === customerId);
+        const custDeals = deals.filter(d => String(d.customer_id?._id || d.customer_id) === idStr);
         
-        // Sum Revenue from Completed Orders (Primary Source of Revenue)
+        // Sum Revenue from Completed Orders
         const custOrders = orders.filter(o => 
-            (o.customerId?._id || o.customerId) === customerId && 
+            String(o.customerId?._id || o.customerId) === idStr && 
             o.orderType === 'SALE' && 
             o.status === 'COMPLETED'
         );
         const orderRev = custOrders.reduce((acc, curr) => acc + (curr.totalAmount || 0), 0);
         
-        // Include Won Deals for legacy support if needed, but per f39e459d, Orders are the source of truth
-        // I will sum BOTH to ensure all recorded revenue shows up.
+        // Sum Revenue from standalone Sales records
+        const custSales = sales.filter(s => String(s.customer_id?._id || s.customer_id) === idStr);
+        const standaloneRev = custSales.reduce((acc, curr) => acc + (curr.total_amount || 0), 0);
+
+        // Include Won Deals (Ensure we don't double count if an order was created, but usually Won deals have amount)
+        // If an order exists for the deal, we might be double counting. 
+        // However, standard CRM practice here seems to be summing all recorded revenue sources.
         const dealRev = custDeals.reduce((acc, curr) => acc + (curr.stage === 'Won' ? curr.amount : 0), 0);
         
-        return { count: custDeals.length, revenue: orderRev + dealRev };
+        return { count: custDeals.length, revenue: orderRev + standaloneRev + dealRev };
     };
 
     const filteredCustomers = customers.filter(c => 
