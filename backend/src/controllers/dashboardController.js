@@ -55,7 +55,7 @@ exports.getStats = async (req, res) => {
                 {
                     $group: {
                         _id: "$status",
-                        totalAmount: { $sum: "$total_amount" }
+                        totalAmount: { $sum: "$totalAmount" }
                     }
                 }
             ]),
@@ -99,8 +99,8 @@ exports.getStats = async (req, res) => {
         let pendingAmount = 0;
         let receivedAmount = 0;
         ordersSummary.forEach(o => {
-            if (o._id === 'Pending') pendingAmount = o.totalAmount;
-            if (o._id === 'Received') receivedAmount = o.totalAmount;
+            if (o._id === 'PENDING') pendingAmount = o.totalAmount;
+            if (o._id === 'COMPLETED') receivedAmount = o.totalAmount;
         });
 
         // Process CRM Sales

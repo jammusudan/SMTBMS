@@ -4,6 +4,18 @@ const api = axios.create({
     baseURL: import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL}/api` : 'http://localhost:5000/api',
 });
 
+// Response interceptor for auth errors
+api.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        if (error.response && error.response.status === 401) {
+            localStorage.removeItem('user');
+            window.location.href = '/login';
+        }
+        return Promise.reject(error);
+    }
+);
+
 export const materialService = {
     getAll: () => api.get('/materials'),
     getById: (id) => api.get(`/materials/${id}`),
