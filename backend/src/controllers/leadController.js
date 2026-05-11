@@ -101,9 +101,23 @@ exports.convertToDeal = async (req, res) => {
             return res.status(400).json({ message: `Lead must be "Qualified" before conversion. Current status: ${lead.status}` });
         }
 
-        // Prepare Deal data
+        // 1. Create or Find Customer
+        let customerId = lead.customer_id;
+        if (!customerId) {
+            console.log('Creating new customer profile from lead data...');
+            const newCustomer = await Customer.create({
+                name: lead.name,
+                email: lead.email,
+                phone: lead.phone,
+                isApproved: true // Converted leads are considered verified
+            });
+            customerId = newCustomer._id;
+        }
+
+        // 2. Create Deal data linked to customer
         const dealData = {
             lead_id: lead._id,
+            customer_id: customerId,
             prospect_name: lead.name,
             prospect_email: lead.email || '',
             prospect_phone: lead.phone || '',
@@ -118,20 +132,24 @@ exports.convertToDeal = async (req, res) => {
         const newDeal = new Deal(dealData);
         const savedDeal = await newDeal.save();
 
-        console.log(`Deal created successfully: ${savedDeal._id}`);
+        // 3. Update Lead Status
+        lead.status = 'Converted';
+        lead.converted_customer_id = customerId;
+        await lead.save();
+
+        console.log(`Lead converted successfully. Deal: ${savedDeal._id}, Customer: ${customerId}`);
 
         res.status(201).json({ 
             message: 'Lead converted to Opportunity successfully', 
             deal_id: savedDeal._id,
+            customer_id: customerId,
             title: savedDeal.title
         });
     } catch (error) {
         console.error('CRITICAL_CONVERSION_ERROR:', error);
-        res.setHeader('Content-Type', 'application/json');
         res.status(500).json({ 
             message: 'Server failed to process conversion', 
-            error: error.message,
-            stack: error.stack
+            error: error.message
         });
     }
 };
